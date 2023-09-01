@@ -1,0 +1,10 @@
+
+1.- Sockets
+############################
+Beej's Guide to Network Programming:
+@link: https://beej.us/guide/bgnet/html/#two-types-of-internet-sockets
+
+-- A useful and lengthy explanation about socket development.
+It is a great point to start at to grasp the concepts of what a socket is,
+the different types there are and how to work with them, even on different
+platforms. 
