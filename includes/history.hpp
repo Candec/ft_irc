@@ -5,10 +5,10 @@
 # include <string>
 # include <iostream>
 
-class displayChannels
+class History
 {
 	public:
-		Display();
+		History();
 
 		void set(unsigned char pos, std::string line);
 		void remove(unsigned char pos);

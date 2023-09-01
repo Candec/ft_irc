@@ -1,11 +1,11 @@
 #include "history.cpp"
 
-Display()
+History::History()
 {
 	update();
 }
 
-Display::update()
+History::update()
 {
 	clear();
 
@@ -13,12 +13,12 @@ Display::update()
 		std::cout << it->second << "\033[0m" << std::endl;
 }
 
-Display::clear()
+History::clear()
 {
 	std::cout << "\033[2J" << std::flush;
 }
 
-Display::set(unsigned char i, std::string line)
+History::set(unsigned char i, std::string line)
 {
 	if (line[i] == line)
 		return
@@ -27,7 +27,7 @@ Display::set(unsigned char i, std::string line)
 	update();
 }
 
-Display::remove(unsigned char i)
+History::remove(unsigned char i)
 {
 	history.erase(i);
 	update();
