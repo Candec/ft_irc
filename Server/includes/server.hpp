@@ -15,6 +15,8 @@
 # include <poll.h>
 # include <ctime>
 
+enum Switch { OFF, ON };
+
 class Server 
 {
 	public:
@@ -25,23 +27,23 @@ class Server
 		void setup();
 		void start();
 
-		//setPort();
-		//setPassword();
+		void setPort(char *_port);
+		void setPassword(char *_password);
 
-		// setOperator();
-		// getOperator();
-		// getOperators();
-		// delOperator();
+		// void setOperator();
+		// User *getOperator();
+		// std::vector<User *> getOperators();
+		// void delOperator();
 
-		// setUser();
-		// getUser();
+		// void setUser();
+		// User *getUser();
 		std::vector<User *> getUsers();
-		// delUser();
+		// void delUser();
 
-		// setChannel();
-		// getChannel();
-		// getChannels();
-		// delChannel();
+		// void setChannel();
+		// Channel *getChannel();
+		// std::vector<Channel *> getChannels();
+		// void delChannel();
 
 	private:
 		int fd;
@@ -61,6 +63,8 @@ class Server
 		// # Configs
 		uint16_t port;
 		std::string password;
+
+		bool run;
 }
 
 #endif

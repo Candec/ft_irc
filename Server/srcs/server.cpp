@@ -1,12 +1,14 @@
 #include "server.hpp"
 
-Server::server() : upTime(std::time(0))
+Server::server() : upTime(std::time(0)), run(OFF)
 {
 	display.set(0, "Welcome to the FT_IRC server");
 }
 
-Server::server(std::string _port, std::string _password) : upTime(std::time(0)), port(_port), password(_password)
+Server::server(char *_port, char * _password) : upTime(std::time(0))
 {
+	Server::setPort(_port);
+	Server::setPassword(_password);
 	display.set(0, "Welcome to the FT_IRC server");
 }
 
@@ -19,6 +21,9 @@ Server::~server()
 
 Server::setup()
 {
+	if (port.empty())
+		error("port", true);
+
 	//AF_INT: ip_v4 | SOCK_STREAM: TCP
 	fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (fd == 0)
@@ -47,9 +52,21 @@ Server::setup()
 	pollfds.push_back(pollfd());
 	pollfds.back().fd = fd;
 	pollfds.back().events = POLLIN;
+
+	run = ON;
 }
 
 Server::start()
 {
 	
+}
+
+Server::setPort(char *_port)
+{
+	port = atoi(_port.c_str());
+}
+
+Server::setPassword(char *_password)
+{
+	port = atoi(_password.c_str());
 }
