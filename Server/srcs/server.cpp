@@ -12,7 +12,7 @@ Server::~server()
 		delUser(*(*i));
 }
 
-Server::init()
+Server::setup()
 {
 	//AF_INT: ip_v4 | SOCK_STREAM: TCP
 	fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -42,4 +42,9 @@ Server::init()
 	pollfds.push_back(pollfd());
 	pollfds.back().fd = fd;
 	pollfds.back().events = POLLIN;
+}
+
+Server::start()
+{
+	
 }

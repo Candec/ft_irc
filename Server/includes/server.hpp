@@ -1,7 +1,7 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-# include "client.hpp"
+# include "user.hpp"
 # include "channel.hpp"
 
 # include <string>
@@ -21,8 +21,8 @@ class Server
 		Server();
 		~Server();
 
-		void init();
-		void exec();
+		void setup();
+		void start();
 
 		// setOperator();
 		// getOperator();
