@@ -9,6 +9,8 @@
 # include <map>
 
 # include <sys/socket.h>
+# include <arpa/inet.h>
+# include <netinet/in.h>
 # include <fcntl.h>
 # include <poll.h>
 # include <ctime>
@@ -42,6 +44,7 @@ class Server
 	
 		std::map<int, User> operators;
 		std::map<int, User> users;
+		std::vector<pollfd> pollfds;
 		
 		std::string upTime;
 		// time_t previous_ping
@@ -51,6 +54,8 @@ class Server
 		// void displayUsers();
 		// void displayChannels();
 
+		// # Configs
+		uint16_t port;
 }
 
 #endif
