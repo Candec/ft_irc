@@ -41,7 +41,7 @@ Server::setup()
 	struct sockaddr_in address;
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(port);
+	address.sin_port = htons(atoi(port.c_str()));
 
 	if (bind(fd, (struct sockaddr *)&addres, sizeof(addres)) < 0)
 		error("bind", true);
@@ -63,10 +63,10 @@ Server::start()
 
 Server::setPort(char *_port)
 {
-	port = atoi(_port.c_str());
+	portassign(_port, sizeof(_port));
 }
 
 Server::setPassword(char *_password)
 {
-	port = atoi(_password.c_str());
+	password.assign(_password, sizeof(_password));
 }

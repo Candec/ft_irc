@@ -1,19 +1,30 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-# include "user.hpp"
+# include "../../User/includes/user.hpp"
 # include "channel.hpp"
 
+# include <algorithm>
+# include <iostream>
+# include <ostream>
+# include <sstream>
 # include <string>
 # include <vector>
 # include <map>
 
 # include <sys/socket.h>
-# include <arpa/inet.h>
 # include <netinet/in.h>
+# include <arpa/inet.h>
+# include <unistd.h>
 # include <fcntl.h>
 # include <poll.h>
+
+# include <cstdlib>
+# include <cstdio>
 # include <ctime>
+
+
+
 
 enum Switch { OFF, ON };
 
@@ -45,6 +56,8 @@ class Server
 		// std::vector<Channel *> getChannels();
 		// void delChannel();
 
+		bool run;
+
 	private:
 		int fd;
 	
@@ -61,10 +74,9 @@ class Server
 		// void displayChannels();
 
 		// # Configs
-		uint16_t port;
+		std::string port;
 		std::string password;
 
-		bool run;
-}
+};
 
 #endif

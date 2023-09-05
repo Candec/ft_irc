@@ -1,7 +1,7 @@
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
-# include "user.hpp"
+# include "../../User/includes/user.hpp"
 
 # include <string>
 # include <vector>
@@ -10,8 +10,8 @@
 class Channel
 {
 	public:
-		channel();
-		~channel();
+		Channel();
+		~Channel();
 
 		// void setName(std::string name);
 		// std::string getName();
@@ -49,9 +49,9 @@ class Channel
 
 		std::map<int, User *> users;
 		std::map<int, User *> user_mode;
-		uint16_t user_max;
+		std::string user_max;
 
 		std::vector<User *> invitations;
-}
+};
 
 #endif

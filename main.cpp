@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "./Server/includes/server.hpp"
 
 int main(int argc, char*argv[])
 {
@@ -9,7 +9,7 @@ int main(int argc, char*argv[])
 		return (1);
 	}
 
-	if (atoi(port) <= 0 || atoi(port) > 49150)
+	if (atoi(argv[1]) <= 0 || atoi(argv[1]) > 49150)
 	{
 		std::cout << "Error" << std::endl;
 		std::cout << "Port out of range" << std::endl;
