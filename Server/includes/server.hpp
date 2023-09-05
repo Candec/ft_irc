@@ -19,10 +19,14 @@ class Server
 {
 	public:
 		Server();
+		Server(std::string _port, std::string _password);
 		~Server();
 
 		void setup();
 		void start();
+
+		//setPort();
+		//setPassword();
 
 		// setOperator();
 		// getOperator();
@@ -56,6 +60,7 @@ class Server
 
 		// # Configs
 		uint16_t port;
+		std::string password;
 }
 
 #endif
