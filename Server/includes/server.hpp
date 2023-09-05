@@ -4,11 +4,13 @@
 # include "client.hpp"
 # include "channel.hpp"
 
-# include <poll.h>
 # include <string>
 # include <vector>
 # include <map>
 
+# include <sys/socket.h>
+# include <fcntl.h>
+# include <poll.h>
 # include <ctime>
 
 class Server 
@@ -36,6 +38,8 @@ class Server
 		// delChannel();
 
 	private:
+		int fd;
+	
 		std::map<int, User> operators;
 		std::map<int, User> users;
 		
