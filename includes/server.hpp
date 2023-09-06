@@ -1,8 +1,9 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-# include "../../User/includes/user.hpp"
+# include "user.hpp"
 # include "channel.hpp"
+# include "history.hpp"
 
 # include <algorithm>
 # include <iostream>

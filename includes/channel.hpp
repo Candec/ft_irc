@@ -1,7 +1,7 @@
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
-# include "../../User/includes/user.hpp"
+# include "user.hpp"
 
 # include <string>
 # include <vector>
