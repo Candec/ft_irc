@@ -15,19 +15,14 @@
 # all:				$(NAME)
 
 # $(NAME):			$(OBJS)
-# 	@echo $(ANSI_B_BGREEN) "compiling $(NAME)" $(ANSI_RESET)$(ANSI_F_BBLACK)
 # 	@$(CC) $(CFLAGS) -o $(NAME) -I $(HEADERS) $(OBJS)
-# 	@echo "$(NAME) mandatory successfully compiled!"
 
 # $(OBJS_DIR)/%.o:	%.cpp
-# 	@echo $(ANSI_B_BGREEN) "compiling objects" $(ANSI_RESET)$(ANSI_F_BBLACK)
 # 	@mkdir -p $(dir $@)
 # 	@$(CC) $(CFLAGS) -I $(HEADERS) -c $< -o $@
 
 # clean:
-# 	@echo $(ANSI_B_RED) "Cleaning" $(ANSI_RESET)$(ANSI_F_BBLACK)
 # 	@$(RM) $(OBJS_DIR)
-# 	@echo "Successfuly cleaned all object files of $(NAME)!"
 
 # fclean:				clean
 # 	@echo $(ANSI_B_RED) "Fully Cleaning" $(ANSI_RESET)$(ANSI_F_BBLACK)
@@ -38,7 +33,6 @@
 
 # rebonus:			fclean	bonus
 
-# .PHONY:				all	clean	fclean	re
 
 # colors
 ANSI_RESET = "\033[0m"
@@ -51,29 +45,41 @@ NAME =				ircserv
 CC =				c++
 CFLAGS =			-Wall -Werror -Wextra  -g
 CPPFLAGS =			-std=c++98 -MMD -MP -I$(HEADERS_DIR)
+RM =				rm -rf
 
 
 OBJECTS_DIR =		objs
 SOURCES_DIR =		srcs
 HEADERS_DIR =		includes
 
+# OBJECTS = $(addsuffix .o, $(addprefix $(OBJECTS_DIR)/, $(basename $(SOURCES:$(SOURCES_DIR)/%=%))))
 OBJECTS =			$(patsubst $(SOURCES_DIR)/%.cpp,$(OBJECTS_DIR)/%.o,$(wildcard $(SOURCES_DIR)/*.cpp))
-SOURCES =			$(wildcard $(SOURCES_DIR)/*.cpp)
+SOURCES =			$(shell find $(SOURCES_DIR) -name "*.cpp")
 HEADERS =			$(wildcard *.hpp)
 
 all: $(NAME)
 
 $(OBJECTS_DIR)/%.o: $(SOURCES_DIR)/%.cpp $(HEADERS:%=$(HEADERS_DIR)/%)
-	@printf "\e[33m"
-	@printf "Compile\t$< -> $@\n"
+# $(OBJECTS_DIR)/%.o: $(SOURCES_DIR)/%.cpp
+	@echo $(ANSI_B_BGREEN) "compiling objects" $(ANSI_RESET)$(ANSI_F_BBLACK)
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 $(NAME): $(OBJECTS)
-	@printf "\e[32m"
-	@printf "Build\t$@\n"
+	@echo $(ANSI_B_BGREEN) "compiling $(NAME)" $(ANSI_RESET)$(ANSI_F_BBLACK)
 	$(CC) -o $@ $^
-
+	@echo "$(NAME) mandatory successfully compiled!"
 
 clean:
-	$(RM) $(NAME)
+	@echo $(ANSI_B_RED) "Cleaning" $(ANSI_RESET)$(ANSI_F_BBLACK)
+	$(RM) $(OBJECTS_DIR)
+	@echo "Successfuly cleaned all object files of $(NAME)!"
+
+fclean: clean
+	@echo $(ANSI_B_RED) "Fully Cleaning" $(ANSI_RESET)$(ANSI_F_BBLACK)
+	@$(RM) $(NAME)
+	@echo "Successfuly cleaned all executable files of $(NAME)!"
+
+re: fclean all
+
+.PHONY: all clean fclean re

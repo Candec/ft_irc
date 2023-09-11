@@ -1,53 +1,53 @@
 #include "server.hpp"
 
-Server::server() : upTime(std::time(0)), run(OFF)
+Server::Server() : upTime(std::time(0)), run(OFF)
 {
-	display.set(0, "Welcome to the FT_IRC server");
+	history.set(0, "Welcome to the FT_IRC server");
 }
 
-Server::server(char *_port, char * _password) : upTime(std::time(0))
+Server::Server(char *_port, char * _password) : upTime(std::time(0))
 {
 	Server::setPort(_port);
 	Server::setPassword(_password);
-	display.set(0, "Welcome to the FT_IRC server");
+	history.set(0, "Welcome to the FT_IRC server");
 }
 
-Server::~server()
+Server::~Server()
 {
 	std::vector<User *> users = getUsers;
 	for (std::vector<User *>::iterator i = users.begin(); i = users.end; i++)
 		delUser(*(*i));
 }
 
-Server::setup()
+void Server::setup()
 {
 	if (port.empty())
-		error("port", true);
+		error("port", EXIT);
 
 	//AF_INT: ip_v4 | SOCK_STREAM: TCP
 	fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (fd == 0)
-		error("socket", true);
+		error("socket", EXIT);
 
 	//Blocks the use of the Address and the Port at close time to avoid package mix
 	int optname = 1;
-	if (setsockopt(fd, SOL_SOCKET, SO_REUSERADDR | SO_RESUSEPORT, &optname, sizeof(optname)))
-		error("setsockopt", true);
+	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &optname, sizeof(optname)))
+		error("setsockopt", EXIT);
 
 	//Shouldn't be required in linux. It is to block simultanious accesses to the fd
 	if (fcntl(fd, F_SETFL, O_NONBLOCK))
-		error("fcntl", true);
+		error("fcntl", EXIT);
 
 	struct sockaddr_in address;
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
 	address.sin_port = htons(atoi(port.c_str()));
 
-	if (bind(fd, (struct sockaddr *)&addres, sizeof(addres)) < 0)
-		error("bind", true);
+	if (bind(fd, (struct sockaddr *)&address, sizeof(address)) < 0)
+		error("bind", EXIT);
 
 	if (listen(fd, address.sin_port) < 0)
-		error("listen", true);
+		error("listen", EXIT);
 
 	pollfds.push_back(pollfd());
 	pollfds.back().fd = fd;
@@ -56,17 +56,17 @@ Server::setup()
 	run = ON;
 }
 
-Server::start()
+void Server::start()
 {
 	
 }
 
-Server::setPort(char *_port)
+void Server::setPort(char *_port)
 {
 	portassign(_port, sizeof(_port));
 }
 
-Server::setPassword(char *_password)
+void Server::setPassword(char *_password)
 {
 	password.assign(_password, sizeof(_password));
 }
