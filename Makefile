@@ -48,16 +48,17 @@ ANSI_F_BRED = "\033[31;1m"
 ANSI_F_BBLACK = "\033[30;1m"
 
 NAME =				ircserv
-CC =				g++
+CC =				c++
 CFLAGS =			-Wall -Werror -Wextra  -g
-CPPFLAGS =			-std=c++98 -MMD -MP
+CPPFLAGS =			-std=c++98 -MMD -MP -I$(HEADERS_DIR)
+
 
 OBJECTS_DIR =		objs
 SOURCES_DIR =		srcs
 HEADERS_DIR =		includes
 
-OBJECTS =			$(wildcard *.o)
-SOURCES =			$(wildcard *.cpp)
+OBJECTS =			$(patsubst $(SOURCES_DIR)/%.cpp,$(OBJECTS_DIR)/%.o,$(wildcard $(SOURCES_DIR)/*.cpp))
+SOURCES =			$(wildcard $(SOURCES_DIR)/*.cpp)
 HEADERS =			$(wildcard *.hpp)
 
 all: $(NAME)
@@ -68,10 +69,11 @@ $(OBJECTS_DIR)/%.o: $(SOURCES_DIR)/%.cpp $(HEADERS:%=$(HEADERS_DIR)/%)
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-$(NAME): $(SOURCES:%.cpp=$(OBJECTS_DIR)/%.o)
+$(NAME): $(OBJECTS)
 	@printf "\e[32m"
 	@printf "Build\t$@\n"
-	$(CC) -o $@ $(SOURCES:%.cpp=$(OBJECTS_DIR)/%.o)
+	$(CC) -o $@ $^
+
 
 clean:
 	$(RM) $(NAME)
