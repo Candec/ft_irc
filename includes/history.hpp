@@ -18,6 +18,6 @@ class History
 
 		void update();
 		void clear();
-}
+};
 
 #endif

@@ -1,8 +1,10 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-# include "../../User/includes/user.hpp"
+# include "user.hpp"
 # include "channel.hpp"
+# include "history.hpp"
+# include "utility.hpp"
 
 # include <algorithm>
 # include <iostream>
@@ -23,16 +25,35 @@
 # include <cstdio>
 # include <ctime>
 
-
-
-
 enum Switch { OFF, ON };
 
 class Server 
 {
+
+	private:
+		int fd;
+
+		History history;
+	
+		std::map<int, User> operators;
+		std::map<int, User> users;
+		std::vector<pollfd> pollfds;
+		
+		time_t upTime;
+		time_t previous_ping;
+		//void sendPing();
+
+		// void addUser();
+		// void displayUsers();
+		// void displayChannels();
+
+		// # Configs
+		std::string port;
+		std::string password;
+
 	public:
 		Server();
-		Server(std::string _port, std::string _password);
+		Server(char *_port, char *_password);
 		~Server();
 
 		void setup();
@@ -57,26 +78,6 @@ class Server
 		// void delChannel();
 
 		bool run;
-
-	private:
-		int fd;
-	
-		std::map<int, User> operators;
-		std::map<int, User> users;
-		std::vector<pollfd> pollfds;
-		
-		std::string upTime;
-		// time_t previous_ping
-		//void sendPing();
-
-		// void addUser();
-		// void displayUsers();
-		// void displayChannels();
-
-		// # Configs
-		std::string port;
-		std::string password;
-
 };
 
 #endif
