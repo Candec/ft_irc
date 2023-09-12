@@ -14,8 +14,8 @@ Server::Server(char *_port, char * _password) : upTime(std::time(0))
 
 Server::~Server()
 {
-	std::vector<User *> users = getUsers;
-	for (std::vector<User *>::iterator i = users.begin(); i = users.end; i++)
+	std::vector<User *> users = getUsers();
+	for (std::vector<User *>::iterator i = users.begin(); i != users.end(); ++i)
 		delUser(*(*i));
 }
 
@@ -63,7 +63,7 @@ void Server::start()
 
 void Server::setPort(char *_port)
 {
-	portassign(_port, sizeof(_port));
+	port.assign(_port, sizeof(_port));
 }
 
 void Server::setPassword(char *_password)
