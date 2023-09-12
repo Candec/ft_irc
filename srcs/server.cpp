@@ -5,7 +5,7 @@ Server::Server() : upTime(std::time(0)), run(OFF)
 	history.set(0, "Welcome to the FT_IRC server");
 }
 
-Server::Server(char *_port, char * _password) : upTime(std::time(0))
+Server::Server(char *_port, char * _password) : upTime(std::time(0)), run(OFF)
 {
 	Server::setPort(_port);
 	Server::setPassword(_password);
@@ -14,10 +14,36 @@ Server::Server(char *_port, char * _password) : upTime(std::time(0))
 
 Server::~Server()
 {
-	std::vector<User *> users = getUsers;
-	for (std::vector<User *>::iterator i = users.begin(); i = users.end; i++)
+	std::vector<User *> users = getUsers();
+	for (std::vector<User *>::iterator i = users.begin(); i != users.end(); ++i)
 		delUser(*(*i));
 }
+
+
+void Server::setPort(char *_port)
+{
+	port.assign(_port, sizeof(_port));
+}
+
+void Server::setPassword(char *_password)
+{
+	password.assign(_password, sizeof(_password));
+}
+
+std::vector<User *> Server::getUsers()
+{
+	std::vector<User *> usersV = std::vector<User *>();
+	for (std::map<int, User *>::iterator i = users.begin(); i != users.end(); ++i)
+		usersV.push_back(i->second);
+
+	return (usersV);
+}
+
+void Server::delUser(User &user)
+{
+	(void)user;
+}
+
 
 void Server::setup()
 {
@@ -59,14 +85,4 @@ void Server::setup()
 void Server::start()
 {
 	
-}
-
-void Server::setPort(char *_port)
-{
-	portassign(_port, sizeof(_port));
-}
-
-void Server::setPassword(char *_password)
-{
-	password.assign(_password, sizeof(_password));
 }

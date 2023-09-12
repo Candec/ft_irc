@@ -61,7 +61,7 @@ all: $(NAME)
 
 $(OBJECTS_DIR)/%.o: $(SOURCES_DIR)/%.cpp $(HEADERS:%=$(HEADERS_DIR)/%)
 # $(OBJECTS_DIR)/%.o: $(SOURCES_DIR)/%.cpp
-	@echo $(ANSI_B_BGREEN) "compiling objects" $(ANSI_RESET)$(ANSI_F_BBLACK)
+	@echo $(ANSI_B_BGREEN) "compiling $@" $(ANSI_RESET)$(ANSI_F_BBLACK)
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 

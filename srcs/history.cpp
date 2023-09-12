@@ -1,33 +1,33 @@
-#include "history.cpp"
+#include "history.hpp"
 
 History::History()
 {
 	update();
 }
 
-History::update()
+void History::update()
 {
 	clear();
 
-	for (std::map<unsigned char, std::string>::iterator i = history.begin(); i != history.end(); i++)
-		std::cout << it->second << "\033[0m" << std::endl;
+	for (std::map<unsigned int, std::string>::iterator i = history.begin(); i != history.end(); i++)
+		std::cout << i->second << "\033[0m" << std::endl;
 }
 
-History::clear()
+void History::clear()
 {
 	std::cout << "\033[2J" << std::flush;
 }
 
-History::set(unsigned char i, std::string line)
+void History::set(unsigned int i, std::string line)
 {
-	if (line[i] == line)
-		return
+	if (history[i].compare(line) == 0)
+		return;
 	
 	history[i] = line;
 	update();
 }
 
-History::remove(unsigned char i)
+void History::remove(unsigned int i)
 {
 	history.erase(i);
 	update();
