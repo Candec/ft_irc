@@ -10,11 +10,11 @@ class History
 	public:
 		History();
 
-		void set(unsigned char pos, std::string line);
-		void remove(unsigned char pos);
+		void set(unsigned int pos, std::string line);
+		void remove(unsigned int pos);
 
 	private:
-		std::map<unsigned char, std::string> history;
+		std::map<unsigned int, std::string> history;
 
 		void update();
 		void clear();

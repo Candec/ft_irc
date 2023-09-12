@@ -1,8 +1,8 @@
 #include "utility.hpp"
 
-void error(std::string str, bool exit)
+void error(std::string str, bool quit)
 {
 	std::cout << "Error: " << str << std::endl;
-	if (exit)
+	if (quit)
 		exit(EXIT_FAILURE);
 }

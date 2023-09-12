@@ -35,8 +35,8 @@ class Server
 
 		History history;
 	
-		std::map<int, User> operators;
-		std::map<int, User> users;
+		std::map<int, User *> operators;
+		std::map<int, User *> users;
 		std::vector<pollfd> pollfds;
 		
 		time_t upTime;
@@ -70,7 +70,7 @@ class Server
 		// void setUser();
 		// User *getUser();
 		std::vector<User *> getUsers();
-		// void delUser();
+		void delUser(User &user);
 
 		// void setChannel();
 		// Channel *getChannel();
