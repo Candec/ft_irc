@@ -27,6 +27,8 @@
 
 enum Switch { OFF, ON };
 
+# define PING 6000 //60ms of timeout delay
+
 class Server 
 {
 
@@ -35,13 +37,14 @@ class Server
 
 		History history;
 	
+		std::map<int, Channel *> channels;
 		std::map<int, User *> operators;
 		std::map<int, User *> users;
 		std::vector<pollfd> pollfds;
 		
 		time_t upTime;
 		time_t previous_ping;
-		//void sendPing();
+		void updatePing();
 
 		// void addUser();
 		// void displayUsers();
@@ -75,7 +78,7 @@ class Server
 		// void setChannel();
 		// Channel *getChannel();
 		// std::vector<Channel *> getChannels();
-		// void delChannel();
+		void delChannel(Channel &channel);
 
 		bool run;
 };

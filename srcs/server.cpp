@@ -1,5 +1,8 @@
 #include "server.hpp"
 
+/*
+	CONSTRUCTORS
+*/
 Server::Server() : upTime(std::time(0)), run(OFF)
 {
 	history.set(0, "Welcome to the FT_IRC server");
@@ -19,7 +22,9 @@ Server::~Server()
 		delUser(*(*i));
 }
 
-
+/*
+	SETTERS
+*/
 void Server::setPort(char *_port)
 {
 	port.assign(_port, sizeof(_port));
@@ -30,6 +35,9 @@ void Server::setPassword(char *_password)
 	password.assign(_password, sizeof(_password));
 }
 
+/*
+	GETTERS
+*/
 std::vector<User *> Server::getUsers()
 {
 	std::vector<User *> usersV = std::vector<User *>();
@@ -39,11 +47,23 @@ std::vector<User *> Server::getUsers()
 	return (usersV);
 }
 
+/*
+	DELETERS
+*/
 void Server::delUser(User &user)
 {
 	(void)user;
 }
 
+void Server::delChannel(Channel &channel)
+{
+	(void)channel;
+}
+
+void Server::updatePing()
+{
+	
+}
 
 void Server::setup()
 {
@@ -84,5 +104,12 @@ void Server::setup()
 
 void Server::start()
 {
-	
+	if (poll(&pollfds[0], pollfds.size(), PING) == -1)
+		return ;
+
+	if (std::time(0) - previous_ping >= PING)
+	{
+		updatePing();
+		return ;
+	}
 }
