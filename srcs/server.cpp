@@ -6,6 +6,24 @@
 Server::Server() : upTime(std::time(0)), run(OFF)
 {
 	history.set(0, "Welcome to the FT_IRC server");
+
+	std::ifstream file("./Configuration/irc.config", std::ios::in);
+	std::string line;
+
+	while (std::getline(file, line))
+	{
+		if (line.substr(0, line.find("=")) == "default_port")
+			port = atoi(line.substr(1, line.find("=")).c_str());
+
+		if (line.substr(0, line.find("=")) == "default_pass")
+			password = line.substr(1, line.find("="));
+
+		if (line.substr(0, line.find("=")) == "max_ping")
+			ping = atoi(line.substr(1, line.find("=")).c_str());
+
+		if (line.substr(0, line.find("=")) == "timeout")
+			timeout = atoi(line.substr(1, line.find("=")).c_str());
+	}
 }
 
 Server::Server(char *_port, char * _password) : upTime(std::time(0)), run(OFF)
@@ -13,6 +31,18 @@ Server::Server(char *_port, char * _password) : upTime(std::time(0)), run(OFF)
 	Server::setPort(_port);
 	Server::setPassword(_password);
 	history.set(0, "Welcome to the FT_IRC server");
+
+	std::ifstream file("./Configuration/irc.config");
+	std::string line;
+
+	while (std::getline(file, line))
+	{
+		if (line.substr(0, line.find("=")) == "max_ping")
+			ping = atoi(line.substr(1, line.find("=")).c_str());
+
+		if (line.substr(0, line.find("=")) == "timeout")
+			timeout = atoi(line.substr(1, line.find("=")).c_str());
+	}
 }
 
 Server::~Server()
@@ -27,7 +57,7 @@ Server::~Server()
 */
 void Server::setPort(char *_port)
 {
-	port.assign(_port, sizeof(_port));
+	port.assign(atoi(_port), sizeof(atoi(_port)));
 }
 
 void Server::setPassword(char *_password)
@@ -62,7 +92,15 @@ void Server::delChannel(Channel &channel)
 
 void Server::updatePing()
 {
-	
+	time_t now = std::time(0);
+
+	for (std::map<int, User *>::iterator i = users.begin(); i != users.end(); i++)
+	{
+		if (now - (*i).second->getPreviousPing() >= timeout)
+			(*i).second->setStatus(OFFLINE);
+		else if ((*i).second->getStatus() == ONLINE)
+			(*i).second->write("PING " + (*i).second->getNick());
+	}
 }
 
 void Server::setup()
@@ -104,10 +142,10 @@ void Server::setup()
 
 void Server::start()
 {
-	if (poll(&pollfds[0], pollfds.size(), PING) == -1)
+	if (poll(&pollfds[0], pollfds.size(), (ping * 1000) / 10) == -1)
 		return ;
 
-	if (std::time(0) - previous_ping >= PING)
+	if (std::time(0) - previous_ping >= ping)
 	{
 		updatePing();
 		return ;
