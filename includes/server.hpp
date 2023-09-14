@@ -24,24 +24,27 @@
 # include <cstdlib>
 # include <cstdio>
 # include <ctime>
+# include <fstream>
+# include <string>
+# include <utility>
 
 enum Switch { OFF, ON };
 
 class Server 
 {
-
 	private:
 		int fd;
 
 		History history;
 	
+		std::map<int, Channel *> channels;
 		std::map<int, User *> operators;
 		std::map<int, User *> users;
 		std::vector<pollfd> pollfds;
 		
 		time_t upTime;
 		time_t previous_ping;
-		//void sendPing();
+		void updatePing();
 
 		// void addUser();
 		// void displayUsers();
@@ -50,6 +53,9 @@ class Server
 		// # Configs
 		std::string port;
 		std::string password;
+
+		unsigned int ping;
+		unsigned int timeout;
 
 	public:
 		Server();
@@ -75,7 +81,7 @@ class Server
 		// void setChannel();
 		// Channel *getChannel();
 		// std::vector<Channel *> getChannels();
-		// void delChannel();
+		void delChannel(Channel &channel);
 
 		bool run;
 };
