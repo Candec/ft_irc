@@ -11,7 +11,4 @@ int main(int argc, char*argv[])
 	while (server.run)
 		server.start();
 	return (0);
-	
-
-
 }

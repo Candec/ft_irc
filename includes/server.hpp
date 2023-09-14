@@ -43,19 +43,21 @@ class Server
 		std::vector<pollfd> pollfds;
 		
 		time_t upTime;
-		time_t previous_ping;
+		time_t previousPing;
 		void updatePing();
 
-		// void addUser();
+		void addUser();
 		// void displayUsers();
 		// void displayChannels();
 
 		// # Configs
+		std::string serverName;
 		std::string port;
 		std::string password;
 
 		unsigned int ping;
 		unsigned int timeout;
+		unsigned int maxUsers;
 
 	public:
 		Server();

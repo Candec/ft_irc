@@ -12,17 +12,23 @@ Server::Server() : upTime(std::time(0)), run(OFF)
 
 	while (std::getline(file, line))
 	{
-		if (line.substr(0, line.find("=")) == "default_port")
-			port = atoi(line.substr(1, line.find("=")).c_str());
+		if (line.substr(0, line.find(":")) == "default_port")
+			port = atoi(line.substr(1, line.find(":")).c_str());
 
-		if (line.substr(0, line.find("=")) == "default_pass")
-			password = line.substr(1, line.find("="));
+		if (line.substr(0, line.find(":")) == "default_pass")
+			password = line.substr(1, line.find(":"));
 
-		if (line.substr(0, line.find("=")) == "max_ping")
-			ping = atoi(line.substr(1, line.find("=")).c_str());
+		if (line.substr(0, line.find(":")) == "server_name")
+			serverName = atoi(line.substr(1, line.find(":")).c_str());
 
-		if (line.substr(0, line.find("=")) == "timeout")
-			timeout = atoi(line.substr(1, line.find("=")).c_str());
+		if (line.substr(0, line.find(":")) == "max_users")
+			maxUsers = atoi(line.substr(1, line.find(":")).c_str());
+
+		if (line.substr(0, line.find(":")) == "max_ping")
+			ping = atoi(line.substr(1, line.find(":")).c_str());
+
+		if (line.substr(0, line.find(":")) == "timeout")
+			timeout = atoi(line.substr(1, line.find(":")).c_str());
 	}
 }
 
@@ -37,11 +43,17 @@ Server::Server(char *_port, char * _password) : upTime(std::time(0)), run(OFF)
 
 	while (std::getline(file, line))
 	{
-		if (line.substr(0, line.find("=")) == "max_ping")
-			ping = atoi(line.substr(1, line.find("=")).c_str());
+		if (line.substr(0, line.find(":")) == "server_name")
+			serverName = atoi(line.substr(1, line.find(":")).c_str());
 
-		if (line.substr(0, line.find("=")) == "timeout")
-			timeout = atoi(line.substr(1, line.find("=")).c_str());
+		if (line.substr(0, line.find(":")) == "max_users")
+			maxUsers = atoi(line.substr(1, line.find(":")).c_str());
+
+		if (line.substr(0, line.find(":")) == "max_ping")
+			ping = atoi(line.substr(1, line.find(":")).c_str());
+
+		if (line.substr(0, line.find(":")) == "timeout")
+			timeout = atoi(line.substr(1, line.find(":")).c_str());
 	}
 }
 
@@ -78,6 +90,31 @@ std::vector<User *> Server::getUsers()
 }
 
 /*
+	ADDERS
+*/
+void Server::addUser()
+{
+	if (users.size() == maxUsers)
+		if (shutdown(fd, SHUT_RD) == -1)
+			return ;
+
+	struct sockaddr_in addr;
+	socklen_t socklen = sizeof(addr);
+	int _fd = accept(fd, (struct sockaddr *)&addr, &socklen);
+
+	if (_fd == -1)
+		return ;
+
+	users[fd] = new User(fd, addr);
+	users[fd]->setStatus(VERIFY);
+
+	pollfds.push_back(pollfd());
+	pollfds.back().fd = fd;
+	pollfds.back().events = POLLIN;
+}
+
+
+/*
 	DELETERS
 */
 void Server::delUser(User &user)
@@ -92,12 +129,17 @@ void Server::delChannel(Channel &channel)
 
 void Server::updatePing()
 {
+	previous_ping = std::time(0);
+
 	time_t now = std::time(0);
 
 	for (std::map<int, User *>::iterator i = users.begin(); i != users.end(); i++)
 	{
 		if (now - (*i).second->getPreviousPing() >= timeout)
+		{
 			(*i).second->setStatus(OFFLINE);
+			(*i).second->write((*i).second->getNick() + "timed out")
+		}
 		else if ((*i).second->getStatus() == ONLINE)
 			(*i).second->write("PING " + (*i).second->getNick());
 	}
@@ -146,8 +188,8 @@ void Server::start()
 		return ;
 
 	if (std::time(0) - previous_ping >= ping)
-	{
 		updatePing();
-		return ;
-	}
+
+	if (pollfds[0].revents == POLLIN)
+		addUser();
 }
