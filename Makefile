@@ -67,7 +67,7 @@ $(OBJECTS_DIR)/%.o: $(SOURCES_DIR)/%.cpp $(HEADERS:%=$(HEADERS_DIR)/%)
 
 $(NAME): $(OBJECTS)
 	@echo $(ANSI_B_BGREEN) "compiling $(NAME)" $(ANSI_RESET)$(ANSI_F_BBLACK)
-	$(CC) -o $@ $^
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ $^
 	@echo "$(NAME) mandatory successfully compiled!"
 
 clean:

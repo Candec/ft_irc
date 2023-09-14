@@ -9,12 +9,12 @@
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>
+# include <netdb.h>
 # include <unistd.h>
 # include <fcntl.h>
 # include <poll.h>
 
 enum { VERIFY, ACCEPT, ONLINE, OFFLINE };
-enum { R, W, WR };
 
 class User
 {
@@ -30,7 +30,7 @@ class User
 		void setNick(std::string nick);
 		void setUser(std::string user);
 		void setName(std::string name);
-		void setPrivilage(std::string privilages);
+		void setRole(std::string role);
 		void setPreviousNick(std::string previousNick);
 		void setPreviousChannel(std::string previousChannel);
 
@@ -43,7 +43,7 @@ class User
 		std::string getNick();
 		std::string getUser();
 		std::string getName();
-		std::string getPrivilages();
+		std::string getrole();
 		std::string getPreviousNick();
 		std::string getPreviousChannel();
 
@@ -56,7 +56,7 @@ class User
 		std::string nick;
 		std::string user;
 		std::string name;
-		std::string privilages;
+		std::string role;
 		std::string previousNick;
 		std::string previousChannel;
 };
