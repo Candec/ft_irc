@@ -8,3 +8,16 @@ Beej's Guide to Network Programming:
 It is a great point to start at to grasp the concepts of what a socket is,
 the different types there are and how to work with them, even on different
 platforms. 
+
+2.- Byte transforming functions
+#############################
+@link: https://beej.us/guide/bgnet/html/#byte-order
+
+-- Required functions and explanation to trasnform addresses to hosts and
+viceversa.
+
+3.- Required functions for connection
+#############################
+@link: https://beej.us/guide/bgnet/html/#system-calls-or-bust
+
+-- Here is how to build the connection
