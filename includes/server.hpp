@@ -24,14 +24,14 @@
 # include <cstdlib>
 # include <cstdio>
 # include <ctime>
+# include <fstream>
+# include <string>
+# include <utility>
 
 enum Switch { OFF, ON };
 
-# define PING 6000 //60ms of timeout delay
-
 class Server 
 {
-
 	private:
 		int fd;
 
@@ -53,6 +53,9 @@ class Server
 		// # Configs
 		std::string port;
 		std::string password;
+
+		unsigned int ping;
+		unsigned int timeout;
 
 	public:
 		Server();
