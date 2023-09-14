@@ -28,7 +28,7 @@ class User
 
  		// Setters
 		void setStatus(int status);
-		void setPing(time_t ping);
+		void setPreviousPing(time_t ping);
 		void setNick(std::string nick);
 		void setUser(std::string user);
 		void setName(std::string name);
