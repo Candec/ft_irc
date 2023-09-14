@@ -5,21 +5,23 @@ User::User(int fd, struct sockaddr_in addr) : fd(fd), status(VERIFY), previousPi
 	//Shouldn't be required in linux. It is to block simultanious accesses to the fd
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 
+	char _hostname[NI_MAXHOST];
+	
 	if (getnameinfo((struct sockaddr *)&addr, sizeof(addr), _hostname, NI_MAXHOST, NULL, 0, NI_NUMERICSERV) != 0)
 		error("Get Name Info", EXIT);
 
+	hostname = _hostname;
 	hostaddr = inet_ntoa(addr.sin_addr);
 
-	char _hostname[NI_MAXHOST];
-	hostname = _hostname;
 }
 
-// User::~User();
-
-// void User::sendPrivateMessage(User &To, std::string Message);
+User::~User()
+{
+	close(fd);
+}
 
 // // Setters
-// void User::setStatus(int status);
+void User::setStatus(int _status) {	status = _status; }
 // void User::setPing(time_t ping);
 // void User::setNick(std::string nick);
 // void User::setUser(std::string user);
@@ -29,14 +31,17 @@ User::User(int fd, struct sockaddr_in addr) : fd(fd), status(VERIFY), previousPi
 // void User::setPreviousChannel(std::string previousChannel);
 
 // // Getters
-// int User::getFd();
-// int User::getStatus();
-// time_t User::getPreviousPing();
-// std::string User::getHostaddr();
-// std::string User::getHostname();
-// std::string User::getNick();
-// std::string User::getUser();
-// std::string User::getName();
-// std::string User::getRole();
-// std::string User::getPreviousNick();
-// std::string User::getPreviousChannel();
+int User::getFd() {return (fd); }
+int User::getStatus() { return (status); }
+time_t User::getPreviousPing() { return (previousPing); }
+std::string User::getHostaddr() { return (hostaddr); }
+std::string User::getHostname() { return (hostname); }
+std::string User::getNick() { return (nick); }
+std::string User::getUser() {return (user); }
+std::string User::getName() {return (name); }
+std::string User::getRole() {return (role); }
+std::string User::getPreviousNick() { return (previousNick); }
+std::string User::getPreviousChannel() {return (previousChannel); }
+
+// void User::sendPrivateMessage(User &To, std::string Message);
+void User::write(std::string Message) { waitToSend.push_back(Message); }

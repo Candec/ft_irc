@@ -5,6 +5,7 @@
 
 # include <ctime>
 # include <string>
+# include <vector>
 
 # include <sys/socket.h>
 # include <netinet/in.h>
@@ -23,6 +24,7 @@ class User
 		~User();
 
 		void sendPrivateMessage(User &To, std::string Message);
+		void write(std::string Message);
 
  		// Setters
 		void setStatus(int status);
@@ -43,7 +45,7 @@ class User
 		std::string getNick();
 		std::string getUser();
 		std::string getName();
-		std::string getrole();
+		std::string getRole();
 		std::string getPreviousNick();
 		std::string getPreviousChannel();
 
@@ -59,6 +61,8 @@ class User
 		std::string role;
 		std::string previousNick;
 		std::string previousChannel;
+
+		std::vector<std::string> waitToSend;
 };
 
 #endif
