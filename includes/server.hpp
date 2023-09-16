@@ -6,53 +6,30 @@
 /*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/16 13:17:25 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/09/16 18:23:00 by tpereira         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-# include "user.hpp"
-# include "channel.hpp"
-# include "history.hpp"
-# include "utility.hpp"
-
-# include <algorithm>
-# include <iostream>
-# include <ostream>
-# include <sstream>
-# include <string>
-# include <vector>
-# include <map>
-
-# include <sys/socket.h>
-# include <netinet/in.h>
-# include <arpa/inet.h>
-# include <unistd.h>
-# include <fcntl.h>
-# include <poll.h>
-
-# include <cstdlib>
-# include <cstdio>
-# include <ctime>
+# include "main.hpp"
 
 enum Switch { OFF, ON };
 
-class Server 
+class Server
 {
-
 	private:
-		int fd;
+		int _fd;
 
-		History history;
+		History _history;
 	
-		std::map<int, User> operators;
-		std::map<int, User> users;
-		std::vector<pollfd> pollfds;
+		std::map<int, User> _operators;
+		std::map<int, User> _users;
+		std::vector<pollfd> _pollfds;
 		
-		time_t upTime;
-		time_t previous_ping;
+		time_t _upTime;
+		// time_t _previous_ping;
 		//void sendPing();
 
 		// void addUser();
@@ -60,8 +37,8 @@ class Server
 		// void displayChannels();
 
 		// # Configs
-		std::string port;
-		std::string password;
+		std::string _port;
+		std::string _password;
 
 	public:
 		Server();
@@ -71,7 +48,7 @@ class Server
 		void setup();
 		void start();
 
-		void setPort(char *_port);
+		void setPort(std::string _port);
 		void setPassword(char *_password);
 
 		// void setOperator();
@@ -82,7 +59,7 @@ class Server
 		// void setUser();
 		// User *getUser();
 		std::vector<User *> getUsers();
-		// void delUser();
+		void delUser(User &user);
 
 		// void setChannel();
 		// Channel *getChannel();

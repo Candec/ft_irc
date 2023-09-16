@@ -6,41 +6,42 @@
 /*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:51 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/16 13:21:26 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/09/16 17:44:42 by tpereira         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "History.hpp" 
+#include "main.hpp"
 
 History::History()
 {
 	update();
 }
 
-History::update()
+void History::update()
 {
 	clear();
 
 	for (std::map<unsigned char, std::string>::iterator i = history.begin(); i != history.end(); i++)
-		std::cout << it->second << "\033[0m" << std::endl;
+		std::cout << i->second << "\033[0m" << std::endl;
 }
 
-History::clear()
+void History::clear()
 {
 	std::cout << "\033[2J" << std::flush;
 }
 
-History::set(unsigned char i, std::string line)
+void History::set(unsigned char i, std::string line)
 {
-	if (line[i] == line)
-		return
-	
+	if (history[i] == line)
+		return;
 	history[i] = line;
 	update();
 }
 
-History::remove(unsigned char i)
+void History::remove(unsigned char i)
 {
 	history.erase(i);
 	update();
 }
+
+/* ************************************************************************** */

@@ -6,15 +6,17 @@
 /*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:06 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/16 13:20:39 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/09/16 17:44:58 by tpereira         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Utility.hpp"
+#include "main.hpp"
 
-void error(std::string str, bool exit)
+void error(std::string str, bool quit)
 {
 	std::cout << "Error: " << str << std::endl;
-	if (exit)
+	if (quit)
 		exit(EXIT_FAILURE);
 }
+
+/* ************************************************************************** */
