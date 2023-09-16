@@ -6,7 +6,7 @@
 /*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/16 18:23:00 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/09/16 18:41:18 by tpereira         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,14 @@ class Server
 
 	public:
 		Server();
-		Server(char *_port, char *_password);
+		Server(std::string _port, std::string _password);
 		~Server();
 
 		void setup();
 		void start();
 
 		void setPort(std::string _port);
-		void setPassword(char *_password);
+		void setPassword(std::string _password);
 
 		// void setOperator();
 		// User *getOperator();

@@ -6,7 +6,7 @@
 /*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/16 18:22:49 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/09/16 18:41:43 by tpereira         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@ Server::Server() : _upTime(std::time(0)), run(OFF)
 	_history.set(0, "Welcome to the FT_IRC server");
 }
 
-Server::Server(char *_port, char * _password) : _upTime(std::time(0))
+Server::Server(std::string _port, std::string  _password) : _upTime(std::time(0))
 {
-	Server::setPort(_port);
-	Server::setPassword(_password);
+	setPort(_port);
+	setPassword(_password);
 	_history.set(0, "Welcome to the FT_IRC server");
 }
 
@@ -78,7 +78,7 @@ void Server::setPort(std::string port)
 	_port = port;
 }
 
-void Server::setPassword(char *password)
+void Server::setPassword(std::string password)
 {
 	_password.assign(_password, sizeof(password));
 }

@@ -6,7 +6,7 @@
 /*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:58 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/16 18:35:28 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/09/16 18:43:11 by tpereira         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,20 @@ int main(int argc, char*argv[])
 		return (1);
 	}
 
-	Server server(argv[1], argv[2]);
+	try
+	{
+		std::string port = argv[1];
+		std::string password = argv[2];
+		Server server(port, password);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	
 
-	while (server.run)
-		server.start();
+	// while (server.run)
+	// 	server.start();
 	return (0);
 
 }
