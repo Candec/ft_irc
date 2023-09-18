@@ -12,25 +12,21 @@ User::User(int fd, struct sockaddr_in addr) : fd(fd), status(VERIFY), previousPi
 
 	hostname = _hostname;
 	hostaddr = inet_ntoa(addr.sin_addr);
-
 }
 
-User::~User()
-{
-	close(fd);
-}
+User::~User() { close(fd); }
 
-// // Setters
+//Setters
 void User::setStatus(int _status) {	status = _status; }
-// void User::setPing(time_t ping);
-// void User::setNick(std::string nick);
-// void User::setUser(std::string user);
-// void User::setName(std::string name);
-// void User::setRole(std::string role);
-// void User::setPreviousNick(std::string previousNick);
-// void User::setPreviousChannel(std::string previousChannel);
+void User::setPreviousPing(time_t ping) { previousPing = ping; }
+void User::setNick(std::string _nick) { nick = _nick; }
+void User::setUser(std::string _user) { user = _user; }
+void User::setName(std::string _name) { name = _name; }
+void User::setRole(std::string _role) { role = _role ; }
+void User::setPreviousNick(std::string _previousNick) { previousNick = _previousNick; }
+void User::setPreviousChannel(std::string _previousChannel) { previousChannel = _previousChannel; }
 
-// // Getters
+// Getters
 int User::getFd() {return (fd); }
 int User::getStatus() { return (status); }
 time_t User::getPreviousPing() { return (previousPing); }
@@ -43,5 +39,6 @@ std::string User::getRole() {return (role); }
 std::string User::getPreviousNick() { return (previousNick); }
 std::string User::getPreviousChannel() {return (previousChannel); }
 
+// Functions
 // void User::sendPrivateMessage(User &To, std::string Message);
 void User::write(std::string Message) { waitToSend.push_back(Message); }

@@ -23,12 +23,13 @@ class User
 		User(int fd, struct sockaddr_in addr);
 		~User();
 
+		std::string buffer;
 		void sendPrivateMessage(User &To, std::string Message);
 		void write(std::string Message);
 
  		// Setters
 		void setStatus(int status);
-		void setPing(time_t ping);
+		void setPreviousPing(time_t ping);
 		void setNick(std::string nick);
 		void setUser(std::string user);
 		void setName(std::string name);

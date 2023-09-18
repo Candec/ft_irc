@@ -28,6 +28,9 @@
 # include <string>
 # include <utility>
 
+# define BUFFER 2048
+# define MESSAGE_END "\r\n"
+
 enum Switch { OFF, ON };
 
 class Server 
@@ -43,19 +46,22 @@ class Server
 		std::vector<pollfd> pollfds;
 		
 		time_t upTime;
-		time_t previous_ping;
+		time_t previousPing;
 		void updatePing();
+		void updatePoll();
 
-		// void addUser();
+		void addUser();
 		// void displayUsers();
 		// void displayChannels();
 
 		// # Configs
+		std::string serverName;
 		std::string port;
 		std::string password;
 
 		unsigned int ping;
 		unsigned int timeout;
+		unsigned int maxUsers;
 
 	public:
 		Server();
