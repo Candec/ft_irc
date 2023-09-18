@@ -43,18 +43,25 @@ Server::Server(char *_port, char * _password) : upTime(std::time(0)), run(OFF)
 
 	while (std::getline(file, line))
 	{
+		std::cout << "line: " << line << std::endl << std::flush;
 		if (line.substr(0, line.find(":")) == "server_name")
-			serverName = atoi(line.substr(1, line.find(":")).c_str());
+			serverName = line.erase(0, line.find(":") + 1);
 
 		if (line.substr(0, line.find(":")) == "max_users")
-			maxUsers = atoi(line.substr(1, line.find(":")).c_str());
+			maxUsers = atoi(line.erase(0, line.find(":") + 1).c_str());
 
 		if (line.substr(0, line.find(":")) == "max_ping")
-			ping = atoi(line.substr(1, line.find(":")).c_str());
+			ping = atoi(line.erase(0, line.find(":") + 1).c_str());
 
 		if (line.substr(0, line.find(":")) == "timeout")
-			timeout = atoi(line.substr(1, line.find(":")).c_str());
+			timeout = atoi(line.erase(0, line.find(":") + 1).c_str());
 	}
+		std::cout << "serverName: "<< serverName << std::endl << std::flush;
+		std::cout << "max_users: "<< maxUsers << std::endl << std::flush;
+		std::cout << "max_ping: "<< ping << std::endl << std::flush;
+		std::cout << "timeout: "<< timeout << std::endl << std::flush;
+		std::cout << "port: "<< port << std::endl << std::flush;
+		std::cout << "pass: "<< password << std::endl << std::flush;
 }
 
 Server::~Server()
@@ -69,12 +76,12 @@ Server::~Server()
 */
 void Server::setPort(char *_port)
 {
-	port.assign(atoi(_port), sizeof(atoi(_port)));
+	port = atoi(_port);
 }
 
 void Server::setPassword(char *_password)
 {
-	password.assign(_password, sizeof(_password));
+	password = _password;
 }
 
 /*
@@ -183,7 +190,7 @@ void Server::updatePoll()
 
 void Server::setup()
 {
-	if (port.empty())
+	if (port <= 0)
 		error("port", EXIT);
 
 	//AF_INT: ip_v4 | SOCK_STREAM: TCP
@@ -203,13 +210,18 @@ void Server::setup()
 	struct sockaddr_in address;
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(atoi(port.c_str()));
+	address.sin_port = htons(port);
 
 	if (bind(fd, (struct sockaddr *)&address, sizeof(address)) < 0)
 		error("bind", EXIT);
 
 	if (listen(fd, address.sin_port) < 0)
 		error("listen", EXIT);
+
+	struct in_addr ipAddr = address.sin_addr;
+	char str[INET_ADDRSTRLEN];
+	std::cout << "IP: " << std::flush;
+	std::cout << inet_ntop( AF_INET, &ipAddr, str, INET_ADDRSTRLEN)  << std::flush;
 
 	pollfds.push_back(pollfd());
 	pollfds.back().fd = fd;
