@@ -28,6 +28,9 @@
 # include <string>
 # include <utility>
 
+# define BUFFER 2048
+# define MESSAGE_END "\r\n"
+
 enum Switch { OFF, ON };
 
 class Server 
@@ -45,6 +48,7 @@ class Server
 		time_t upTime;
 		time_t previousPing;
 		void updatePing();
+		void updatePoll();
 
 		void addUser();
 		// void displayUsers();

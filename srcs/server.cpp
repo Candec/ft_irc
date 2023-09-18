@@ -129,7 +129,7 @@ void Server::delChannel(Channel &channel)
 
 void Server::updatePing()
 {
-	previous_ping = std::time(0);
+	previousPing = std::time(0);
 
 	time_t now = std::time(0);
 
@@ -138,10 +138,46 @@ void Server::updatePing()
 		if (now - (*i).second->getPreviousPing() >= timeout)
 		{
 			(*i).second->setStatus(OFFLINE);
-			(*i).second->write((*i).second->getNick() + "timed out")
+			(*i).second->write((*i).second->getNick() + "timed out");
 		}
 		else if ((*i).second->getStatus() == ONLINE)
 			(*i).second->write("PING " + (*i).second->getNick());
+	}
+}
+
+void Server::updatePoll()
+{
+	for (std::vector<pollfd>::iterator i = pollfds.begin(); i != pollfds.end(); i++)
+	{
+		if ((*i).revents == POLLIN)
+		{
+			char buf[BUFFER + 1];
+			ssize_t size = recv(users[(*i).fd]->getFd(), &buf, BUFFER, 0);
+
+			if (size == -1)
+				continue;
+
+			if (size == 0)
+			{
+				users[(*i).fd]->setStatus(OFFLINE);
+				continue;
+			}
+
+			buf[size] = 0;
+			users[(*i).fd]->buffer += buf;
+
+			std::string delimiter(MESSAGE_END);
+			size_t position;
+			while ((position = users[(*i).fd]->buffer.find(delimiter)) != std::string::npos)
+			{
+				std::string message = users[(*i).fd]->buffer.substr(0, position);
+				users[(*i).fd]->buffer.erase(0, position + delimiter.length());
+				if (!message.length())
+					continue;
+				// push back msg for the user and the server. After we have to check if it is a command
+			}
+			// messages_operations();
+		}
 	}
 }
 
@@ -187,9 +223,10 @@ void Server::start()
 	if (poll(&pollfds[0], pollfds.size(), (ping * 1000) / 10) == -1)
 		return ;
 
-	if (std::time(0) - previous_ping >= ping)
+	if (std::time(0) - previousPing >= ping)
 		updatePing();
-
-	if (pollfds[0].revents == POLLIN)
+	else if (pollfds[0].revents == POLLIN)
 		addUser();
+	else
+		updatePoll();
 }

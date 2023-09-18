@@ -23,6 +23,7 @@ class User
 		User(int fd, struct sockaddr_in addr);
 		~User();
 
+		std::string buffer;
 		void sendPrivateMessage(User &To, std::string Message);
 		void write(std::string Message);
 
