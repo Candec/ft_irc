@@ -56,8 +56,8 @@ class Server
 
 		// # Configs
 		std::string serverName;
-		std::string port;
 		std::string password;
+		unsigned int port;
 
 		unsigned int ping;
 		unsigned int timeout;
