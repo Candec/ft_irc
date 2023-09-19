@@ -1,22 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utility.cpp                                        :+:      :+:    :+:   */
+/*   utility.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/16 13:17:06 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/19 12:11:34 by jibanez-         ###   ########.fr       */
+/*   Created: 2023/09/16 13:17:19 by tpereira          #+#    #+#             */
+/*   Updated: 2023/09/16 17:10:07 by tpereira         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.hpp"
+#ifndef UTILITY_HPP
+# define UTILITY_HPP
 
-void error(std::string str, bool quit)
-{
-	std::cout << "Error: " << str << std::endl;
-	if (quit)
-		exit(EXIT_FAILURE);
-}
+# include "main.hpp"
 
-/* ************************************************************************** */
+enum {CONTINUE, EXIT};
+
+void error(std::string str, bool exit);
+
+#endif

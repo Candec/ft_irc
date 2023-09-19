@@ -1,11 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   channel.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
+/*   Updated: 2023/09/16 17:40:24 by tpereira         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
-# include "user.hpp"
-
-# include <string>
-# include <vector>
-# include <map>
+# include "main.hpp"
 
 class Channel
 {

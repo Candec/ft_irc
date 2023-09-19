@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   user.hpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/09/16 13:17:22 by tpereira          #+#    #+#             */
+/*   Updated: 2023/09/19 12:03:18 by jibanez-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef USER_HPP
 # define USER_HPP
 
@@ -19,6 +31,21 @@ enum { VERIFY, ACCEPT, ONLINE, OFFLINE };
 
 class User
 {
+	private:
+		std::string		_name;
+		std::string		_password;
+		std::string		_email;
+		std::string		_phone;
+		std::string		_address;
+		std::string		_city;
+		std::string		_postalCode;
+		std::string		_country;
+		std::string		_id;
+		std::string		_role;
+		std::string		_status;
+		std::string		_createdAt;
+		std::string		_updatedAt;
+
 	public:
 		User(int fd, struct sockaddr_in addr);
 		~User();

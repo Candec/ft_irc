@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
+/*   Updated: 2023/09/19 12:06:57 by jibanez-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
@@ -33,12 +45,12 @@
 
 enum Switch { OFF, ON };
 
-class Server 
+class Server
 {
 	private:
-		int fd;
+		int _fd;
 
-		History history;
+		History _history;
 	
 		std::map<int, Channel *> channels;
 		std::map<int, User *> operators;
@@ -65,14 +77,14 @@ class Server
 
 	public:
 		Server();
-		Server(char *_port, char *_password);
+		Server(std::string _port, std::string _password);
 		~Server();
 
 		void setup();
 		void start();
 
-		void setPort(char *_port);
-		void setPassword(char *_password);
+		void setPort(std::string _port);
+		void setPassword(std::string _password);
 
 		// void setOperator();
 		// User *getOperator();

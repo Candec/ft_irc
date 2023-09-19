@@ -1,9 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   history.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/09/16 13:17:27 by tpereira          #+#    #+#             */
+/*   Updated: 2023/09/16 17:09:27 by tpereira         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef HISTORY_HPP
 # define HISTORY_HPP
 
-# include <map>
-# include <string>
-# include <iostream>
+# include "main.hpp"
 
 class History
 {

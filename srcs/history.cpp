@@ -32,3 +32,5 @@ void History::remove(unsigned int i)
 	history.erase(i);
 	update();
 }
+
+/* ************************************************************************** */
