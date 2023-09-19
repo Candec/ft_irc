@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 17:05:34 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/16 18:35:08 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/09/19 12:13:03 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,11 +77,11 @@ recv, signal, sigaction, lseek, fstat, fcntl, poll
 # include <cstdio>
 # include <ctime>
 
-# include "Utility.hpp"
-# include "User.hpp"
-# include "Channel.hpp"
-# include "History.hpp"
-# include "Server.hpp"
+# include "utility.hpp"
+# include "user.hpp"
+# include "channel.hpp"
+# include "history.hpp"
+# include "server.hpp"
 // # include "Message.hpp"
 
 

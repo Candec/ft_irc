@@ -1,5 +1,4 @@
-#include "server.hpp"
-#include "utility.hpp"
+#include "main.hpp"
 
 int main(int argc, char*argv[])
 {
