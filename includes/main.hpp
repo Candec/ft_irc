@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 17:05:34 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/19 12:13:03 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/21 09:51:56 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,20 +57,20 @@ recv, signal, sigaction, lseek, fstat, fcntl, poll
 */
 
 
-# include <iostream>
 # include <string>
 # include <map>
 # include <vector>
 # include <algorithm>
+# include <iostream>
 # include <ostream>
 # include <sstream>
-# include <vector>
 
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <netdb.h>
 # include <poll.h>
 
 # include <cstdlib>
@@ -83,6 +83,8 @@ recv, signal, sigaction, lseek, fstat, fcntl, poll
 # include "history.hpp"
 # include "server.hpp"
 // # include "Message.hpp"
+
+
 
 
 #endif

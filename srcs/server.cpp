@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/19 12:19:55 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/21 11:09:12 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ Server::Server() : upTime(std::time(0)), run(OFF)
 	}
 }
 
-Server::Server(char *_port, char * _password) : upTime(std::time(0)), run(OFF)
+Server::Server(std::string _port, std::string _password) : upTime(std::time(0)), run(OFF)
 {
 	Server::setPort(_port);
 	Server::setPassword(_password);
@@ -86,12 +86,12 @@ Server::~Server()
 /*
 	SETTERS
 */
-void Server::setPort(char *_port)
+void Server::setPort(std::string _port)
 {
-	port = atoi(_port);
+	port = atoi(_port.c_str());
 }
 
-void Server::setPassword(char *_password)
+void Server::setPassword(std::string _password)
 {
 	password = _password;
 }

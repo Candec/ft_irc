@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/19 12:20:29 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/21 11:15:47 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,31 +14,6 @@
 # define SERVER_HPP
 
 # include "main.hpp"
-// # include "channel.hpp"
-// # include "history.hpp"
-// # include "utility.hpp"
-
-// # include <algorithm>
-// # include <iostream>
-// # include <ostream>
-// # include <sstream>
-// # include <string>
-// # include <vector>
-// # include <map>
-
-// # include <sys/socket.h>
-// # include <netinet/in.h>
-// # include <arpa/inet.h>
-// # include <unistd.h>
-// # include <fcntl.h>
-// # include <poll.h>
-
-// # include <cstdlib>
-// # include <cstdio>
-// # include <ctime>
-// # include <fstream>
-// # include <string>
-// # include <utility>
 
 # define BUFFER 2048
 # define MESSAGE_END "\r\n"

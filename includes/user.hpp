@@ -6,26 +6,14 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/19 12:03:18 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/21 09:52:32 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef USER_HPP
 # define USER_HPP
 
-# include "utility.hpp"
-
-# include <ctime>
-# include <string>
-# include <vector>
-
-# include <sys/socket.h>
-# include <netinet/in.h>
-# include <arpa/inet.h>
-# include <netdb.h>
-# include <unistd.h>
-# include <fcntl.h>
-# include <poll.h>
+# include "main.hpp"
 
 enum { VERIFY, ACCEPT, ONLINE, OFFLINE };
 
