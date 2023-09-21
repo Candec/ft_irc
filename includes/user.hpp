@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/21 11:47:18 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/21 17:26:12 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ class User
 		std::string buffer;
 		void sendPrivateMessage(User &To, std::string Message);
 		void write(std::string Message);
+		void push();
 
  		// Setters
 		void setStatus(int status);

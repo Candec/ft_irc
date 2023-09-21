@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/21 11:09:12 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/21 17:27:26 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ Server::Server(std::string _port, std::string _password) : upTime(std::time(0)),
 
 	while (std::getline(file, line))
 	{
-		std::cout << "line: " << line << std::endl << std::flush;
+		// std::cout << "line: " << line << std::endl << std::flush;
 		if (line.substr(0, line.find(":")) == "server_name")
 			serverName = line.erase(0, line.find(":") + 1);
 
@@ -68,12 +68,12 @@ Server::Server(std::string _port, std::string _password) : upTime(std::time(0)),
 		if (line.substr(0, line.find(":")) == "timeout")
 			timeout = atoi(line.erase(0, line.find(":") + 1).c_str());
 	}
-		std::cout << "serverName: "<< serverName << std::endl << std::flush;
-		std::cout << "max_users: "<< maxUsers << std::endl << std::flush;
-		std::cout << "max_ping: "<< ping << std::endl << std::flush;
-		std::cout << "timeout: "<< timeout << std::endl << std::flush;
-		std::cout << "port: "<< port << std::endl << std::flush;
-		std::cout << "pass: "<< password << std::endl << std::flush;
+		// std::cout << "serverName: "<< serverName << std::endl << std::flush;
+		// std::cout << "max_users: "<< maxUsers << std::endl << std::flush;
+		// std::cout << "max_ping: "<< ping << std::endl << std::flush;
+		// std::cout << "timeout: "<< timeout << std::endl << std::flush;
+		// std::cout << "port: "<< port << std::endl << std::flush;
+		// std::cout << "pass: "<< password << std::endl << std::flush;
 }
 
 Server::~Server()
@@ -193,7 +193,7 @@ void Server::updatePoll()
 				users[(*i).fd]->buffer.erase(0, position + delimiter.length());
 				if (!message.length())
 					continue;
-				// push back msg for the user and the server. After we have to check if it is a command
+				users[(*i).fd]->push();
 			}
 			// messages_operations();
 		}
@@ -230,10 +230,9 @@ void Server::setup()
 	if (listen(fd, address.sin_port) < 0)
 		error("listen", EXIT);
 
-	struct in_addr ipAddr = address.sin_addr;
-	char str[INET_ADDRSTRLEN];
-	std::cout << "IP: " << std::flush;
-	std::cout << inet_ntop( AF_INET, &ipAddr, str, INET_ADDRSTRLEN)  << std::flush;
+	// struct in_addr ipAddr = address.sin_addr;
+	// char str[INET_ADDRSTRLEN];
+	// std::cout << "IP: " << inet_ntop( AF_INET, &ipAddr, str, INET_ADDRSTRLEN)  << std::flush;
 
 	pollfds.push_back(pollfd());
 	pollfds.back().fd = fd;

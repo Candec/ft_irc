@@ -42,3 +42,20 @@ std::string User::getPreviousChannel() {return (previousChannel); }
 // Functions
 // void User::sendPrivateMessage(User &To, std::string Message);
 void User::write(std::string Message) { waitToSend.push_back(Message); }
+
+void User::push()
+{
+	if (!waitToSend.size())
+		return ;
+
+	std::string buffer;
+	for (std::vector<std::string>::iterator i = waitToSend.begin(); i != waitToSend.end(); ++i)
+		buffer += *i + MESSAGE_END;
+	waitToSend.clear();
+
+	if (buffer.length())
+		return ;
+
+	if (send(fd, buffer.c_str(), buffer.length(), 0) == -1)
+		error("send", false);
+}
