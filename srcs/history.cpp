@@ -15,7 +15,7 @@ void History::update()
 
 void History::clear()
 {
-	// std::cout << "\033[2J" << std::flush;
+	std::cout << "\033[2J" << std::flush;
 }
 
 void History::set(unsigned int i, std::string line)

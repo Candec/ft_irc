@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/21 09:52:32 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/21 11:47:18 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,20 @@ class User
 		std::string		_status;
 		std::string		_createdAt;
 		std::string		_updatedAt;
+		
+		int fd;
+		int status;
+		time_t previousPing;
+		std::string hostaddr;
+		std::string hostname;
+		std::string nick;
+		std::string user;
+		std::string name;
+		std::string role;
+		std::string previousNick;
+		std::string previousChannel;
+
+		std::vector<std::string> waitToSend;
 
 	public:
 		User(int fd, struct sockaddr_in addr);
@@ -65,20 +79,6 @@ class User
 		std::string getPreviousNick();
 		std::string getPreviousChannel();
 
-	private:
-		int fd;
-		int status;
-		time_t previousPing;
-		std::string hostaddr;
-		std::string hostname;
-		std::string nick;
-		std::string user;
-		std::string name;
-		std::string role;
-		std::string previousNick;
-		std::string previousChannel;
-
-		std::vector<std::string> waitToSend;
 };
 
 #endif

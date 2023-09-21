@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 17:05:34 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/21 09:51:56 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/21 12:10:10 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ recv, signal, sigaction, lseek, fstat, fcntl, poll
 # include <algorithm>
 # include <iostream>
 # include <ostream>
+# include <fstream>
 # include <sstream>
 
 # include <sys/socket.h>
@@ -77,11 +78,11 @@ recv, signal, sigaction, lseek, fstat, fcntl, poll
 # include <cstdio>
 # include <ctime>
 
-# include "utility.hpp"
+# include "history.hpp"
 # include "user.hpp"
 # include "channel.hpp"
-# include "history.hpp"
 # include "server.hpp"
+# include "utility.hpp"
 // # include "Message.hpp"
 
 

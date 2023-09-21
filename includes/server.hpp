@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/21 11:15:47 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/21 12:07:31 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 # define MESSAGE_END "\r\n"
 
 enum Switch { OFF, ON };
+
+
 
 class Server
 {
