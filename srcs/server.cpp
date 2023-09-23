@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/21 17:27:26 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/23 17:28:56 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,42 @@ void Server::addUser()
 */
 void Server::delUser(User &user)
 {
-	(void)user;
+	std::vector<User *> dUser = std::vector<User *>();
+	dUser.push_back(&user);
+
+	std::vector<Channel> remove;
+	for (std::map<int, Channel *>::iterator i = channels.begin(); i != channels.end(); ++i)
+		if ((*i).second.isUser(user))
+		{
+			(*i).second.removeUser(user);
+			
+			std::vector<User *> users = i->second.getUsers();
+			if (!users.size())
+				remove.push_back((*i).second);
+			else
+				for (std::vector<User *>::iterator i = users.begin(); i != users.end(); ++i)
+					if (std::find(dUser.begin(), dUser.end(), *i) == dUser.end())
+						dUser.push_back(*i);
+		}
+
+	for (std::vector<Channel>::iterator j = remove.begin(); j != remove.end(); ++j)
+		delChannel(*j);
+
+	std::string message = "QUIT :" + user.getDeleteMessage();
+	for (std::vector<User *>::iterator k = dUser.begin(); k != dUser.end(); ++k)
+		user.sendPrivateMessage(*(*k), message);
+	user.push();
+
+	history.remove(user.getFd());
+
+	for (std::vector<pollfd>::iterator l = pollfds.begin(); l != pollfds.end(); ++l)
+		if ((*l).fd == user.getFd())
+		{
+			pollfds.erase(l);
+			break;
+		}
+	users.erase(user.getFd());
+	delete &user;
 }
 
 void Server::delChannel(Channel &channel)
@@ -168,11 +203,13 @@ void Server::updatePoll()
 {
 	for (std::vector<pollfd>::iterator i = pollfds.begin(); i != pollfds.end(); i++)
 	{
+		std::cout << "fd: " << (*i).fd << " - (*i).revents: " << (*i).revents << " = " << POLLIN << std::endl << std::flush;
 		if ((*i).revents == POLLIN)
 		{
 			char buf[BUFFER + 1];
 			ssize_t size = recv(users[(*i).fd]->getFd(), &buf, BUFFER, 0);
 
+			std::cout << "in pckg: " << buf << std::endl << std::flush;
 			if (size == -1)
 				continue;
 
@@ -243,13 +280,22 @@ void Server::setup()
 
 void Server::start()
 {
-	if (poll(&pollfds[0], pollfds.size(), (ping * 1000) / 10) == -1)
+	if (poll(&pollfds[0], pollfds.size(), (ping * 1000) / 100) == -1)
 		return ;
 
 	if (std::time(0) - previousPing >= ping)
+	{
+		std::cout << "updating ping" << std::endl << std::flush;
 		updatePing();
+	}
 	else if (pollfds[0].revents == POLLIN)
+	{
+		std::cout << "adding user" << std::endl << std::flush;
 		addUser();
+	}
 	else
+	{
+		std::cout << "updating poll" << std::endl << std::flush;
 		updatePoll();
+	}
 }
