@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/23 17:28:56 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/23 17:32:33 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,11 +143,11 @@ void Server::delUser(User &user)
 
 	std::vector<Channel> remove;
 	for (std::map<int, Channel *>::iterator i = channels.begin(); i != channels.end(); ++i)
-		if ((*i).second.isUser(user))
+		if ((*i).second->isUser(user))
 		{
-			(*i).second.removeUser(user);
+			(*i).second->removeUser(user);
 			
-			std::vector<User *> users = i->second.getUsers();
+			std::vector<User *> users = i->second->getUsers();
 			if (!users.size())
 				remove.push_back((*i).second);
 			else
