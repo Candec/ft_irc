@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/21 12:14:46 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/23 17:27:02 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,45 +23,53 @@ class Channel
 		Channel();
 		~Channel();
 
-		// void setName(std::string name);
-		// std::string getName();
+		void setName(std::string name);
+		std::string getName();
 
-		// void setMode(std::string Mode);
-		// std::string getMode();
+		void setMode(std::string mode);
+		std::string getMode();
 
-		// void setDescription(std::string Description);
-		// std::string getDescription();
+		void setUserMode(User &user, std::string mode);
+		std::string getUserMode(User &user);
 
-		// void setkey(std::string key);
-		// std::string getkey();
+		void setMaxUsers(std::string users_max);
+		std::string getMaxUsers();
 
-		// void addUser(User &user);
-		// void removeUser(User &user);
-		// void removeUser(const std::string &nick);
-		// std::vector<User *> getUsers();
+		void setDescription(std::string Description);
+		std::string getDescription();
 
-		// bool isUser(User &user);
-		// bool isOnChannel(User &user);
+		void setPass(std::string key);
+		std::string getPass();
 
-		//void setUserMax(uint16_t max);
+		void addUser(User &user);
+		void removeUser(User &user);
+		void removeUser(const std::string &nick);
+		std::vector<User *> getUsers();
 
-		// void addInvitedUser(User &user);
-		// void isInvitedUser(User &user);
-		// void revokeInvitation(User &user);
+		bool isUser(User &user);
+		bool isOnChannel(std::string const &nick);
 
-		//void brodcast(User &user, std::string brodcast);
+
+		void setUserMax(uint16_t max);
+
+		void addInvitedUser(User &user);
+		bool isInvitedUser(User &user);
+		void revokeInvitation(User &user);
+
+		void broadcast(User &user, std::string message);
+
 
 	private:
-		std::string name;
-		std::string mode;
-		std::string description;
-		std::string key;
+		std::string _name;
+		std::string _mode;
+		std::string _description;
+		std::string _pass;
 
-		std::map<int, User *> users;
-		std::map<int, User *> user_mode;
-		std::string user_max;
+		std::map<int, std::string> _user_mode;
+		std::map<int, User *> _users;
+		std::string _users_max;
 
-		std::vector<User *> invitations;
+		std::vector<User *> _invitations;
 };
 
 #endif
