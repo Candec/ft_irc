@@ -32,6 +32,7 @@ int User::getStatus() { return (status); }
 time_t User::getPreviousPing() { return (previousPing); }
 std::string User::getHostaddr() { return (hostaddr); }
 std::string User::getHostname() { return (hostname); }
+std::string User::getHost() { return (hostname.size() ? hostname : hostaddr); }
 std::string User::getNick() { return (nick); }
 std::string User::getUser() {return (user); }
 std::string User::getName() {return (name); }

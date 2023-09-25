@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/24 12:01:30 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/25 22:06:55 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 /*
 	CONSTRUCTORS
 */
-Server::Server() : upTime(std::time(0)), run(OFF)
+Server::Server() : upTime(std::time(0))
 {
 	history.set(0, "Welcome to the FT_IRC server");
 
@@ -44,7 +44,7 @@ Server::Server() : upTime(std::time(0)), run(OFF)
 	}
 }
 
-Server::Server(std::string _port, std::string _password) : upTime(std::time(0)), run(OFF)
+Server::Server(std::string _port, std::string _password) : upTime(std::time(0))
 {
 	Server::setPort(_port);
 	Server::setPassword(_password);
@@ -193,15 +193,28 @@ void Server::updatePing()
 		{
 			(*i).second->setStatus(OFFLINE);
 			(*i).second->write((*i).second->getNick() + "timed out");
+			std::cout << (*i).second->getNick() << "timed out" << std::endl << std::flush;
 		}
 		else if ((*i).second->getStatus() == ONLINE)
 			(*i).second->write("PING " + (*i).second->getNick());
 	}
 }
 
+void Server::printUsers()
+{
+	char buffer[42];
+	sprintf(buffer, "%-4s %-9s %s", "FD", "Nickname", "Host");
+	history.set(fd, std::string("\n") + buffer);
+	for (std::map<int, User *>::iterator it = users.begin(); it != users.end(); ++it)
+	{
+		sprintf(buffer, "\033[34m%-4i \033[33m%-9s \033[35m", (*it).second->getFd(), (*it).second->getNick().c_str());
+		history.set((*it).second->getFd(), buffer + (*it).second->getHost());
+	}
+}
+
 void Server::updatePoll()
 {
-	for (std::vector<pollfd>::iterator i = pollfds.begin(); i != pollfds.end(); i++)
+	for (std::vector<pollfd>::iterator i = pollfds.begin(); i != pollfds.end(); ++i)
 	{
 		if ((*i).revents == POLLIN)
 		{
@@ -257,7 +270,7 @@ void Server::setup()
 
 	struct sockaddr_in address;
 	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = INADDR_ANY;
+	address.sin_addr.s_addr = htons(INADDR_ANY);
 	address.sin_port = htons(port);
 
 	if (bind(fd, (struct sockaddr *)&address, sizeof(address)) < 0)
@@ -274,11 +287,9 @@ void Server::setup()
 	pollfds.push_back(pollfd());
 	pollfds.back().fd = fd;
 	pollfds.back().events = POLLIN;
-
-	run = ON;
 }
 
-void Server::start()
+void Server::run()
 {
 	if (poll(&pollfds[0], pollfds.size(), (ping * 1000) / 100) == -1)
 		return ;
@@ -295,4 +306,14 @@ void Server::start()
 	}
 	else
 		updatePoll();
+
+	std::vector<User *> users = getUsers();
+	
+	for (std::vector<User *>::iterator i = users.begin(); i != users.end(); ++i)
+		if ((*i)->getStatus() == OFFLINE)
+			delUser(*(*i));
+	users = getUsers();
+	for (std::vector<User *>::iterator j = users.begin(); j != users.end(); ++j)
+		(*j)->push();
+	printUsers();
 }

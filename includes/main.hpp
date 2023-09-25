@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 17:05:34 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/21 12:10:10 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/25 21:56:08 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ recv, signal, sigaction, lseek, fstat, fcntl, poll
 # include <cstdlib>
 # include <cstdio>
 # include <ctime>
+# include <csignal>
 
 # include "history.hpp"
 # include "user.hpp"
@@ -84,8 +85,5 @@ recv, signal, sigaction, lseek, fstat, fcntl, poll
 # include "server.hpp"
 # include "utility.hpp"
 // # include "Message.hpp"
-
-
-
 
 #endif

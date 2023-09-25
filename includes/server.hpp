@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/23 16:35:12 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/25 22:06:06 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,10 @@ class Server
 		void updatePoll();
 
 		void addUser();
-		// void displayUsers();
+		void printUsers();
+
 		// void displayChannels();
+
 
 		// # Configs
 		std::string serverName;
@@ -58,7 +60,7 @@ class Server
 		~Server();
 
 		void setup();
-		void start();
+		void run();
 
 		void setPort(std::string _port);
 		void setPassword(std::string _password);
@@ -77,8 +79,6 @@ class Server
 		// Channel *getChannel();
 		// std::vector<Channel *> getChannels();
 		void delChannel(Channel &channel);
-
-		bool run;
 };
 
 #endif

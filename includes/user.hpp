@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/21 17:26:12 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/25 21:33:13 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ class User
 		time_t getPreviousPing();
 		std::string getHostaddr();
 		std::string getHostname();
+		std::string getHost();
 		std::string getNick();
 		std::string getUser();
 		std::string getName();
