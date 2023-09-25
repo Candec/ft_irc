@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/23 17:32:33 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/24 12:01:30 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,7 @@ void Server::delUser(User &user)
 			
 			std::vector<User *> users = i->second->getUsers();
 			if (!users.size())
-				remove.push_back((*i).second);
+				remove.push_back((*i->second));
 			else
 				for (std::vector<User *>::iterator i = users.begin(); i != users.end(); ++i)
 					if (std::find(dUser.begin(), dUser.end(), *i) == dUser.end())
@@ -159,7 +159,7 @@ void Server::delUser(User &user)
 	for (std::vector<Channel>::iterator j = remove.begin(); j != remove.end(); ++j)
 		delChannel(*j);
 
-	std::string message = "QUIT :" + user.getDeleteMessage();
+	std::string message = "QUIT :" + user.getFd();
 	for (std::vector<User *>::iterator k = dUser.begin(); k != dUser.end(); ++k)
 		user.sendPrivateMessage(*(*k), message);
 	user.push();
@@ -203,7 +203,6 @@ void Server::updatePoll()
 {
 	for (std::vector<pollfd>::iterator i = pollfds.begin(); i != pollfds.end(); i++)
 	{
-		std::cout << "fd: " << (*i).fd << " - (*i).revents: " << (*i).revents << " = " << POLLIN << std::endl << std::flush;
 		if ((*i).revents == POLLIN)
 		{
 			char buf[BUFFER + 1];
@@ -267,6 +266,7 @@ void Server::setup()
 	if (listen(fd, address.sin_port) < 0)
 		error("listen", EXIT);
 
+	updatePing();
 	// struct in_addr ipAddr = address.sin_addr;
 	// char str[INET_ADDRSTRLEN];
 	// std::cout << "IP: " << inet_ntop( AF_INET, &ipAddr, str, INET_ADDRSTRLEN)  << std::flush;
@@ -294,8 +294,5 @@ void Server::start()
 		addUser();
 	}
 	else
-	{
-		std::cout << "updating poll" << std::endl << std::flush;
 		updatePoll();
-	}
 }

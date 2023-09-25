@@ -40,7 +40,7 @@ std::string User::getPreviousNick() { return (previousNick); }
 std::string User::getPreviousChannel() {return (previousChannel); }
 
 // Functions
-// void User::sendPrivateMessage(User &To, std::string Message);
+void User::sendPrivateMessage(User &To, std::string Message) { To.write(":" + Message); }
 void User::write(std::string Message) { waitToSend.push_back(Message); }
 
 void User::push()
