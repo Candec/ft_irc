@@ -35,3 +35,5 @@
 *.dSym
 *.aout
 *.swp
+ircserv
+.vscode/

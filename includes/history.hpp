@@ -37,16 +37,18 @@
 # include <cstdio>
 # include <ctime>
 
+using namespace std;
+
 class History
 {
 	public:
 		History();
 
-		void set(unsigned int pos, std::string line);
+		void set(unsigned int pos, string line);
 		void remove(unsigned int pos);
 
 	private:
-		std::map<unsigned int, std::string> history;
+		map<unsigned int, string> history;
 
 		void update();
 		void clear();

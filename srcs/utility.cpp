@@ -12,9 +12,9 @@
 
 #include "main.hpp"
 
-void error(std::string str, bool quit)
+void error(string str, bool quit)
 {
-	std::cout << "Error: " << str << std::endl;
+	cout << RED << "Error: " << WHITE << str << endl;
 	if (quit)
 		exit(EXIT_FAILURE);
 }

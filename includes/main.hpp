@@ -53,7 +53,7 @@ socket, close, setsockopt, getsockname,
 getprotobyname, gethostbyname, getaddrinfo,
 freeaddrinfo, bind, connect, listen, accept, htons,
 htonl, ntohs, ntohl, inet_addr, inet_ntoa, send,
-recv, signal, sigaction, lseek, fstat, fcntl, poll 
+recv, signal, sigaction, lseek, fstat, fcntl, poll
 */
 
 
@@ -78,6 +78,7 @@ recv, signal, sigaction, lseek, fstat, fcntl, poll
 # include <cstdio>
 # include <ctime>
 # include <csignal>
+# include <cstring>
 
 # include "history.hpp"
 # include "user.hpp"
@@ -85,5 +86,8 @@ recv, signal, sigaction, lseek, fstat, fcntl, poll
 # include "server.hpp"
 # include "utility.hpp"
 // # include "Message.hpp"
+
+using namespace std;
+
 
 #endif

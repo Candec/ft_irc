@@ -15,14 +15,14 @@
 /*
 	CONSTRUCTORS
 */
-Server::Server() : upTime(std::time(0))
+Server::Server() : upTime(time(0))
 {
 	history.set(0, "Welcome to the FT_IRC server");
 
-	std::ifstream file("./Configuration/irc.config", std::ios::in);
-	std::string line;
+	ifstream file("./Configuration/irc.config", ios::in);
+	string line;
 
-	while (std::getline(file, line))
+	while (getline(file, line))
 	{
 		if (line.substr(0, line.find(":")) == "default_port")
 			port = atoi(line.substr(1, line.find(":")).c_str());
@@ -44,18 +44,20 @@ Server::Server() : upTime(std::time(0))
 	}
 }
 
-Server::Server(std::string _port, std::string _password) : upTime(std::time(0))
+Server::Server(string _port, string _password) : upTime(time(0))
 {
 	Server::setPort(_port);
 	Server::setPassword(_password);
 	history.set(0, "Welcome to the FT_IRC server");
 
-	std::ifstream file("./Configuration/irc.config");
-	std::string line;
+	cout << BLUE << "Listening on port " << YELLOW << this->port << WHITE << endl;
 
-	while (std::getline(file, line))
+	ifstream file("./Configuration/irc.config");
+	string line;
+
+	while (getline(file, line))
 	{
-		// std::cout << "line: " << line << std::endl << std::flush;
+		// cout << "line: " << line << endl << flush;
 		if (line.substr(0, line.find(":")) == "server_name")
 			serverName = line.erase(0, line.find(":") + 1);
 
@@ -68,41 +70,39 @@ Server::Server(std::string _port, std::string _password) : upTime(std::time(0))
 		if (line.substr(0, line.find(":")) == "timeout")
 			timeout = atoi(line.erase(0, line.find(":") + 1).c_str());
 	}
-		// std::cout << "serverName: "<< serverName << std::endl << std::flush;
-		// std::cout << "max_users: "<< maxUsers << std::endl << std::flush;
-		// std::cout << "max_ping: "<< ping << std::endl << std::flush;
-		// std::cout << "timeout: "<< timeout << std::endl << std::flush;
-		// std::cout << "port: "<< port << std::endl << std::flush;
-		// std::cout << "pass: "<< password << std::endl << std::flush;
+		// cout << "serverName: "<< serverName << endl << flush;
+		// cout << "max_users: "<< maxUsers << endl << flush;
+		// cout << "max_ping: "<< ping << endl << flush;
+		// cout << "timeout: "<< timeout << endl << flush;
+		// cout << "port: "<< port << endl << flush;
+		// cout << "pass: "<< password << endl << flush;
 }
 
 Server::~Server()
 {
-	std::vector<User *> users = getUsers();
-	for (std::vector<User *>::iterator i = users.begin(); i != users.end(); ++i)
+	cout << endl << BLUE << "Shutting down server" << WHITE << endl;
+
+	vector<User *> users = getUsers();
+	for (vector<User *>::iterator i = users.begin(); i != users.end(); ++i)
 		delUser(*(*i));
+	close(listen_fd);
+
+	exit(EXIT_SUCCESS);
 }
 
 /*
 	SETTERS
 */
-void Server::setPort(std::string _port)
-{
-	port = atoi(_port.c_str());
-}
-
-void Server::setPassword(std::string _password)
-{
-	password = _password;
-}
+void Server::setPort(string _port) { port = atoi(_port.c_str()); }
+void Server::setPassword(string _password) { password = _password; }
 
 /*
 	GETTERS
 */
-std::vector<User *> Server::getUsers()
+vector<User *> Server::getUsers()
 {
-	std::vector<User *> usersV = std::vector<User *>();
-	for (std::map<int, User *>::iterator i = users.begin(); i != users.end(); ++i)
+	vector<User *> usersV = vector<User *>();
+	for (map<int, User *>::const_iterator i = users.begin(); i != users.end(); ++i)
 		usersV.push_back(i->second);
 
 	return (usersV);
@@ -113,23 +113,69 @@ std::vector<User *> Server::getUsers()
 */
 void Server::addUser()
 {
-	if (users.size() == maxUsers)
-		if (shutdown(fd, SHUT_RD) == -1)
-			return ;
-
 	struct sockaddr_in addr;
 	socklen_t socklen = sizeof(addr);
-	int _fd = accept(fd, (struct sockaddr *)&addr, &socklen);
-
-	if (_fd == -1)
+	int user_fd = accept(listen_fd, (struct sockaddr *)&addr, &socklen);
+	if (user_fd == -1) {
+		error("Failed accept", CONTINUE);
 		return ;
+	}
 
-	users[fd] = new User(fd, addr);
-	users[fd]->setStatus(VERIFY);
+	if (users.size() == maxUsers) {
+		sendMsg(user_fd, "Error: Server Full");
+		close(user_fd);
+		return ;
+	}
+
+	User *user = new User(user_fd, addr);
+	users[user_fd] = user;
+	users[user_fd]->setStatus(VERIFY);
+
+	cout << WHITE << "User " << GREEN << "connected" << WHITE << " from ";
+	cout << user->getHostaddr() << ":" << user->getPort() << endl;
+
+	// strncpy(buffer, "Server connected\n", 18);
+	// send(c_fd, buffer, BUFFER, 0);
+
+	// TODO remove from here (function futurely used to process all users' messages)
+	while (true) {
+		char	buffer[BUFFER + 1] = { 0 };
+		ssize_t	rd;
+
+		if ((rd = recv(user_fd, buffer, BUFFER, 0)) == -1) {
+			// users.erase(user_fd);
+			// delete user;
+			error("Failed recv", CONTINUE);
+			// continue;
+			return;
+		} else if (!rd)
+			continue;
+
+		struct s_msg msg = this->parseMessage(user, buffer);
+
+		// Print timestamp
+		time_t		now = time(NULL);
+		struct tm	t = *localtime(&now);
+		cout << "[" << t.tm_hour << ":" << t.tm_min << ":" << t.tm_sec << "] ";
+
+		cout << MAGENTA << user->getNick() << WHITE << ":" << endl;
+		cout << buffer;
+		cout << "*end of message*" << endl;
+
+		if (!msg.command.compare("QUIT") || !rd) {
+			cout << "User " << MAGENTA << user->getNick();
+			cout << RED << "disconnected" << WHITE << endl;
+			delUser(*user);
+			return;
+		}
+	}
 
 	pollfds.push_back(pollfd());
-	pollfds.back().fd = fd;
+	pollfds.back().fd = user_fd;
 	pollfds.back().events = POLLIN;
+
+	if (users.size() == maxUsers && (shutdown(listen_fd, SHUT_RD) == -1))
+		error("Failed shutdown of receptions on listening socket", CONTINUE);
 }
 
 
@@ -138,35 +184,38 @@ void Server::addUser()
 */
 void Server::delUser(User &user)
 {
-	std::vector<User *> dUser = std::vector<User *>();
+	vector<User *> dUser = vector<User *>();
 	dUser.push_back(&user);
 
-	std::vector<Channel> remove;
-	for (std::map<int, Channel *>::iterator i = channels.begin(); i != channels.end(); ++i)
-		if ((*i).second->isUser(user))
+	vector<Channel> remove;
+	for (map<int, Channel *>::iterator i = channels.begin(); i != channels.end(); ++i)
+	{
+		Channel *channel = i->second;
+		if (channel->isUser(user))
 		{
-			(*i).second->removeUser(user);
-			
-			std::vector<User *> users = i->second->getUsers();
+			channel->removeUser(user);
+
+			vector<User *> users = channel->getUsers();
 			if (!users.size())
-				remove.push_back((*i->second));
+				remove.push_back(*channel);
 			else
-				for (std::vector<User *>::iterator i = users.begin(); i != users.end(); ++i)
-					if (std::find(dUser.begin(), dUser.end(), *i) == dUser.end())
+				for (vector<User *>::iterator i = users.begin(); i != users.end(); ++i)
+					if (find(dUser.begin(), dUser.end(), *i) == dUser.end())
 						dUser.push_back(*i);
 		}
+	}
 
-	for (std::vector<Channel>::iterator j = remove.begin(); j != remove.end(); ++j)
+	for (vector<Channel>::iterator j = remove.begin(); j != remove.end(); ++j)
 		delChannel(*j);
 
-	std::string message = "QUIT :" + user.getFd();
-	for (std::vector<User *>::iterator k = dUser.begin(); k != dUser.end(); ++k)
+	string message = "QUIT :" + user.getFd();
+	for (vector<User *>::iterator k = dUser.begin(); k != dUser.end(); ++k)
 		user.sendPrivateMessage(*(*k), message);
 	user.push();
 
 	history.remove(user.getFd());
 
-	for (std::vector<pollfd>::iterator l = pollfds.begin(); l != pollfds.end(); ++l)
+	for (vector<pollfd>::iterator l = pollfds.begin(); l != pollfds.end(); ++l)
 		if ((*l).fd == user.getFd())
 		{
 			pollfds.erase(l);
@@ -183,20 +232,21 @@ void Server::delChannel(Channel &channel)
 
 void Server::updatePing()
 {
-	previousPing = std::time(0);
+	previousPing = time(0);
 
-	time_t now = std::time(0);
+	time_t now = time(0);
 
-	for (std::map<int, User *>::iterator i = users.begin(); i != users.end(); i++)
+	for (map<int, User *>::iterator i = users.begin(); i != users.end(); i++)
 	{
-		if (now - (*i).second->getPreviousPing() >= timeout)
+		User *user = (*i).second;
+		if (now - user->getPreviousPing() >= timeout)
 		{
-			(*i).second->setStatus(OFFLINE);
-			(*i).second->write((*i).second->getNick() + "timed out");
-			std::cout << (*i).second->getNick() << "timed out" << std::endl << std::flush;
+			user->setStatus(OFFLINE);
+			user->write(user->getNick() + "timed out");
+			cout << user->getNick() << "timed out" << endl << flush;
 		}
-		else if ((*i).second->getStatus() == ONLINE)
-			(*i).second->write("PING " + (*i).second->getNick());
+		else if (user->getStatus() == ONLINE)
+			user->write("PING " + user->getNick());
 	}
 }
 
@@ -204,24 +254,25 @@ void Server::printUsers()
 {
 	char buffer[42];
 	sprintf(buffer, "%-4s %-9s %s", "FD", "Nickname", "Host");
-	history.set(fd, std::string("\n") + buffer);
-	for (std::map<int, User *>::iterator it = users.begin(); it != users.end(); ++it)
+	history.set(listen_fd, string("\n") + buffer);
+	for (map<int, User *>::iterator it = users.begin(); it != users.end(); ++it)
 	{
-		sprintf(buffer, "\033[34m%-4i \033[33m%-9s \033[35m", (*it).second->getFd(), (*it).second->getNick().c_str());
-		history.set((*it).second->getFd(), buffer + (*it).second->getHost());
+		User *user = (*it).second;
+		sprintf(buffer, "\033[34m%-4i \033[33m%-9s \033[35m", user->getFd(), user->getNick().c_str());
+		history.set(user->getFd(), buffer + user->getHost());
 	}
 }
 
 void Server::updatePoll()
 {
-	for (std::vector<pollfd>::iterator i = pollfds.begin(); i != pollfds.end(); ++i)
+	for (vector<pollfd>::iterator i = pollfds.begin(); i != pollfds.end(); i++)
 	{
 		if ((*i).revents == POLLIN)
 		{
 			char buf[BUFFER + 1];
 			ssize_t size = recv(users[(*i).fd]->getFd(), &buf, BUFFER, 0);
 
-			std::cout << "in pckg: " << buf << std::endl << std::flush;
+			cout << "in pckg: " << buf << endl << flush;
 			if (size == -1)
 				continue;
 
@@ -234,11 +285,11 @@ void Server::updatePoll()
 			buf[size] = 0;
 			users[(*i).fd]->buffer += buf;
 
-			std::string delimiter(MESSAGE_END);
+			string delimiter(MESSAGE_END);
 			size_t position;
-			while ((position = users[(*i).fd]->buffer.find(delimiter)) != std::string::npos)
+			while ((position = users[(*i).fd]->buffer.find(delimiter)) != string::npos)
 			{
-				std::string message = users[(*i).fd]->buffer.substr(0, position);
+				string message = users[(*i).fd]->buffer.substr(0, position);
 				users[(*i).fd]->buffer.erase(0, position + delimiter.length());
 				if (!message.length())
 					continue;
@@ -255,17 +306,17 @@ void Server::setup()
 		error("port", EXIT);
 
 	//AF_INT: ip_v4 | SOCK_STREAM: TCP
-	fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (fd == 0)
+	listen_fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (listen_fd == 0)
 		error("socket", EXIT);
 
 	//Blocks the use of the Address and the Port at close time to avoid package mix
 	int optname = 1;
-	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &optname, sizeof(optname)))
+	if (setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &optname, sizeof(optname)))
 		error("setsockopt", EXIT);
 
 	//Shouldn't be required in linux. It is to block simultanious accesses to the fd
-	if (fcntl(fd, F_SETFL, O_NONBLOCK))
+	if (fcntl(listen_fd, F_SETFL, O_NONBLOCK))
 		error("fcntl", EXIT);
 
 	struct sockaddr_in address;
@@ -273,42 +324,44 @@ void Server::setup()
 	address.sin_addr.s_addr = htons(INADDR_ANY);
 	address.sin_port = htons(port);
 
-	if (bind(fd, (struct sockaddr *)&address, sizeof(address)) < 0)
+	if (bind(listen_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
 		error("bind", EXIT);
 
-	if (listen(fd, address.sin_port) < 0)
+	if (listen(listen_fd, address.sin_port) < 0)
 		error("listen", EXIT);
 
 	updatePing();
 	// struct in_addr ipAddr = address.sin_addr;
 	// char str[INET_ADDRSTRLEN];
-	// std::cout << "IP: " << inet_ntop( AF_INET, &ipAddr, str, INET_ADDRSTRLEN)  << std::flush;
+	// cout << "IP: " << inet_ntop( AF_INET, &ipAddr, str, INET_ADDRSTRLEN)  << flush;
 
 	pollfds.push_back(pollfd());
-	pollfds.back().fd = fd;
+	pollfds.back().fd = listen_fd;
 	pollfds.back().events = POLLIN;
 }
 
 void Server::run()
 {
-	if (poll(&pollfds[0], pollfds.size(), (ping * 1000) / 100) == -1)
-		return ;
+	if (poll(&pollfds[0], pollfds.size(), (ping * 1000) / 100) == -1) {
+		error("Failed poll", CONTINUE);
+		return;
+	}
 
-	if (std::time(0) - previousPing >= ping)
+	if (time(0) - previousPing >= ping)
 	{
-		std::cout << "updating ping" << std::endl << std::flush;
+		cout << "updating ping" << endl << flush;
 		updatePing();
 	}
 	else if (pollfds[0].revents == POLLIN)
 	{
-		std::cout << "adding user" << std::endl << std::flush;
+		cout << YELLOW << "Adding user..." << WHITE << endl << flush;
 		addUser();
 	}
 	else
 		updatePoll();
 
 	std::vector<User *> users = getUsers();
-	
+
 	for (std::vector<User *>::iterator i = users.begin(); i != users.end(); ++i)
 		if ((*i)->getStatus() == OFFLINE)
 			delUser(*(*i));
@@ -316,4 +369,10 @@ void Server::run()
 	for (std::vector<User *>::iterator j = users.begin(); j != users.end(); ++j)
 		(*j)->push();
 	printUsers();
+}
+
+void Server::sendMsg(int client_fd, const string &msg)
+{
+	if (send(client_fd, (msg + MESSAGE_END).c_str(), msg.size() + 2, 0) == -1)
+		error("Error sending message", CONTINUE);
 }

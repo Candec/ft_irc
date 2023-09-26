@@ -23,31 +23,31 @@ class Channel
 		Channel();
 		~Channel();
 
-		void setName(std::string name);
-		std::string getName();
+		void setName(string name);
+		string getName();
 
-		void setMode(std::string mode);
-		std::string getMode();
+		void setMode(string mode);
+		string getMode();
 
-		void setUserMode(User &user, std::string mode);
-		std::string getUserMode(User &user);
+		void setUserMode(User &user, string mode);
+		string getUserMode(User &user);
 
-		void setMaxUsers(std::string users_max);
-		std::string getMaxUsers();
+		void setMaxUsers(string users_max);
+		string getMaxUsers();
 
-		void setDescription(std::string Description);
-		std::string getDescription();
+		void setDescription(string Description);
+		string getDescription();
 
-		void setPass(std::string key);
-		std::string getPass();
+		void setPass(string key);
+		string getPass();
 
 		void addUser(User &user);
 		void removeUser(User &user);
-		void removeUser(const std::string &nick);
-		std::vector<User *> getUsers();
+		void removeUser(const string &nick);
+		vector<User *> getUsers();
 
 		bool isUser(User &user);
-		bool isOnChannel(std::string const &nick);
+		bool isOnChannel(string const &nick);
 
 
 		void setUserMax(uint16_t max);
@@ -56,20 +56,20 @@ class Channel
 		bool isInvitedUser(User &user);
 		void revokeInvitation(User &user);
 
-		void broadcast(User &user, std::string message);
+		void broadcast(User &user, string message);
 
 
 	private:
-		std::string _name;
-		std::string _mode;
-		std::string _description;
-		std::string _pass;
+		string _name;
+		string _mode;
+		string _description;
+		string _pass;
 
-		std::map<int, std::string> _user_mode;
-		std::map<int, User *> _users;
-		std::string _users_max;
+		map<int, string> _user_mode;
+		map<int, User *> _users;
+		string _users_max;
 
-		std::vector<User *> _invitations;
+		vector<User *> _invitations;
 };
 
 #endif
