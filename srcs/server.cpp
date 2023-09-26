@@ -360,15 +360,15 @@ void Server::run()
 	else
 		updatePoll();
 
-	std::vector<User *> users = getUsers();
+	// std::vector<User *> users = getUsers();
 
-	for (std::vector<User *>::iterator i = users.begin(); i != users.end(); ++i)
-		if ((*i)->getStatus() == OFFLINE)
-			delUser(*(*i));
-	users = getUsers();
-	for (std::vector<User *>::iterator j = users.begin(); j != users.end(); ++j)
-		(*j)->push();
-	printUsers();
+	// for (std::vector<User *>::iterator i = users.begin(); i != users.end(); ++i)
+	// 	if ((*i)->getStatus() == OFFLINE)
+	// 		delUser(*(*i));
+	// users = getUsers();
+	// for (std::vector<User *>::iterator j = users.begin(); j != users.end(); ++j)
+	// 	(*j)->push();
+	// printUsers();
 }
 
 void Server::sendMsg(int client_fd, const string &msg)
