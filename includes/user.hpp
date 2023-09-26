@@ -33,7 +33,7 @@ class User
 		std::string		_status;
 		std::string		_createdAt;
 		std::string		_updatedAt;
-		
+
 		int fd;
 		int status;
 		time_t previousPing;
@@ -45,6 +45,8 @@ class User
 		std::string role;
 		std::string previousNick;
 		std::string previousChannel;
+
+		uint16_t hostport;
 
 		std::vector<std::string> waitToSend;
 
@@ -58,6 +60,8 @@ class User
 		void push();
 
  		// Setters
+		void setPassword(std::string passwd);
+
 		void setStatus(int status);
 		void setPreviousPing(time_t ping);
 		void setNick(std::string nick);
@@ -73,12 +77,15 @@ class User
 		time_t getPreviousPing();
 		std::string getHostaddr();
 		std::string getHostname();
+		std::string getHost();
 		std::string getNick();
 		std::string getUser();
 		std::string getName();
 		std::string getRole();
 		std::string getPreviousNick();
 		std::string getPreviousChannel();
+
+		uint16_t getPort() const;
 
 };
 

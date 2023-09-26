@@ -14,7 +14,7 @@
 
 void error(std::string str, bool quit)
 {
-	std::cout << "Error: " << str << std::endl;
+	std::cout << RED << "Error: " << WHITE << str << std::endl;
 	if (quit)
 		exit(EXIT_FAILURE);
 }

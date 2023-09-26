@@ -15,32 +15,42 @@
 
 # include "main.hpp"
 
-# define BUFFER 2048
+# define BUFFER 1024
 # define MESSAGE_END "\r\n"
 
 enum Switch { OFF, ON };
 
-
+struct s_msg {
+	User	*src;
+	time_t	timestamp;
+	char	buffer[BUFFER + 1];
+	std::string	command;
+	std::string	nick;
+	std::string	user;
+	std::string	password;
+	bool	op;
+	bool	away;
+};
 
 class Server
 {
 	private:
-		int fd;
+		int listen_fd;
 
 		History history;
-	
+
 		std::map<int, Channel *> channels;
 		std::map<int, User *> operators;
 		std::map<int, User *> users;
 		std::vector<pollfd> pollfds;
-		
+
 		time_t upTime;
 		time_t previousPing;
 		void updatePing();
 		void updatePoll();
 
 		void addUser();
-		// void displayUsers();
+		void printUsers();
 		// void displayChannels();
 
 		// # Configs
@@ -58,7 +68,7 @@ class Server
 		~Server();
 
 		void setup();
-		void start();
+		void run();
 
 		void setPort(std::string _port);
 		void setPassword(std::string _password);
@@ -78,7 +88,11 @@ class Server
 		// std::vector<Channel *> getChannels();
 		void delChannel(Channel &channel);
 
-		bool run;
+		struct s_msg parseMessage(User *user, const char* const buffer) const;
+		const std::vector< std::vector<std::string> > splitBuffer(const char* const buffer) const;
+		void parseLine(User *user, struct s_msg& msg, const std::vector<std::string>& words) const;
+
+		void sendMsg(int client_fd, const std::string &msg);
 };
 
 #endif

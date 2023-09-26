@@ -1,5 +1,9 @@
 #include "main.hpp"
 
+Server *server;
+
+void handler(int) { delete server; }
+
 int main(int argc, char*argv[])
 {
 	if (argc != 3)
@@ -7,7 +11,7 @@ int main(int argc, char*argv[])
 
 	std::string port = argv[1];
 	std::string password = argv[2];
-	Server server(port, password);
+	server = new Server(port, password);
 	// try
 	// {
 	// }
@@ -15,10 +19,10 @@ int main(int argc, char*argv[])
 	// {
 	// 	std::cerr << e.what() << '\n';
 	// }
-	
 
-	server.setup();
-	while (server.run)
-		server.start();
-	return (0);
+	signal(SIGINT, handler);
+	server->setup();
+	while (true)
+		server->run();
+	return (EXIT_SUCCESS);
 }

@@ -22,7 +22,7 @@ void History::set(unsigned int i, std::string line)
 {
 	if (history[i].compare(line) == 0)
 		return;
-	
+
 	history[i] = line;
 	update();
 }
@@ -30,7 +30,7 @@ void History::set(unsigned int i, std::string line)
 void History::remove(unsigned int i)
 {
 	history.erase(i);
-	update();
+	// update();
 }
 
 /* ************************************************************************** */
