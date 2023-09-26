@@ -9,15 +9,15 @@ int main(int argc, char*argv[])
 	if (argc != 3)
 		error("./ircserv <port> <password>", EXIT);
 
-	std::string port = argv[1];
-	std::string password = argv[2];
+	string port = argv[1];
+	string password = argv[2];
 	server = new Server(port, password);
 	// try
 	// {
 	// }
-	// catch(const std::exception& e)
+	// catch(const exception& e)
 	// {
-	// 	std::cerr << e.what() << '\n';
+	// 	cerr << e.what() << '\n';
 	// }
 
 	signal(SIGINT, handler);

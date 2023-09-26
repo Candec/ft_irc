@@ -9,16 +9,16 @@ void History::update()
 {
 	clear();
 
-	for (std::map<unsigned int, std::string>::iterator i = history.begin(); i != history.end(); i++)
-		std::cout << i->second << "\033[0m" << std::endl;
+	for (map<unsigned int, string>::iterator i = history.begin(); i != history.end(); i++)
+		cout << i->second << "\033[0m" << endl;
 }
 
 void History::clear()
 {
-	std::cout << "\033[2J" << std::flush;
+	cout << "\033[2J" << flush;
 }
 
-void History::set(unsigned int i, std::string line)
+void History::set(unsigned int i, string line)
 {
 	if (history[i].compare(line) == 0)
 		return;

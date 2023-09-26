@@ -17,6 +17,6 @@
 
 enum {CONTINUE, EXIT};
 
-void error(std::string str, bool exit);
+void error(string str, bool exit);
 
 #endif

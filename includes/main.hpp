@@ -87,7 +87,7 @@ recv, signal, sigaction, lseek, fstat, fcntl, poll
 # include "utility.hpp"
 // # include "Message.hpp"
 
-// using namespace std;
+using namespace std;
 
 
 #endif
