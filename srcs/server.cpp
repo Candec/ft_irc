@@ -131,44 +131,11 @@ void Server::addUser()
 	users[user_fd] = user;
 	users[user_fd]->setStatus(VERIFY);
 
-	cout << WHITE << "User " << GREEN << "connected" << WHITE << " from ";
-	cout << user->getHostaddr() << ":" << user->getPort() << endl;
+	cout << BLUE << "User " << GREEN << "connected" << BLUE << " from ";
+	cout << user->getHostaddr() << ":" << user->getPort() << WHITE << endl;
 
 	// strncpy(buffer, "Server connected\n", 18);
 	// send(c_fd, buffer, BUFFER, 0);
-
-	// TODO remove from here (function futurely used to process all users' messages)
-	while (true) {
-		char	buffer[BUFFER + 1] = { 0 };
-		ssize_t	rd;
-
-		if ((rd = recv(user_fd, buffer, BUFFER, 0)) == -1) {
-			// users.erase(user_fd);
-			// delete user;
-			error("Failed recv", CONTINUE);
-			// continue;
-			return;
-		} else if (!rd)
-			continue;
-
-		struct s_msg msg = this->parseMessage(user, buffer);
-
-		// Print timestamp
-		time_t		now = time(NULL);
-		struct tm	t = *localtime(&now);
-		cout << "[" << t.tm_hour << ":" << t.tm_min << ":" << t.tm_sec << "] ";
-
-		cout << MAGENTA << user->getNick() << WHITE << ":" << endl;
-		cout << buffer;
-		cout << "*end of message*" << endl;
-
-		if (!msg.command.compare("QUIT") || !rd) {
-			cout << "User " << MAGENTA << user->getNick();
-			cout << RED << "disconnected" << WHITE << endl;
-			delUser(*user);
-			return;
-		}
-	}
 
 	pollfds.push_back(pollfd());
 	pollfds.back().fd = user_fd;
@@ -222,6 +189,7 @@ void Server::delUser(User &user)
 			break;
 		}
 	users.erase(user.getFd());
+
 	delete &user;
 }
 
@@ -267,35 +235,18 @@ void Server::updatePoll()
 {
 	for (vector<pollfd>::iterator i = pollfds.begin(); i != pollfds.end(); i++)
 	{
-		if ((*i).revents == POLLIN)
-		{
-			char buf[BUFFER + 1];
-			ssize_t size = recv(users[(*i).fd]->getFd(), &buf, BUFFER, 0);
-
-			cout << "in pckg: " << buf << endl << flush;
-			if (size == -1)
-				continue;
-
-			if (size == 0)
-			{
-				users[(*i).fd]->setStatus(OFFLINE);
-				continue;
+		if (i->revents & POLLIN) {
+			if (users.find(i->fd) != users.end()) {
+				// if (receiveMsg2(i->fd) == -1)
+				// 	break;
+				if (receiveMsg(i) == -1) {
+					User *user = users[i->fd];
+					cout << BLUE << "User " << MAGENTA << user->getNick();
+					cout << RED << " disconnected" << WHITE << endl;
+					delUser(*user);
+					break;
+				}
 			}
-
-			buf[size] = 0;
-			users[(*i).fd]->buffer += buf;
-
-			string delimiter(MESSAGE_END);
-			size_t position;
-			while ((position = users[(*i).fd]->buffer.find(delimiter)) != string::npos)
-			{
-				string message = users[(*i).fd]->buffer.substr(0, position);
-				users[(*i).fd]->buffer.erase(0, position + delimiter.length());
-				if (!message.length())
-					continue;
-				users[(*i).fd]->push();
-			}
-			// messages_operations();
 		}
 	}
 }
@@ -349,12 +300,12 @@ void Server::run()
 
 	if (time(0) - previousPing >= ping)
 	{
-		cout << "updating ping" << endl << flush;
+		cout << BLUE << "updating ping" << WHITE << endl << flush;
 		updatePing();
 	}
 	else if (pollfds[0].revents == POLLIN)
 	{
-		cout << YELLOW << "Adding user..." << WHITE << endl << flush;
+		cout << BLUE << "Adding user..." << WHITE << endl << flush;
 		addUser();
 	}
 	else
@@ -368,11 +319,134 @@ void Server::run()
 	// users = getUsers();
 	// for (std::vector<User *>::iterator j = users.begin(); j != users.end(); ++j)
 	// 	(*j)->push();
+
 	// printUsers();
 }
 
-void Server::sendMsg(int client_fd, const string &msg)
+void Server::sendMsg(int user_fd, const string &msg)
 {
-	if (send(client_fd, (msg + MESSAGE_END).c_str(), msg.size() + 2, 0) == -1)
+	if (send(user_fd, (msg + MESSAGE_END).c_str(), msg.size() + 2, 0) == -1)
 		error("Error sending message", CONTINUE);
+}
+
+// int Server::receiveMsg2(int user_fd)
+// {
+// 	char	buffer[BUFFER + 1] = { 0 };
+// 	ssize_t	rd;
+// 	User	*user = users.at(user_fd);
+
+// 	if ((rd = recv(user_fd, buffer, BUFFER, 0)) == -1) {
+// 		error("Failed recv", CONTINUE);
+// 		return 0;
+// 	} else if (rd == 0) {
+// 		return -1;
+// 	}
+
+// 	struct s_msg msg = this->parseMessage(user, buffer);
+
+// 	// Print timestamp
+// 	time_t		now = time(NULL);
+// 	struct tm	t = *localtime(&now);
+// 	cout << "[" << t.tm_hour << ":" << t.tm_min << ":" << t.tm_sec << "] ";
+
+// 	cout << MAGENTA << user->getNick() << WHITE << " @ FD# " << user_fd << ":" << endl;
+// 	cout << buffer;
+// 	cout << "*end of message*" << endl << endl;
+
+// 	if (!msg.command.compare("QUIT"))
+// 		return -1;
+
+// 	return 0;
+// }
+
+
+
+// Since application is single threaded, is a msg buffer for each client needed?
+// Can't we just process each fd and flush the parsed content one by one?
+
+int Server::receiveMsg(vector<pollfd>::iterator it)
+{
+	User	*user = users.at(it->fd);
+	char	buf[BUFFER + 1] = { 0 };
+	ssize_t	size = recv(user->getFd(), &buf, BUFFER, 0);
+
+	if (size == -1) {
+		error("Failed recv", CONTINUE);
+		return 0;
+	}
+	else if (size == 0) {
+		user->setStatus(OFFLINE); // Perhaps user can be removed instantly
+		return -1;
+	}
+
+	struct s_msg msg = this->parseMessage(user, buf);
+	// cout << "in pckg: " << buf << endl << flush;
+	printMsg2(it->fd, buf);
+
+	// buf[size] = 0;
+	user->buffer += buf;
+
+	string delimiter(MESSAGE_END);
+	size_t position;
+	while ((position = user->buffer.find(delimiter)) != string::npos)
+	{
+		string message = user->buffer.substr(0, position);
+		user->buffer.erase(0, position + delimiter.length());
+		if (!message.length())
+			continue;
+		user->push();
+	}
+	// messages_operations();
+
+	// printMsg(it);
+
+	if (!msg.command.compare("QUIT"))
+		return -1;
+
+	return 0;
+}
+
+
+
+void Server::printMsg(vector<pollfd>::const_iterator it)
+{
+	// Print timestamp
+	time_t		now = time(NULL);
+	struct tm	t = *localtime(&now);
+	cout << "[" << t.tm_hour << ":" << t.tm_min << ":" << t.tm_sec << "] ";
+
+	int		user_fd = it->fd;
+	User	*user = users[user_fd];
+
+	// Test to check if we could use just one of the formats (user_fd vs it->fd)
+	// to relate to the user's fd
+	if (user->getFd() != user_fd)
+		error("FDs mismatch", EXIT);
+	else
+		cout << GREEN << "FDs match " << WHITE;
+
+	cout << MAGENTA << user->getNick() << WHITE << " @ FD# " << user_fd << ":" << endl;
+	cout << user->buffer;
+	cout << "*end of message*" << endl << endl;
+}
+
+void Server::printMsg2(const int user_fd, const char *msg)
+{
+	// Print timestamp
+	time_t		now = time(NULL);
+	struct tm	t = *localtime(&now);
+	cout << "[" << t.tm_hour << ":" << t.tm_min << ":" << t.tm_sec << "] ";
+
+	User	*user = users[user_fd];
+
+	// Test to check if we could use just one of the formats (user_fd vs it->fd)
+	// to relate to the user's fd
+	if (user->getFd() != user_fd)
+		error("FDs mismatch", EXIT);
+	else
+		cout << GREEN << "FDs match " << WHITE;
+
+	cout << MAGENTA << user->getNick() << WHITE << " @ FD# " << user_fd << ":" << endl;
+	cout << msg;
+	cout << "*end of message*" << endl << endl;
 }

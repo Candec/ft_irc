@@ -62,5 +62,5 @@ void User::push()
 		return ;
 
 	if (send(fd, buffer.c_str(), buffer.length(), 0) == -1)
-		error("send", false);
+		error("send", CONTINUE);
 }

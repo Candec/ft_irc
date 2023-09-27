@@ -25,9 +25,9 @@ struct s_msg {
 	time_t	timestamp;
 	char	buffer[BUFFER + 1];
 	string	command;
-	string	nick;
-	string	user;
-	string	password;
+	// string	nick;
+	// string	user;
+	// string	password;
 	bool	op;
 	bool	away;
 };
@@ -93,7 +93,11 @@ class Server
 		const vector< vector<string> > splitBuffer(const char* const buffer) const;
 		void parseLine(User *user, struct s_msg& msg, const vector<string>& words) const;
 
-		void sendMsg(int client_fd, const string &msg);
+		void sendMsg(int user_fd, const string &msg);
+		int receiveMsg(vector<pollfd>::iterator it);
+		int receiveMsg2(int user_fd);
+		void printMsg(vector<pollfd>::const_iterator it);
+		void printMsg2(const int user_fd, const char *msg);
 };
 
 #endif

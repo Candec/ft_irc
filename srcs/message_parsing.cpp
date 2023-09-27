@@ -65,13 +65,13 @@ Server::parseLine(User *user, struct s_msg& msg, const vector<string>& words) co
 
 		if (!arg.empty()) {
 			if (!cmd.compare("PASS")) {
-				msg.password = arg;
+				// msg.password = arg;
 				user->setPassword(arg);
 			} else if (!cmd.compare("NICK")) {
-				msg.nick = arg;
+				// msg.nick = arg;
 				user->setNick(arg);
 			} else if (!cmd.compare("USER")) {
-				msg.user = arg;
+				// msg.user = arg;
 				user->setUser(arg);
 			}
 		}
