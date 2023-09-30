@@ -20,66 +20,72 @@ enum { VERIFY, ACCEPT, ONLINE, OFFLINE };
 class User
 {
 	private:
-		std::string		_name;
-		std::string		_password;
-		std::string		_email;
-		std::string		_phone;
-		std::string		_address;
-		std::string		_city;
-		std::string		_postalCode;
-		std::string		_country;
-		std::string		_id;
-		std::string		_role;
-		std::string		_status;
-		std::string		_createdAt;
-		std::string		_updatedAt;
-		
+		string		_name;
+		string		_password;
+		string		_email;
+		string		_phone;
+		string		_address;
+		string		_city;
+		string		_postalCode;
+		string		_country;
+		string		_id;
+		string		_role;
+		string		_status;
+		string		_createdAt;
+		string		_updatedAt;
+
 		int fd;
 		int status;
 		time_t previousPing;
-		std::string hostaddr;
-		std::string hostname;
-		std::string nick;
-		std::string user;
-		std::string name;
-		std::string role;
-		std::string previousNick;
-		std::string previousChannel;
+		string hostaddr;
+		string hostname;
+		string nick;
+		string user;
+		string name;
+		string role;
+		string previousNick;
+		string previousChannel;
 
-		std::vector<std::string> waitToSend;
+		uint16_t hostport;
+
+		vector<string> waitToSend;
 
 	public:
 		User(int fd, struct sockaddr_in addr);
 		~User();
 
-		std::string buffer;
-		void sendPrivateMessage(User &To, std::string Message);
-		void write(std::string Message);
+		string buffer;
+		void sendPrivateMessage(User &To, string Message);
+		void write(string Message);
 		void push();
 
  		// Setters
+		void setPassword(string passwd);
+
 		void setStatus(int status);
 		void setPreviousPing(time_t ping);
-		void setNick(std::string nick);
-		void setUser(std::string user);
-		void setName(std::string name);
-		void setRole(std::string role);
-		void setPreviousNick(std::string previousNick);
-		void setPreviousChannel(std::string previousChannel);
+		void setNick(string nick);
+		void setUser(string user);
+		void setName(string name);
+		void setRole(string role);
+		void setPreviousNick(string previousNick);
+		void setPreviousChannel(string previousChannel);
 
 		// Getters
 		int getFd();
 		int getStatus();
 		time_t getPreviousPing();
-		std::string getHostaddr();
-		std::string getHostname();
-		std::string getHost();
-		std::string getNick();
-		std::string getUser();
-		std::string getName();
-		std::string getRole();
-		std::string getPreviousNick();
-		std::string getPreviousChannel();
+		string getHostaddr();
+		string getHostname();
+		string getHost();
+		string getNick();
+		string getUser();
+		string getName();
+		string getRole();
+		string getPreviousNick();
+		string getPreviousChannel();
+
+		uint16_t getPort() const;
 
 };
 

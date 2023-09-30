@@ -15,25 +15,35 @@
 
 # include "main.hpp"
 
-# define BUFFER 2048
+# define BUFFER 1024
 # define MESSAGE_END "\r\n"
 
 enum Switch { OFF, ON };
 
-
+struct s_msg {
+	User	*src;
+	time_t	timestamp;
+	char	buffer[BUFFER + 1];
+	string	command;
+	// string	nick;
+	// string	user;
+	// string	password;
+	bool	op;
+	bool	away;
+};
 
 class Server
 {
 	private:
-		int fd;
+		int listen_fd;
 
 		History history;
-	
-		std::map<int, Channel *> channels;
-		std::map<int, User *> operators;
-		std::map<int, User *> users;
-		std::vector<pollfd> pollfds;
-		
+
+		map<int, Channel *> channels;
+		map<int, User *> operators;
+		map<int, User *> users;
+		vector<pollfd> pollfds;
+
 		time_t upTime;
 		time_t previousPing;
 		void updatePing();
@@ -41,13 +51,12 @@ class Server
 
 		void addUser();
 		void printUsers();
-
 		// void displayChannels();
 
 
 		// # Configs
-		std::string serverName;
-		std::string password;
+		string serverName;
+		string password;
 		unsigned int port;
 
 		unsigned int ping;
@@ -56,29 +65,39 @@ class Server
 
 	public:
 		Server();
-		Server(std::string _port, std::string _password);
+		Server(string _port, string _password);
 		~Server();
 
 		void setup();
 		void run();
 
-		void setPort(std::string _port);
-		void setPassword(std::string _password);
+		void setPort(string _port);
+		void setPassword(string _password);
 
 		// void setOperator();
 		// User *getOperator();
-		// std::vector<User *> getOperators();
+		// vector<User *> getOperators();
 		// void delOperator();
 
 		// void setUser();
 		// User *getUser();
-		std::vector<User *> getUsers();
+		vector<User *> getUsers();
 		void delUser(User &user);
 
 		// void setChannel();
 		// Channel *getChannel();
-		// std::vector<Channel *> getChannels();
+		// vector<Channel *> getChannels();
 		void delChannel(Channel &channel);
+
+		struct s_msg parseMessage(User *user, const char* const buffer) const;
+		const vector< vector<string> > splitBuffer(const char* const buffer) const;
+		void parseLine(User *user, struct s_msg& msg, const vector<string>& words) const;
+
+		void sendMsg(int user_fd, const string &msg);
+		int receiveMsg(vector<pollfd>::iterator it);
+		int receiveMsg2(int user_fd);
+		void printMsg(vector<pollfd>::const_iterator it);
+		void printMsg2(const int user_fd, const char *msg);
 };
 
 #endif
