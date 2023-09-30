@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/23 17:27:02 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/30 12:34:18 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,6 @@ class Channel
 
 		bool isUser(User &user);
 		bool isOnChannel(std::string const &nick);
-
-
-		void setUserMax(uint16_t max);
 
 		void addInvitedUser(User &user);
 		bool isInvitedUser(User &user);
