@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/30 12:34:18 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/30 13:07:12 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ class Channel
 {
 	public:
 		Channel();
+		Channel(std::string name);
+
 		~Channel();
 
 		void setName(string name);
@@ -67,6 +69,8 @@ class Channel
 		string _users_max;
 
 		vector<User *> _invitations;
+
+		History _history;
 };
 
 #endif

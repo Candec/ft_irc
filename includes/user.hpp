@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/25 21:33:13 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/30 16:52:39 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ class User
 		string name;
 		string role;
 		string previousNick;
-		string previousChannel;
+		string atChannel;
 
 		uint16_t hostport;
 
@@ -69,7 +69,7 @@ class User
 		void setName(string name);
 		void setRole(string role);
 		void setPreviousNick(string previousNick);
-		void setPreviousChannel(string previousChannel);
+		void setAtChannel(string atChannel);
 
 		// Getters
 		int getFd();
@@ -83,7 +83,7 @@ class User
 		string getName();
 		string getRole();
 		string getPreviousNick();
-		string getPreviousChannel();
+		string getAtChannel();
 
 		uint16_t getPort() const;
 

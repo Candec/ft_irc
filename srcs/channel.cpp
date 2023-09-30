@@ -6,13 +6,14 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/24 11:45:49 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/30 13:07:14 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main.hpp"
 
 Channel::Channel() : _mode("n") {}
+Channel::Channel(std::string name) : _mode("n") { _name = name; }
 Channel::~Channel() {}
 
 void Channel::setName(string name) { _name = name; }

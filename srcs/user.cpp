@@ -26,7 +26,7 @@ void User::setUser(string _user) { user = _user; }
 void User::setName(string _name) { name = _name; }
 void User::setRole(string _role) { role = _role; }
 void User::setPreviousNick(string _previousNick) { previousNick = _previousNick; }
-void User::setPreviousChannel(string _previousChannel) { previousChannel = _previousChannel; }
+void User::setAtChannel(string _atChannel) { atChannel = _atChannel; }
 
 // Getters
 int User::getFd() { return (fd); }
@@ -40,7 +40,7 @@ string User::getUser() { return (user); }
 string User::getName() { return (name); }
 string User::getRole() { return (role); }
 string User::getPreviousNick() { return (previousNick); }
-string User::getPreviousChannel() { return (previousChannel); }
+string User::getAtChannel() { return (atChannel); }
 
 uint16_t User::getPort() const { return ntohs(hostport); }
 

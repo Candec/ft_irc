@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/09/25 23:10:04 by fporto           ###   ########.fr       */
+/*   Updated: 2023/09/30 16:51:14 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,25 +58,25 @@ Server::splitBuffer(const char* const buffer) const
 void
 Server::parseLine(User *user, struct s_msg& msg, const vector<string>& words) const
 {
-	const string& cmd = words[0];
+	const string& command = words[0];
 
 	if (words.size() > 1) {
 		const string& arg = words[1];
 
 		if (!arg.empty()) {
-			if (!cmd.compare("PASS")) {
+			if (!command.compare("PASS")) {
 				// msg.password = arg;
 				user->setPassword(arg);
-			} else if (!cmd.compare("NICK")) {
+			} else if (!command.compare("NICK")) {
 				// msg.nick = arg;
 				user->setNick(arg);
-			} else if (!cmd.compare("USER")) {
+			} else if (!command.compare("USER")) {
 				// msg.user = arg;
 				user->setUser(arg);
 			}
 		}
-	} else if (!cmd.compare("QUIT")) {
+	} else if (!command.compare("QUIT")) {
 		// msg.command = "QUIT";
-		msg.command = cmd;
+		msg.command = command;
 	}
 }

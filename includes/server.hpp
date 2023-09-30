@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/25 22:06:06 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/30 15:27:03 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ class Server
 
 		History history;
 
-		map<int, Channel *> channels;
+		map<std::string, Channel *> channels;
 		map<int, User *> operators;
 		map<int, User *> users;
 		vector<pollfd> pollfds;
@@ -84,9 +84,9 @@ class Server
 		vector<User *> getUsers();
 		void delUser(User &user);
 
-		// void setChannel();
+		void setChannel(string channelName);
 		// Channel *getChannel();
-		// vector<Channel *> getChannels();
+		vector<Channel *> getChannels();
 		void delChannel(Channel &channel);
 
 		struct s_msg parseMessage(User *user, const char* const buffer) const;

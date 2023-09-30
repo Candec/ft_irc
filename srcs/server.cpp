@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/25 22:06:55 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/09/30 16:51:16 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,18 @@ Server::Server() : upTime(time(0))
 
 		if (line.substr(0, line.find(":")) == "timeout")
 			timeout = atoi(line.substr(1, line.find(":")).c_str());
+
+		if (line.substr(0, line.find(":")) == "default_channels")
+		{
+			std::string channel;
+			size_t pos = 0;
+			while ((pos = line.find(',')) != std::string::npos)
+			{
+				channel = line.substr(0, pos);
+				setChannel(channel);
+				line.erase(0, pos + 1);
+			}
+		}
 	}
 }
 
@@ -69,6 +81,18 @@ Server::Server(string _port, string _password) : upTime(time(0))
 
 		if (line.substr(0, line.find(":")) == "timeout")
 			timeout = atoi(line.erase(0, line.find(":") + 1).c_str());
+
+		if (line.substr(0, line.find(":")) == "default_channels")
+		{
+			std::string channel;
+			size_t pos = 0;
+			while ((pos = line.find(',')) != std::string::npos)
+			{
+				channel = line.substr(0, pos);
+				setChannel(channel);
+				line.erase(0, pos + 1);
+			}
+		}
 	}
 		// cout << "serverName: "<< serverName << endl << flush;
 		// cout << "max_users: "<< maxUsers << endl << flush;
@@ -96,6 +120,12 @@ Server::~Server()
 void Server::setPort(string _port) { port = atoi(_port.c_str()); }
 void Server::setPassword(string _password) { password = _password; }
 
+void Server::setChannel(string channelName)
+{
+	Channel *channel = new Channel(channelName);
+	channels.insert( std::pair<std::string, Channel *>(channelName, channel));
+}
+
 /*
 	GETTERS
 */
@@ -106,6 +136,15 @@ vector<User *> Server::getUsers()
 		usersV.push_back(i->second);
 
 	return (usersV);
+}
+
+vector<Channel *> Server::getChannels()
+{
+	vector<Channel *> channelsV = vector<Channel *>();
+	for (map<std::string, Channel *>::const_iterator i = channels.begin(); i != channels.end(); ++i)
+		channelsV.push_back(i->second);
+
+	return (channelsV);
 }
 
 /*
@@ -155,7 +194,7 @@ void Server::delUser(User &user)
 	dUser.push_back(&user);
 
 	vector<Channel> remove;
-	for (map<int, Channel *>::iterator i = channels.begin(); i != channels.end(); ++i)
+	for (map<std::string, Channel *>::iterator i = channels.begin(); i != channels.end(); ++i)
 	{
 		Channel *channel = i->second;
 		if (channel->isUser(user))
