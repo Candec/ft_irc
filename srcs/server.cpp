@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/30 16:51:16 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/01 03:23:40 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 */
 Server::Server() : upTime(time(0))
 {
+	history.clear();
 	history.set(0, "Welcome to the FT_IRC server");
 
 	ifstream file("./Configuration/irc.config", ios::in);
@@ -60,6 +61,8 @@ Server::Server(string _port, string _password) : upTime(time(0))
 {
 	Server::setPort(_port);
 	Server::setPassword(_password);
+
+	history.clear();
 	history.set(0, "Welcome to the FT_IRC server");
 
 	cout << BLUE << "Listening on port " << YELLOW << this->port << WHITE << endl;
@@ -278,7 +281,7 @@ void Server::updatePoll()
 			if (users.find(i->fd) != users.end()) {
 				// if (receiveMsg2(i->fd) == -1)
 				// 	break;
-				if (receiveMsg(i) == -1) {
+				if (receiveMsg(i) == QUIT) {
 					User *user = users[i->fd];
 					cout << BLUE << "User " << MAGENTA << user->getNick();
 					cout << RED << " disconnected" << WHITE << endl;
