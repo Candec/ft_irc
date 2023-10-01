@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/16 13:17:22 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/30 16:52:39 by jibanez-         ###   ########.fr       */
+/*   Created: 2023/09/16 13:17:22 by jibanez-          #+#    #+#             */
+/*   Updated: 2023/09/30 23:19:09 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ class User
 		void write(string Message);
 		void push();
 
- 		// Setters
+		// Setters
 		void setPassword(string passwd);
 
 		void setStatus(int status);

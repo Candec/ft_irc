@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/09/30 15:27:03 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/01 02:56:32 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "main.hpp"
 
+# define QUIT -1
 # define BUFFER 1024
 # define MESSAGE_END "\r\n"
 
@@ -63,17 +64,6 @@ class Server
 		unsigned int timeout;
 		unsigned int maxUsers;
 
-	public:
-		Server();
-		Server(string _port, string _password);
-		~Server();
-
-		void setup();
-		void run();
-
-		void setPort(string _port);
-		void setPassword(string _password);
-
 		// void setOperator();
 		// User *getOperator();
 		// vector<User *> getOperators();
@@ -89,15 +79,38 @@ class Server
 		vector<Channel *> getChannels();
 		void delChannel(Channel &channel);
 
-		struct s_msg parseMessage(User *user, const char* const buffer) const;
-		const vector< vector<string> > splitBuffer(const char* const buffer) const;
-		void parseLine(User *user, struct s_msg& msg, const vector<string>& words) const;
+		struct s_msg parseMessage(User *user, char* buffer);
+		vector< vector<string> > splitBuffer(char* buffer);
+		void lookForCmd(User *user, struct s_msg& msg, vector<string> words);
 
 		void sendMsg(int user_fd, const string &msg);
 		int receiveMsg(vector<pollfd>::iterator it);
 		int receiveMsg2(int user_fd);
 		void printMsg(vector<pollfd>::const_iterator it);
 		void printMsg2(const int user_fd, const char *msg);
+
+		/*
+		** LIST OF CMDS
+		*/
+
+		void passCmd(User *user, vector<string> words);
+		void nickCmd(User *user, vector<string> words);
+		void userCmd(User *user, vector<string> words);
+
+
+
+
+	public:
+		Server();
+		Server(string _port, string _password);
+		~Server();
+
+		void setup();
+		void run();
+
+		void setPort(string _port);
+		void setPassword(string _password);
+
 };
 
 #endif

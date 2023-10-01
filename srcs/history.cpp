@@ -7,8 +7,6 @@ History::History()
 
 void History::update()
 {
-	clear();
-
 	for (map<unsigned int, string>::iterator i = history.begin(); i != history.end(); i++)
 		cout << i->second << "\033[0m" << endl;
 }

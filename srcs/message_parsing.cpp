@@ -6,16 +6,14 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/09/30 16:51:14 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/01 03:07:38 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main.hpp"
 
-using namespace std;
-
 struct s_msg
-Server::parseMessage(User *user, const char* const buffer) const
+Server::parseMessage(User *user, char* const buffer)
 {
 	struct s_msg msg;
 	msg.src = user;
@@ -23,17 +21,17 @@ Server::parseMessage(User *user, const char* const buffer) const
 
 	strncpy(msg.buffer, buffer, BUFFER + 1);
 
-	const vector< vector<string> >	lines = splitBuffer(buffer);
+	vector< vector<string> > lines = splitBuffer(buffer);
 
-	vector< vector<string> >::const_iterator line;
+	vector< vector<string> >::iterator line;
 	for (line = lines.begin(); line != lines.end(); line++)
-		this->parseLine(user, msg, *line);
+		this->lookForCmd(user, msg, *line);
 
 	return msg;
 }
 
-const vector< vector<string> >
-Server::splitBuffer(const char* const buffer) const
+vector< vector<string> >
+Server::splitBuffer(char* buffer)
 {
 	vector< vector<string> >	lines;
 	istringstream				lines_iss(buffer);
@@ -55,28 +53,63 @@ Server::splitBuffer(const char* const buffer) const
 	return lines;
 }
 
-void
-Server::parseLine(User *user, struct s_msg& msg, const vector<string>& words) const
+template <typename T> bool expectedArgs(T args, size_t n)
 {
-	const string& command = words[0];
+	if (args.size() == n)
+		return(true);
 
-	if (words.size() > 1) {
-		const string& arg = words[1];
+	if (args.size() > n)
+		error("too many arguments", CONTINUE);
+	else
+		error("not enough arguments", CONTINUE);
+	return(false);
+}
 
-		if (!arg.empty()) {
-			if (!command.compare("PASS")) {
-				// msg.password = arg;
-				user->setPassword(arg);
-			} else if (!command.compare("NICK")) {
-				// msg.nick = arg;
-				user->setNick(arg);
-			} else if (!command.compare("USER")) {
-				// msg.user = arg;
-				user->setUser(arg);
-			}
-		}
-	} else if (!command.compare("QUIT")) {
-		// msg.command = "QUIT";
-		msg.command = command;
-	}
+void
+Server::lookForCmd(User *user, struct s_msg& msg, vector<string> words)
+{
+	if (words.empty())
+		return ;
+
+	string cmd = words[0];
+	// const string& arg = words[1];
+
+	if (!cmd.compare("PASS"))
+		passCmd(user, words);
+		// msg.password = arg;
+
+	if (!cmd.compare("NICK"))
+		nickCmd(user, words);
+		// msg.nick = arg;
+
+	if (!cmd.compare("USER"))
+		userCmd(user, words);
+		// msg.user = arg;
+
+	if (!cmd.compare("QUIT"))
+		msg.command = cmd;
+		// msg.cmd = "QUIT";
+}
+
+
+/*
+** LIST OF COMMANDS
+*/
+
+void Server::passCmd(User *user, vector<string> words)
+{
+	if (expectedArgs(words, 2))
+		user->setPassword(words[1]);
+}
+
+void Server::nickCmd(User *user, vector<string> words)
+{
+	if (expectedArgs(words, 2))
+		user->setNick(words[1]);
+}
+
+void Server::userCmd(User *user, vector<string> words)
+{
+	if (expectedArgs(words, 2))
+		user->setUser(words[1]);
 }
