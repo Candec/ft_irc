@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/01 03:23:40 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/03 20:06:59 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,9 @@ void Server::addUser()
 
 	cout << BLUE << "User " << GREEN << "connected" << BLUE << " from ";
 	cout << user->getHostaddr() << ":" << user->getPort() << WHITE << endl;
+
+	sendMsg(user_fd, WELCOME_MSG);
+	sendMsg(user_fd, COMMAND_MSG);
 
 	// strncpy(buffer, "Server connected\n", 18);
 	// send(c_fd, buffer, BUFFER, 0);
