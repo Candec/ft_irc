@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/03 20:06:59 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/04 08:05:55 by tpereira         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,7 +220,7 @@ void Server::delUser(User &user)
 	for (vector<Channel>::iterator j = remove.begin(); j != remove.end(); ++j)
 		delChannel(*j);
 
-	string message = "QUIT :" + user.getFd();
+	string message = "QUIT :" + user.getNick() + " has quit";
 	for (vector<User *>::iterator k = dUser.begin(); k != dUser.end(); ++k)
 		user.sendPrivateMessage(*(*k), message);
 	user.push();
@@ -266,12 +266,12 @@ void Server::updatePing()
 void Server::printUsers()
 {
 	char buffer[42];
-	sprintf(buffer, "%-4s %-9s %s", "FD", "Nickname", "Host");
+	snprintf(buffer, sizeof(buffer), "%-4s %-9s %s", "FD", "Nickname", "Host");
 	history.set(listen_fd, string("\n") + buffer);
 	for (map<int, User *>::iterator it = users.begin(); it != users.end(); ++it)
 	{
 		User *user = (*it).second;
-		sprintf(buffer, "\033[34m%-4i \033[33m%-9s \033[35m", user->getFd(), user->getNick().c_str());
+		snprintf(buffer, sizeof(buffer), "\033[34m%-4i \033[33m%-9s \033[35m", user->getFd(), user->getNick().c_str());
 		history.set(user->getFd(), buffer + user->getHost());
 	}
 }
