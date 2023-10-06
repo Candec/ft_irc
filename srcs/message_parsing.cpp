@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/05 23:30:45 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/06 18:51:47 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,11 +127,12 @@ void Server::joinCmd(User *user, vector<string> words)
 		// User joins an existing channel
 	else
 	{
+		cout << "HERE setting channel" << endl;
 		setChannel(words[1]);
 		joinCmd(user, words);
 		// User creates and joins a channel
 	}
 	Channel *channel = getChannel(words[1]);
 	History *chnnlHistory = channel->getHistory();
-	chnnlHistory->set(1, "User joined the channel");
+	chnnlHistory->set("User joined the channel");
 }

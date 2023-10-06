@@ -21,7 +21,19 @@ void History::set(unsigned int i, string line)
 	if (_history[i].compare(line) == 0)
 		return;
 
+	// _history[i] = line;
 	_history[i] = line;
+	update();
+}
+
+void History::set(string line)
+{
+	unsigned int last = _history.size();
+	// if (_history[last].compare(line) == 0)
+		// return;
+
+	// _history[i] = line;
+	_history.insert(std::pair<unsigned int, string>(last, line));
 	update();
 }
 
