@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/04 08:05:55 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/10/05 11:37:00 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,12 +97,6 @@ Server::Server(string _port, string _password) : upTime(time(0))
 			}
 		}
 	}
-		// cout << "serverName: "<< serverName << endl << flush;
-		// cout << "max_users: "<< maxUsers << endl << flush;
-		// cout << "max_ping: "<< ping << endl << flush;
-		// cout << "timeout: "<< timeout << endl << flush;
-		// cout << "port: "<< port << endl << flush;
-		// cout << "pass: "<< password << endl << flush;
 }
 
 Server::~Server()
@@ -139,6 +133,11 @@ vector<User *> Server::getUsers()
 		usersV.push_back(i->second);
 
 	return (usersV);
+}
+
+Channel *Server::getChannel(const std::string &channelName)
+{
+	return (channels[channelName]);
 }
 
 vector<Channel *> Server::getChannels()
@@ -238,9 +237,17 @@ void Server::delUser(User &user)
 	delete &user;
 }
 
+
 void Server::delChannel(Channel &channel)
 {
 	(void)channel;
+}
+
+bool Server::isChannel(string const &channel)
+{
+	if (channels.find(channel) == channels.end())
+		return (false);
+	return (true);
 }
 
 void Server::updatePing()

@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/09/30 23:19:09 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/05 13:03:54 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # include "main.hpp"
 
 enum { VERIFY, ACCEPT, ONLINE, OFFLINE };
+
+class Server;
 
 class User
 {
@@ -45,6 +47,7 @@ class User
 		string role;
 		string previousNick;
 		string atChannel;
+		Server *server;
 
 		uint16_t hostport;
 

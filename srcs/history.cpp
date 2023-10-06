@@ -7,7 +7,7 @@ History::History()
 
 void History::update()
 {
-	for (map<unsigned int, string>::iterator i = history.begin(); i != history.end(); i++)
+	for (map<unsigned int, string>::iterator i = _history.begin(); i != _history.end(); i++)
 		cout << i->second << "\033[0m" << endl;
 }
 
@@ -18,16 +18,16 @@ void History::clear()
 
 void History::set(unsigned int i, string line)
 {
-	if (history[i].compare(line) == 0)
+	if (_history[i].compare(line) == 0)
 		return;
 
-	history[i] = line;
+	_history[i] = line;
 	update();
 }
 
 void History::remove(unsigned int i)
 {
-	history.erase(i);
+	_history.erase(i);
 	// update();
 }
 

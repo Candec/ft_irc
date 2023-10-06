@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/01 03:07:38 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/05 23:30:45 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,9 @@ Server::lookForCmd(User *user, struct s_msg& msg, vector<string> words)
 		userCmd(user, words);
 		// msg.user = arg;
 
+	if (!cmd.compare("JOIN"))
+		joinCmd(user,words);
+
 	if (!cmd.compare("QUIT"))
 		msg.command = cmd;
 		// msg.cmd = "QUIT";
@@ -112,4 +115,23 @@ void Server::userCmd(User *user, vector<string> words)
 {
 	if (expectedArgs(words, 2))
 		user->setUser(words[1]);
+}
+
+void Server::joinCmd(User *user, vector<string> words)
+{
+	if (!expectedArgs(words, 2))
+		return ;
+
+	if (isChannel(words[1]) && user->getAtChannel() != words[1])
+		user->setAtChannel(words[1]);
+		// User joins an existing channel
+	else
+	{
+		setChannel(words[1]);
+		joinCmd(user, words);
+		// User creates and joins a channel
+	}
+	Channel *channel = getChannel(words[1]);
+	History *chnnlHistory = channel->getHistory();
+	chnnlHistory->set(1, "User joined the channel");
 }

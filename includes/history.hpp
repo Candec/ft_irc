@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:27 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/01 03:21:09 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/05 23:13:14 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ class History
 		void clear();
 
 	private:
-		map<unsigned int, string> history;
+		map<unsigned int, string> _history;
 
 		void update();
 };

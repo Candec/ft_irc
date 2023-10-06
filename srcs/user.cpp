@@ -26,7 +26,13 @@ void User::setUser(string _user) { user = _user; }
 void User::setName(string _name) { name = _name; }
 void User::setRole(string _role) { role = _role; }
 void User::setPreviousNick(string _previousNick) { previousNick = _previousNick; }
-void User::setAtChannel(string _atChannel) { atChannel = _atChannel; }
+void User::setAtChannel(string _atChannel)
+{
+	if (_atChannel != atChannel)
+		return ;
+
+	atChannel = _atChannel;
+}
 
 // Getters
 int User::getFd() { return (fd); }

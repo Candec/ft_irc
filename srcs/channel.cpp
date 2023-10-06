@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/09/30 23:19:25 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/05 23:03:53 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ Channel::~Channel() {}
 
 void Channel::setName(string name) { _name = name; }
 string Channel::getName() { return _name; }
+
+History *Channel::getHistory() { return _history; }
 
 void Channel::setDescription(string description) { _description = description; }
 string Channel::getDescription() { return _description; }

@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/01 02:56:32 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/05 11:36:35 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,10 @@ class Server
 		void delUser(User &user);
 
 		void setChannel(string channelName);
-		// Channel *getChannel();
+		Channel *getChannel(const std::string &channelName);
+
 		vector<Channel *> getChannels();
+		bool isChannel(string const &channel);
 		void delChannel(Channel &channel);
 
 		struct s_msg parseMessage(User *user, char* buffer);
@@ -96,6 +98,8 @@ class Server
 		void passCmd(User *user, vector<string> words);
 		void nickCmd(User *user, vector<string> words);
 		void userCmd(User *user, vector<string> words);
+		void joinCmd(User *user, vector<string> words);
+
 
 
 
