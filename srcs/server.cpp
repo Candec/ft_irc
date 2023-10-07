@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/05 11:37:00 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/07 10:55:07 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -485,9 +485,7 @@ void Server::printMsg(vector<pollfd>::const_iterator it)
 void Server::printMsg2(const int user_fd, const char *msg)
 {
 	// Print timestamp
-	time_t		now = time(NULL);
-	struct tm	t = *localtime(&now);
-	cout << "[" << t.tm_hour << ":" << t.tm_min << ":" << t.tm_sec << "] ";
+	cout << timestamp();
 
 	User	*user = users[user_fd];
 
