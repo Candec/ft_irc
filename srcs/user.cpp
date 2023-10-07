@@ -12,6 +12,8 @@ User::User(int fd, struct sockaddr_in addr) : fd(fd), status(VERIFY), previousPi
 
 	hostname = _hostname;
 	hostaddr = inet_ntoa(addr.sin_addr);
+
+	setNick("Annon-" + to_string(fd));
 }
 
 User::~User() { close(fd); }

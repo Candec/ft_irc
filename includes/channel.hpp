@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/05 23:10:21 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/07 10:17:32 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,10 @@ class Channel
 		void setName(string name);
 		string getName();
 
-		History *getHistory();
-
-
 		void setMode(string mode);
 		string getMode();
+
+		void setHistory(string line);
 
 		void setUserMode(User &user, string mode);
 		string getUserMode(User &user);
@@ -73,7 +72,7 @@ class Channel
 
 		vector<User *> _invitations;
 
-		History *_history;
+		History _history;
 };
 
 #endif
