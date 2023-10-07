@@ -1,6 +1,6 @@
 #include "user.hpp"
 
-User::User(int fd, struct sockaddr_in addr) : fd(fd), status(VERIFY), previousPing(time(0)), role("user")
+User::User(int fd, struct sockaddr_in addr, Server *server) : fd(fd), status(VERIFY), previousPing(time(0)), role("user"), server(server)
 {
 	//Shouldn't be required in linux. It is to block simultanious accesses to the fd
 	fcntl(fd, F_SETFL, O_NONBLOCK);
@@ -14,6 +14,8 @@ User::User(int fd, struct sockaddr_in addr) : fd(fd), status(VERIFY), previousPi
 	hostaddr = inet_ntoa(addr.sin_addr);
 
 	setNick("Annon-" + to_string(fd));
+	setAtChannel("general");
+	setChannel(server->getChannel("general"));
 }
 
 User::~User() { close(fd); }
@@ -27,14 +29,18 @@ void User::setNick(string _nick) { nick = _nick; }
 void User::setUser(string _user) { user = _user; }
 void User::setName(string _name) { name = _name; }
 void User::setRole(string _role) { role = _role; }
+void User::setColor(string _color) { color = _color; }
 void User::setPreviousNick(string _previousNick) { previousNick = _previousNick; }
 void User::setAtChannel(string _atChannel)
 {
-	if (_atChannel != atChannel)
+	if (_atChannel == atChannel)
 		return ;
 
 	atChannel = _atChannel;
 }
+void User::setChannel(Channel *_channel) { channel = _channel; }
+
+
 
 // Getters
 int User::getFd() { return (fd); }
@@ -47,8 +53,11 @@ string User::getNick() { return (nick); }
 string User::getUser() { return (user); }
 string User::getName() { return (name); }
 string User::getRole() { return (role); }
+string User::getColor() { return (color); }
 string User::getPreviousNick() { return (previousNick); }
-string User::getAtChannel() { return (atChannel); }
+const string User::getAtChannel() { return (atChannel); }
+Channel * User::getChannel() { return (channel); }
+
 
 uint16_t User::getPort() const { return ntohs(hostport); }
 

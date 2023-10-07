@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/07 10:17:32 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/07 22:58:33 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,14 @@
 
 # include "main.hpp"
 
+class Server;
 class User;
 
 class Channel
 {
 	public:
 		Channel();
-		Channel(std::string name);
+		Channel(std::string name, Server *server);
 
 		~Channel();
 
@@ -51,14 +52,13 @@ class Channel
 		vector<User *> getUsers();
 
 		bool isUser(User &user);
-		bool isOnChannel(string const &nick);
+		bool isOnChannel(int const &fd);
 
 		void addInvitedUser(User &user);
 		bool isInvitedUser(User &user);
 		void revokeInvitation(User &user);
 
 		void broadcast(User &user, string message);
-
 
 	private:
 		string _name;
@@ -72,6 +72,7 @@ class Channel
 
 		vector<User *> _invitations;
 
+		Server *server;
 		History _history;
 };
 

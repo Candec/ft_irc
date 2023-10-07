@@ -6,20 +6,28 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/07 10:17:23 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/07 22:58:59 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main.hpp"
 
 Channel::Channel() : _mode("n") {}
-Channel::Channel(std::string name) : _mode("n") { _name = name; }
+Channel::Channel(std::string name, Server *server) : _mode("n"), _server(server)
+{
+	_name = name;
+	_history.set("Welcome to " + name);
+	_history.set("Este canal es de " + name);
+}
 Channel::~Channel() {}
 
 void Channel::setName(string name) { _name = name; }
 string Channel::getName() { return _name; }
 
-void Channel::setHistory(string line) { _history.set(line); }
+void Channel::setHistory(string line) {
+	// cout << "at channel set function" << endl;
+	_history.set(line);
+	}
 
 
 void Channel::setDescription(string description) { _description = description; }
@@ -49,10 +57,12 @@ vector<User *> Channel::getUsers()
 }
 
 bool Channel::isUser(User &user) { return _users.find(user.getFd()) != _users.end(); }
-bool Channel::isOnChannel(string const &nick)
+bool Channel::isOnChannel(string const &fd)
 {
-	for (map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
-		if (i->second->getNick() == nick)
+	//keep looking this because it is wrong
+
+	 for (map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
+		if (i->second->getFd() == fd)
 			return true;
 	return false;
 }
@@ -83,3 +93,4 @@ void Channel::broadcast(User &user, string message)
 	for (map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
 		user.sendPrivateMessage(*i->second, message);
 }
+

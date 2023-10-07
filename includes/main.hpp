@@ -6,14 +6,17 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 17:05:34 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/03 20:01:51 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/07 18:21:46 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAIN_HPP
 # define MAIN_HPP
 
+enum {red, black, green, yellow, blue, pink, cyan, white, none};
+
 # define RESET "\033[0m"
+# define CLEAR "\033[2J"
 
 # define RED_BG "\033[41m"
 # define GREEN_BG "\033[42;1m"

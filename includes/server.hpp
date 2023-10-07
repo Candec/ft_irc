@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/05 11:36:35 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/07 22:57:58 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ class Server
 	private:
 		int listen_fd;
 
-		History history;
+		// History history;
 
 		map<std::string, Channel *> channels;
 		map<int, User *> operators;
@@ -51,8 +51,8 @@ class Server
 		void updatePoll();
 
 		void addUser();
-		void printUsers();
-		// void displayChannels();
+		// void printUsers();
+		// void printChannels();
 
 
 		// # Configs
@@ -74,10 +74,6 @@ class Server
 		vector<User *> getUsers();
 		void delUser(User &user);
 
-		void setChannel(string channelName);
-		Channel *getChannel(const std::string &channelName);
-
-		vector<Channel *> getChannels();
 		bool isChannel(string const &channel);
 		void delChannel(Channel &channel);
 
@@ -86,6 +82,8 @@ class Server
 		void lookForCmd(User *user, struct s_msg& msg, vector<string> words);
 
 		void sendMsg(int user_fd, const string &msg);
+		void sendError(int user_fd, const string &msg);
+
 		int receiveMsg(vector<pollfd>::iterator it);
 		int receiveMsg2(int user_fd);
 		void printMsg(vector<pollfd>::const_iterator it);
@@ -99,6 +97,8 @@ class Server
 		void nickCmd(User *user, vector<string> words);
 		void userCmd(User *user, vector<string> words);
 		void joinCmd(User *user, vector<string> words);
+		void colorCmd(User *user, vector<string> words);
+
 
 
 
@@ -114,6 +114,12 @@ class Server
 
 		void setPort(string _port);
 		void setPassword(string _password);
+
+		void setChannel(string channelName);
+		Channel *getChannel(const std::string &channelName);
+
+		vector<Channel *> getChannels();
+
 
 };
 

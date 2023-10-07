@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/07 11:07:09 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/07 22:57:49 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 */
 Server::Server() : upTime(time(0))
 {
-	history.clear();
-	history.set(0, "Welcome to the FT_IRC server");
+	// history.clear();
+	// history.set("Welcome to the FT_IRC server");
 
 	ifstream file("./Configuration/irc.config", ios::in);
 	string line;
@@ -62,8 +62,8 @@ Server::Server(string _port, string _password) : upTime(time(0))
 	Server::setPort(_port);
 	Server::setPassword(_password);
 
-	history.clear();
-	history.set(0, "Welcome to the FT_IRC server");
+	// history.clear();
+	// history.set("Welcome to the FT_IRC server");
 
 	cout << BLUE << "Listening on port " << YELLOW << this->port << WHITE << endl;
 
@@ -89,12 +89,15 @@ Server::Server(string _port, string _password) : upTime(time(0))
 		{
 			std::string channel;
 			size_t pos = 0;
+			line.erase(0, line.find(":") + 1);
 			while ((pos = line.find(',')) != std::string::npos)
 			{
 				channel = line.substr(0, pos);
 				setChannel(channel);
 				line.erase(0, pos + 1);
 			}
+			channel = line.substr(0, pos);
+			setChannel(channel);
 		}
 	}
 }
@@ -119,7 +122,8 @@ void Server::setPassword(string _password) { password = _password; }
 
 void Server::setChannel(string channelName)
 {
-	Channel *channel = new Channel(channelName);
+	Server *ptrServer = this;
+	Channel *channel = new Channel(channelName, ptrServer);
 	channels.insert( std::pair<std::string, Channel *>(channelName, channel));
 }
 
@@ -168,7 +172,7 @@ void Server::addUser()
 		return ;
 	}
 
-	User *user = new User(user_fd, addr);
+	User *user = new User(user_fd, addr, this);
 	users[user_fd] = user;
 	users[user_fd]->setStatus(VERIFY);
 
@@ -225,7 +229,7 @@ void Server::delUser(User &user)
 		user.sendPrivateMessage(*(*k), message);
 	user.push();
 
-	history.remove(user.getFd());
+	// history.remove(user.getFd());
 
 	for (vector<pollfd>::iterator l = pollfds.begin(); l != pollfds.end(); ++l)
 		if ((*l).fd == user.getFd())
@@ -241,7 +245,7 @@ void Server::delUser(User &user)
 
 void Server::delChannel(Channel &channel)
 {
-	(void)channel;
+	channels.erase(channel.getName());
 }
 
 bool Server::isChannel(string const &channel)
@@ -271,18 +275,29 @@ void Server::updatePing()
 	}
 }
 
-void Server::printUsers()
-{
-	char buffer[42];
-	snprintf(buffer, sizeof(buffer), "%-4s %-9s %s", "FD", "Nickname", "Host");
-	history.set(listen_fd, string("\n") + buffer);
-	for (map<int, User *>::iterator it = users.begin(); it != users.end(); ++it)
-	{
-		User *user = (*it).second;
-		snprintf(buffer, sizeof(buffer), "\033[34m%-4i \033[33m%-9s \033[35m", user->getFd(), user->getNick().c_str());
-		history.set(user->getFd(), buffer + user->getHost());
-	}
-}
+// void Server::printUsers()
+// {
+// 	char buffer[42];
+// 	snprintf(buffer, sizeof(buffer), "%-4s %-9s %s", "FD", "Nickname", "Host");
+// 	history.set(listen_fd, string("\n") + buffer);
+// 	for (map<int, User *>::iterator it = users.begin(); it != users.end(); ++it)
+// 	{
+// 		User *user = (*it).second;
+// 		snprintf(buffer, sizeof(buffer), "\033[34m%-4i \033[33m%-9s \033[35m", user->getFd(), user->getNick().c_str());
+// 		history.set(user->getFd(), buffer + user->getHost());
+// 	}
+// }
+
+// void Server::printChannels()
+// {
+// 	for (map<string, Channel *>::iterator it = channels.begin(); it != channels.end(); ++it)
+// 	{
+// 		Channel *channel = (*it).second;
+// 		sendMsg()
+
+// 	}
+
+// }
 
 void Server::updatePoll()
 {
@@ -382,6 +397,15 @@ void Server::sendMsg(int user_fd, const string &msg)
 		error("Error sending message", CONTINUE);
 }
 
+void Server::sendError(int user_fd, const string &msg)
+{
+	string str;
+	str = RED + msg + WHITE + MESSAGE_END;
+	// int size = str.str().size();
+	if (send(user_fd, str.c_str(), str.size(), 0) == -1)
+		error("Error sending message", CONTINUE);
+}
+
 // int Server::receiveMsg2(int user_fd)
 // {
 // 	char	buffer[BUFFER + 1] = { 0 };
@@ -452,6 +476,9 @@ int Server::receiveMsg(vector<pollfd>::iterator it)
 	// messages_operations();
 
 	// printMsg(it);
+	Channel *channel = user->getChannel();
+	cout << CYAN << user->buffer;
+	channel->setHistory(user->buffer);
 
 	if (!msg.command.compare("QUIT"))
 		return -1;

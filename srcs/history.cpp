@@ -1,30 +1,25 @@
 #include "history.hpp"
 
-History::History()
-{
-	update();
-}
+History::History() { update(); }
 
 void History::update()
 {
+	//got the server point, need the channel pointer to get the users within the channel
 	clear();
-	for (map<unsigned int, string>::iterator i = _history.begin(); i != _history.end(); i++)
-		cout << i->second << "\033[0m" << endl << flush;
+	for (map<unsigned int, User *>::iterator it = _user->begin(); i != _user->end(); it++)
+	{
+		for (map<unsigned int, string>::iterator i = _history.begin(); i != _history.end(); i++)
+		{
+			if (it->isOnChannel(it->getFd()))
+			sendMsg(it->getFd(), i->second);
+		}
+	}
+	// cout << i->second << RESET << endl << flush;
 }
 
 void History::clear()
 {
-	cout << "\033[2J" << flush;
-}
-
-void History::set(unsigned int i, string line)
-{
-	if (_history[i].compare(line) == 0)
-		return;
-
-	// _history[i] = line;
-	_history[i] = line;
-	update();
+	cout << CLEAR << flush;
 }
 
 void History::set(string line)

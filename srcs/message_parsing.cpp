@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/07 10:18:03 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/07 18:15:43 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,9 @@ Server::lookForCmd(User *user, struct s_msg& msg, vector<string> words)
 		userCmd(user, words);
 		// msg.user = arg;
 
+	if (!cmd.compare("COLOR"))
+		colorCmd(user, words);
+
 	if (!cmd.compare("JOIN"))
 		joinCmd(user,words);
 
@@ -127,12 +130,56 @@ void Server::joinCmd(User *user, vector<string> words)
 
 	if (!isChannel(words[1]))
 		setChannel(words[1]);
-	cout << "channel created" << endl;
+
+	//leaving channel msg
+	Channel *prevChannel = getChannel(user->getAtChannel());
+	prevChannel->setHistory(user->getNick() + " left the channel");
+
+	//joining channel msg
 	user->setAtChannel(words[1]);
-	cout << "user set at channel" << endl;
-
 	Channel *channel = getChannel(words[1]);
-	cout << "channel to var*" << endl;
+	user->setChannel(channel);
+	channel->setHistory(user->getNick() + " joined the channel");
+}
 
-	channel->setHistory("User joined the channel");
+void Server::colorCmd(User *user, vector<string> words)
+{
+	if (!expectedArgs(words, 2))
+		return ;
+
+	map<string, string>colors;
+
+	colors["r"] = RED_BOLD;
+	colors["k"] = BLACK_BOLD;
+	colors["g"] = GREEN_BOLD;
+	colors["y"] = YELLOW_BOLD;
+	colors["b"] = BLUE_BOLD;
+	colors["p"] = MAGENTA_BOLD;
+	colors["c"] = CYAN_BOLD;
+	colors["w"] = WHITE_BOLD;
+	colors["n"] = BOLD;
+
+	colors["red"] = RED_BOLD;
+	colors["black"] = BLACK_BOLD;
+	colors["green"] = GREEN_BOLD;
+	colors["yellow"] = YELLOW_BOLD;
+	colors["blue"] = BLUE_BOLD;
+	colors["pink"] = MAGENTA_BOLD;
+	colors["cyan"] = CYAN_BOLD;
+	colors["white"] = WHITE_BOLD;
+	colors["none"] = BOLD;
+
+	colors["RED"] = RED_BOLD;
+	colors["BLACK"] = BLACK_BOLD;
+	colors["GREEN"] = GREEN_BOLD;
+	colors["YELLOW"] = YELLOW_BOLD;
+	colors["BLUE"] = BLUE_BOLD;
+	colors["PINK"] = MAGENTA_BOLD;
+	colors["CYAN"] = CYAN_BOLD;
+	colors["WHITE"] = WHITE_BOLD;
+	colors["NONE"] = BOLD;
+
+	if (colors.find(words[1]) == colors.end())
+		sendError(user->getFd(), "Color not found\nTry: red, black, green, yellow, blue, pink cyan, white, none");
+	user->setColor(colors[words[1]]);
 }

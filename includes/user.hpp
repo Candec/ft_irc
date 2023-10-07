@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/05 13:03:54 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/07 16:03:16 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 enum { VERIFY, ACCEPT, ONLINE, OFFLINE };
 
 class Server;
+class Channel;
 
 class User
 {
@@ -45,8 +46,10 @@ class User
 		string user;
 		string name;
 		string role;
+		string color;
 		string previousNick;
 		string atChannel;
+		Channel *channel;
 		Server *server;
 
 		uint16_t hostport;
@@ -54,7 +57,7 @@ class User
 		vector<string> waitToSend;
 
 	public:
-		User(int fd, struct sockaddr_in addr);
+		User(int fd, struct sockaddr_in addr, Server *server);
 		~User();
 
 		string buffer;
@@ -71,8 +74,10 @@ class User
 		void setUser(string user);
 		void setName(string name);
 		void setRole(string role);
+		void setColor(string color);
 		void setPreviousNick(string previousNick);
 		void setAtChannel(string atChannel);
+		void setChannel(Channel *);
 
 		// Getters
 		int getFd();
@@ -85,8 +90,11 @@ class User
 		string getUser();
 		string getName();
 		string getRole();
+		string getColor();
 		string getPreviousNick();
-		string getAtChannel();
+		const string getAtChannel();
+		Channel *getChannel();
+
 
 		uint16_t getPort() const;
 
