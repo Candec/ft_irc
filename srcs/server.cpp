@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/07 10:55:07 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/07 11:07:09 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,7 @@ void Server::addUser()
 	cout << BLUE << "User " << GREEN << "connected" << BLUE << " from ";
 	cout << user->getHostaddr() << ":" << user->getPort() << WHITE << endl;
 
+	sendMsg(user_fd, CLEAR_MSG);
 	sendMsg(user_fd, WELCOME_MSG);
 	sendMsg(user_fd, COMMAND_MSG);
 
@@ -463,9 +464,7 @@ int Server::receiveMsg(vector<pollfd>::iterator it)
 void Server::printMsg(vector<pollfd>::const_iterator it)
 {
 	// Print timestamp
-	time_t		now = time(NULL);
-	struct tm	t = *localtime(&now);
-	cout << "[" << t.tm_hour << ":" << t.tm_min << ":" << t.tm_sec << "] ";
+	cout << timestamp();
 
 	int		user_fd = it->fd;
 	User	*user = users[user_fd];
