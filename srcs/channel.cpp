@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/08 16:38:15 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/08 17:41:42 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,12 @@ Channel::Channel(std::string name, Server *server) : _mode("n"), _server(server)
 {
 	_name = name;
 
-	set("Welcome to " + name);
-	set("Este canal es de " + name);
+	string str;
+	str = WLC_CH_MSG + name + RESET;
+
+	set(YELLOW_BG + str);
+	if (!_description.empty())
+		set(_description);
 }
 Channel::~Channel() {}
 
@@ -107,6 +111,22 @@ void Channel::set(string line)
 	unsigned int last = _history.size();
 
 	_history.insert(std::pair<unsigned int, string>(last, line));
+	update();
+}
+
+void Channel::setLog(string line)
+{
+	unsigned int last = _history.size();
+
+	_history.insert(std::pair<unsigned int, string>(last, "[ log ]: " + line));
+	update();
+}
+
+void Channel::setMsg(string line, string nick)
+{
+	unsigned int last = _history.size();
+
+	_history.insert(std::pair<unsigned int, string>(last, "[ " + nick + " ]: " + line));
 	update();
 }
 

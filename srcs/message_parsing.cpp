@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/08 16:38:29 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/08 17:39:55 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ void Server::joinCmd(User *user, vector<string> words)
 	cout << "back in the joinCmd" << endl << flush;
 	//leaving channel msg
 	Channel *prevChannel = getChannel(user->getAtChannel());
-	prevChannel->set(user->getNick() + " left " + prevChannel->getName());
+	prevChannel->setLog(user->getNick() + " left " + prevChannel->getName());
 
 	//joining channel msg
 	cout << "user fd: " << user->getFd() << endl << flush;
@@ -146,7 +146,7 @@ void Server::joinCmd(User *user, vector<string> words)
 	Channel *channel = getChannel(words[1]);
 	user->setChannel(channel);
 	channel->addUser(*user);
-	channel->set("[" + channel->getName() + "] Hst: " +user->getNick() + " joined the channel");
+	channel->setLog("[" + channel->getName() + "] Hst: " +user->getNick() + " joined the channel");
 
 	// removes the user from the previous channel list of users
 	// prevChannel->removeUser(*user);

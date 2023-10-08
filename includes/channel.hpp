@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/08 12:38:51 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/08 17:41:15 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,9 @@ class Channel
 
 		void update();
 		void set(string line);
+		void setLog(string line);
+		void setMsg(string line, string nick);
+
 		void remove(unsigned int i);
 
 

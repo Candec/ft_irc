@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/08 16:38:40 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/08 19:15:19 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,7 +270,8 @@ void Server::updatePing()
 		{
 			user->setStatus(OFFLINE);
 			user->write(user->getNick() + "timed out");
-			cout << user->getNick() << "timed out" << endl << flush;
+			sendColorMsg(user->getFd(), TIMEOUT_ERR, RED);
+			delUser(*user);
 		}
 		else if (user->getStatus() == ONLINE)
 			user->write("PING " + user->getNick());
@@ -468,7 +469,7 @@ int Server::receiveMsg(vector<pollfd>::iterator it)
 
 	struct s_msg msg = this->parseMessage(user, buf);
 	// cout << "in pckg: " << buf << endl << flush;
-	printMsg2(it->fd, buf);
+	// printMsg2(it->fd, buf);
 
 	// buf[size] = 0;
 	user->buffer += buf;
@@ -487,7 +488,7 @@ int Server::receiveMsg(vector<pollfd>::iterator it)
 
 	// printMsg(it);
 	Channel *channel = user->getChannel();
-	channel->set(user->buffer);
+	channel->setMsg(user->buffer, user->getNick());
 
 	if (!msg.command.compare("QUIT"))
 		return -1;
