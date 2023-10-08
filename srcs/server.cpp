@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/08 12:48:41 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/08 16:38:40 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,7 @@ void Server::setChannel(string channelName)
 	Server *ptrServer = this;
 	Channel *channel = new Channel(channelName, ptrServer);
 	channels.insert( std::pair<std::string, Channel *>(channelName, channel));
+	cout << "channel [ mem: " << channels[channelName] << " | << name: " << channels[channelName]->getName() << " ] created" << endl << flush;
 }
 
 /*
@@ -179,9 +180,10 @@ void Server::addUser()
 	cout << BLUE << "User " << GREEN << "connected" << BLUE << " from ";
 	cout << user->getHostaddr() << ":" << user->getPort() << WHITE << endl;
 
-	sendMsg(user_fd, CLEAR_MSG);
+	sendClear(user_fd);
 	sendMsg(user_fd, WELCOME_MSG);
-	sendMsg(user_fd, COMMAND_MSG);
+	sendColorMsg(user_fd, COMMAND_MSG, BOLD);
+	sendColorMsg(user_fd, CMD_LIST_MSG, YELLOW);
 
 	// strncpy(buffer, "Server connected\n", 18);
 	// send(c_fd, buffer, BUFFER, 0);
@@ -368,7 +370,7 @@ void Server::run()
 
 	if (time(0) - previousPing >= ping)
 	{
-		cout << BLUE << "updating ping" << WHITE << endl << flush;
+		// cout << BLUE << "updating ping" << WHITE << endl << flush;
 		updatePing();
 	}
 	else if (pollfds[0].revents == POLLIN)
@@ -391,17 +393,25 @@ void Server::run()
 	// printUsers();
 }
 
+void Server::sendClear(int user_fd)
+{
+	if (send(user_fd, CLEAR_MSG, 5, 0) == -1)
+		error("Error sending message", CONTINUE);
+}
+
 void Server::sendMsg(int user_fd, const string &msg)
 {
+	cout << "Reporting message to the client: " << msg << endl;
 	if (send(user_fd, (msg + MESSAGE_END).c_str(), msg.size() + 2, 0) == -1)
 		error("Error sending message", CONTINUE);
 }
 
-void Server::sendError(int user_fd, const string &msg)
+void Server::sendColorMsg(int user_fd, const string &msg, const string &color)
 {
 	string str;
-	str = RED + msg + WHITE + MESSAGE_END;
+	str = color + msg + RESET + MESSAGE_END;
 	// int size = str.str().size();
+	cout << "Reporting message to the client: " << str << endl;
 	if (send(user_fd, str.c_str(), str.size(), 0) == -1)
 		error("Error sending message", CONTINUE);
 }
@@ -477,7 +487,6 @@ int Server::receiveMsg(vector<pollfd>::iterator it)
 
 	// printMsg(it);
 	Channel *channel = user->getChannel();
-	cout << CYAN << user->buffer;
 	channel->set(user->buffer);
 
 	if (!msg.command.compare("QUIT"))

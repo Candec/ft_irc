@@ -49,7 +49,12 @@ time_t User::getPreviousPing() { return (previousPing); }
 string User::getHostaddr() { return (hostaddr); }
 string User::getHostname() { return (hostname); }
 string User::getHost() { return (hostname.size() ? hostname : hostaddr); }
-string User::getNick() { return (nick); }
+string User::getNick()
+{
+	if (!color.empty())
+		return (color + nick + RESET);
+	return (nick);
+}
 string User::getUser() { return (user); }
 string User::getName() { return (name); }
 string User::getRole() { return (role); }

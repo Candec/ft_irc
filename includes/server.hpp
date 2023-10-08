@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/08 12:46:40 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/08 16:39:24 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,8 +112,9 @@ class Server
 		void setPort(string _port);
 		void setPassword(string _password);
 
+		void sendClear(int user_fd);
 		void sendMsg(int user_fd, const string &msg);
-		void sendError(int user_fd, const string &msg);
+		void sendColorMsg(int user_fd, const string &msg, const string &color);
 
 		void setChannel(string channelName);
 		Channel *getChannel(const std::string &channelName);

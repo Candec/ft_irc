@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/08 12:48:24 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/08 16:38:29 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,26 +122,34 @@ void Server::userCmd(User *user, vector<string> words)
 
 void Server::joinCmd(User *user, vector<string> words)
 {
+	cout << "User " << user->getNick() << " is going to join the channel" << endl << flush;
 	if (!expectedArgs(words, 2))
 		return ;
 
+	cout << "args are fine" << endl << flush;
 	if (user->getAtChannel() == words[1])
 		return ;
 
+	cout << "user wasn't already in channel" << endl << flush;
 	if (!isChannel(words[1]))
 		setChannel(words[1]);
 
+	cout << "back in the joinCmd" << endl << flush;
 	//leaving channel msg
 	Channel *prevChannel = getChannel(user->getAtChannel());
-	prevChannel->removeUser(*user);
-	prevChannel->set(user->getNick() + " left the channel");
+	prevChannel->set(user->getNick() + " left " + prevChannel->getName());
 
 	//joining channel msg
+	cout << "user fd: " << user->getFd() << endl << flush;
+	sendClear(user->getFd());
 	user->setAtChannel(words[1]);
 	Channel *channel = getChannel(words[1]);
 	user->setChannel(channel);
 	channel->addUser(*user);
-	channel->set(user->getNick() + " joined the channel");
+	channel->set("[" + channel->getName() + "] Hst: " +user->getNick() + " joined the channel");
+
+	// removes the user from the previous channel list of users
+	// prevChannel->removeUser(*user);
 }
 
 void Server::colorCmd(User *user, vector<string> words)
@@ -182,6 +190,6 @@ void Server::colorCmd(User *user, vector<string> words)
 	colors["NONE"] = BOLD;
 
 	if (colors.find(words[1]) == colors.end())
-		sendError(user->getFd(), "Color not found\nTry: red, black, green, yellow, blue, pink cyan, white, none");
+		sendColorMsg(user->getFd(), COLOR_ERR, RED);
 	user->setColor(colors[words[1]]);
 }
