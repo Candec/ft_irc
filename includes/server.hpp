@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/07 22:57:58 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/08 12:46:40 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,6 @@ class Server
 		vector< vector<string> > splitBuffer(char* buffer);
 		void lookForCmd(User *user, struct s_msg& msg, vector<string> words);
 
-		void sendMsg(int user_fd, const string &msg);
-		void sendError(int user_fd, const string &msg);
-
 		int receiveMsg(vector<pollfd>::iterator it);
 		int receiveMsg2(int user_fd);
 		void printMsg(vector<pollfd>::const_iterator it);
@@ -114,6 +111,9 @@ class Server
 
 		void setPort(string _port);
 		void setPassword(string _password);
+
+		void sendMsg(int user_fd, const string &msg);
+		void sendError(int user_fd, const string &msg);
 
 		void setChannel(string channelName);
 		Channel *getChannel(const std::string &channelName);

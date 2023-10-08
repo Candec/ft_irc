@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 17:05:34 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/07 18:21:46 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/08 12:38:05 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ htonl, ntohs, ntohl, inet_addr, inet_ntoa, send,
 recv, signal, sigaction, lseek, fstat, fcntl, poll
 */
 
+using namespace std;
 
 # include <string>
 # include <map>
@@ -83,14 +84,13 @@ recv, signal, sigaction, lseek, fstat, fcntl, poll
 # include <csignal>
 # include <cstring>
 
-# include "history.hpp"
+// # include "history.hpp"
 # include "user.hpp"
 # include "channel.hpp"
 # include "server.hpp"
 # include "utility.hpp"
 # include "message.hpp"
 
-using namespace std;
 
 
 #endif

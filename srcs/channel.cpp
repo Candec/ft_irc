@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/07 22:58:59 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/08 12:47:23 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,14 @@ Channel::Channel() : _mode("n") {}
 Channel::Channel(std::string name, Server *server) : _mode("n"), _server(server)
 {
 	_name = name;
-	_history.set("Welcome to " + name);
-	_history.set("Este canal es de " + name);
+
+	set("Welcome to " + name);
+	set("Este canal es de " + name);
 }
 Channel::~Channel() {}
 
 void Channel::setName(string name) { _name = name; }
 string Channel::getName() { return _name; }
-
-void Channel::setHistory(string line) {
-	// cout << "at channel set function" << endl;
-	_history.set(line);
-	}
-
 
 void Channel::setDescription(string description) { _description = description; }
 string Channel::getDescription() { return _description; }
@@ -57,10 +52,8 @@ vector<User *> Channel::getUsers()
 }
 
 bool Channel::isUser(User &user) { return _users.find(user.getFd()) != _users.end(); }
-bool Channel::isOnChannel(string const &fd)
+bool Channel::isOnChannel(int const &fd)
 {
-	//keep looking this because it is wrong
-
 	 for (map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
 		if (i->second->getFd() == fd)
 			return true;
@@ -94,3 +87,31 @@ void Channel::broadcast(User &user, string message)
 		user.sendPrivateMessage(*i->second, message);
 }
 
+void Channel::update()
+{
+	// clear();
+	for (map<int, User *>::iterator it = _users.begin(); it != _users.end(); it++)
+	{
+		if (isOnChannel(it->second->getFd()))
+		{
+			_server->sendMsg(it->second->getFd(), CLEAR);
+			for (map<int, string>::iterator i = _history.begin(); i != _history.end(); i++)
+				_server->sendMsg(it->second->getFd(), i->second);
+		}
+	}
+	// cout << i->second << RESET << endl << flush;
+}
+
+void Channel::set(string line)
+{
+	unsigned int last = _history.size();
+
+	_history.insert(std::pair<unsigned int, string>(last, line));
+	update();
+}
+
+void Channel::remove(unsigned int i)
+{
+	_history.erase(i);
+	update();
+}

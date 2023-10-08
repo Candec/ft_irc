@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/07 22:58:33 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/08 12:38:51 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,12 @@ class Channel
 
 		void broadcast(User &user, string message);
 
+		void update();
+		void set(string line);
+		void remove(unsigned int i);
+
+
+
 	private:
 		string _name;
 		string _mode;
@@ -72,8 +78,8 @@ class Channel
 
 		vector<User *> _invitations;
 
-		Server *server;
-		History _history;
+		Server *_server;
+		map<int, string> _history;
 };
 
 #endif

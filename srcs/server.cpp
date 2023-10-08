@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/07 22:57:49 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/08 12:48:41 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -478,7 +478,7 @@ int Server::receiveMsg(vector<pollfd>::iterator it)
 	// printMsg(it);
 	Channel *channel = user->getChannel();
 	cout << CYAN << user->buffer;
-	channel->setHistory(user->buffer);
+	channel->set(user->buffer);
 
 	if (!msg.command.compare("QUIT"))
 		return -1;

@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/07 18:15:43 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/08 12:48:24 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,13 +133,15 @@ void Server::joinCmd(User *user, vector<string> words)
 
 	//leaving channel msg
 	Channel *prevChannel = getChannel(user->getAtChannel());
-	prevChannel->setHistory(user->getNick() + " left the channel");
+	prevChannel->removeUser(*user);
+	prevChannel->set(user->getNick() + " left the channel");
 
 	//joining channel msg
 	user->setAtChannel(words[1]);
 	Channel *channel = getChannel(words[1]);
 	user->setChannel(channel);
-	channel->setHistory(user->getNick() + " joined the channel");
+	channel->addUser(*user);
+	channel->set(user->getNick() + " joined the channel");
 }
 
 void Server::colorCmd(User *user, vector<string> words)
