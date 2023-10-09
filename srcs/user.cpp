@@ -83,6 +83,6 @@ void User::push()
 	if (buffer.length())
 		return ;
 
-	if (send(fd, buffer.c_str(), buffer.length(), 0) == -1)
+	if (send(fd, buffer.c_str(), buffer.length(), 0) == SENDING_ERROR)
 		error("send", CONTINUE);
 }

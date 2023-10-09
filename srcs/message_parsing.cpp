@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/08 17:39:55 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/09 14:51:10 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ Server::parseMessage(User *user, char* const buffer)
 	struct s_msg msg;
 	msg.src = user;
 	msg.timestamp = time(NULL);
+	msg.command = false;
 
 	strncpy(msg.buffer, buffer, BUFFER + 1);
 
@@ -72,29 +73,24 @@ Server::lookForCmd(User *user, struct s_msg& msg, vector<string> words)
 		return ;
 
 	string cmd = words[0];
-	// const string& arg = words[1];
 
 	if (!cmd.compare("PASS"))
-		passCmd(user, words);
-		// msg.password = arg;
+		passCmd(user, words, msg);
 
 	if (!cmd.compare("NICK"))
-		nickCmd(user, words);
-		// msg.nick = arg;
+		nickCmd(user, words, msg);
 
 	if (!cmd.compare("USER"))
-		userCmd(user, words);
-		// msg.user = arg;
+		userCmd(user, words, msg);
 
 	if (!cmd.compare("COLOR"))
-		colorCmd(user, words);
+		colorCmd(user, words, msg);
 
 	if (!cmd.compare("JOIN"))
-		joinCmd(user,words);
+		joinCmd(user, words, msg);
 
 	if (!cmd.compare("QUIT"))
-		msg.command = cmd;
-		// msg.cmd = "QUIT";
+		quitCmd(user, words, msg);
 }
 
 
@@ -102,57 +98,68 @@ Server::lookForCmd(User *user, struct s_msg& msg, vector<string> words)
 ** LIST OF COMMANDS
 */
 
-void Server::passCmd(User *user, vector<string> words)
+void Server::passCmd(User *user, vector<string> words, struct s_msg& msg)
 {
 	if (expectedArgs(words, 2))
-		user->setPassword(words[1]);
+		return ;
+
+	user->setPassword(words[1]);
+	msg.command = true;
 }
 
-void Server::nickCmd(User *user, vector<string> words)
+void Server::nickCmd(User *user, vector<string> words, struct s_msg& msg)
 {
-	if (expectedArgs(words, 2))
-		user->setNick(words[1]);
+	if (!expectedArgs(words, 2))
+		return ;
+		
+	user->setNick(words[1]);
+	msg.command = true;
 }
 
-void Server::userCmd(User *user, vector<string> words)
+void Server::userCmd(User *user, vector<string> words, struct s_msg& msg)
 {
-	if (expectedArgs(words, 2))
-		user->setUser(words[1]);
+	if (!expectedArgs(words, 2))
+		return ;
+	 
+	user->setUser(words[1]);
+	msg.command = true;
 }
 
-void Server::joinCmd(User *user, vector<string> words)
+void Server::joinCmd(User *user, vector<string> words, struct s_msg& msg)
 {
-	cout << "User " << user->getNick() << " is going to join the channel" << endl << flush;
+	// cout << "User " << user->getNick() << " is going to join the channel" << endl << flush;
 	if (!expectedArgs(words, 2))
 		return ;
 
-	cout << "args are fine" << endl << flush;
+	// cout << "args are fine" << endl << flush;
 	if (user->getAtChannel() == words[1])
 		return ;
 
-	cout << "user wasn't already in channel" << endl << flush;
+	// cout << "user wasn't already in channel" << endl << flush;
 	if (!isChannel(words[1]))
 		setChannel(words[1]);
 
-	cout << "back in the joinCmd" << endl << flush;
+	// cout << "back in the joinCmd" << endl << flush;
 	//leaving channel msg
 	Channel *prevChannel = getChannel(user->getAtChannel());
 	prevChannel->setLog(user->getNick() + " left " + prevChannel->getName());
 
 	//joining channel msg
-	cout << "user fd: " << user->getFd() << endl << flush;
+	// cout << "user fd: " << user->getFd() << endl << flush;
 	sendClear(user->getFd());
 	user->setAtChannel(words[1]);
 	Channel *channel = getChannel(words[1]);
 	user->setChannel(channel);
 	channel->addUser(*user);
-	channel->setLog("[" + channel->getName() + "] Hst: " +user->getNick() + " joined the channel");
+	channel->setLog(BLACK + user->getNick() + " joined the channel" + RESET);
+
+	msg.command = true;
 
 	// removes the user from the previous channel list of users
 	// prevChannel->removeUser(*user);
 }
 
-void Server::colorCmd(User *user, vector<string> words)
+void Server::colorCmd(User *user, vector<string> words, struct s_msg& msg)
 {
 	if (!expectedArgs(words, 2))
 		return ;
@@ -192,4 +199,18 @@ void Server::colorCmd(User *user, vector<string> words)
 	if (colors.find(words[1]) == colors.end())
 		sendColorMsg(user->getFd(), COLOR_ERR, RED);
 	user->setColor(colors[words[1]]);
+
+	msg.command = true;
+}
+
+
+void Server::quitCmd(User *user, vector<string> words, struct s_msg& msg)
+{
+	if (!expectedArgs(words, 1))
+		return ;
+		
+	cout << BLUE << "User " << user->getNick();
+	cout << RED << " disconnected" << RESET << endl;
+	delUser(*user);
+	msg.command = true;
 }

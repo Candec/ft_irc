@@ -6,17 +6,24 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 17:05:34 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/08 12:38:05 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/09 12:28:10 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAIN_HPP
 # define MAIN_HPP
 
-enum {red, black, green, yellow, blue, pink, cyan, white, none};
+const int SENDING_ERROR = -1;
+const int QUIT = -1;
+// # define QUIT -1
+# define BUFFER 1024
+# define MESSAGE_END "\r\n"
+
 
 # define RESET "\033[0m"
 # define CLEAR "\033[2J"
+
+enum {red, black, green, yellow, blue, pink, cyan, white, none};
 
 # define RED_BG "\033[41m"
 # define GREEN_BG "\033[42;1m"

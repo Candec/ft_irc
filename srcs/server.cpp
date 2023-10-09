@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/08 19:15:19 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/09 14:48:50 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ void Server::setChannel(string channelName)
 	Server *ptrServer = this;
 	Channel *channel = new Channel(channelName, ptrServer);
 	channels.insert( std::pair<std::string, Channel *>(channelName, channel));
-	cout << "channel [ mem: " << channels[channelName] << " | << name: " << channels[channelName]->getName() << " ] created" << endl << flush;
+	// cout << "channel [ mem: " << channels[channelName] << " | << name: " << channels[channelName]->getName() << " ] created" << endl << flush;
 }
 
 /*
@@ -162,7 +162,7 @@ void Server::addUser()
 	struct sockaddr_in addr;
 	socklen_t socklen = sizeof(addr);
 	int user_fd = accept(listen_fd, (struct sockaddr *)&addr, &socklen);
-	if (user_fd == -1) {
+	if (user_fd == SENDING_ERROR) {
 		error("Failed accept", CONTINUE);
 		return ;
 	}
@@ -192,7 +192,7 @@ void Server::addUser()
 	pollfds.back().fd = user_fd;
 	pollfds.back().events = POLLIN;
 
-	if (users.size() == maxUsers && (shutdown(listen_fd, SHUT_RD) == -1))
+	if (users.size() == maxUsers && (shutdown(listen_fd, SHUT_RD) == SENDING_ERROR))
 		error("Failed shutdown of receptions on listening socket", CONTINUE);
 }
 
@@ -308,15 +308,7 @@ void Server::updatePoll()
 	{
 		if (i->revents & POLLIN) {
 			if (users.find(i->fd) != users.end()) {
-				// if (receiveMsg2(i->fd) == -1)
-				// 	break;
-				if (receiveMsg(i) == QUIT) {
-					User *user = users[i->fd];
-					cout << BLUE << "User " << MAGENTA << user->getNick();
-					cout << RED << " disconnected" << WHITE << endl;
-					delUser(*user);
-					break;
-				}
+				receiveMsg(i);
 			}
 		}
 	}
@@ -364,7 +356,7 @@ void Server::setup()
 
 void Server::run()
 {
-	if (poll(&pollfds[0], pollfds.size(), (ping * 1000) / 100) == -1) {
+	if (poll(&pollfds[0], pollfds.size(), (ping * 1000) / 100) == SENDING_ERROR) {
 		error("Failed poll", CONTINUE);
 		return;
 	}
@@ -402,8 +394,7 @@ void Server::sendClear(int user_fd)
 
 void Server::sendMsg(int user_fd, const string &msg)
 {
-	cout << "Reporting message to the client: " << msg << endl;
-	if (send(user_fd, (msg + MESSAGE_END).c_str(), msg.size() + 2, 0) == -1)
+	if (send(user_fd, (msg + MESSAGE_END).c_str(), msg.size() + 2, 0) == SENDING_ERROR)
 		error("Error sending message", CONTINUE);
 }
 
@@ -411,8 +402,7 @@ void Server::sendColorMsg(int user_fd, const string &msg, const string &color)
 {
 	string str;
 	str = color + msg + RESET + MESSAGE_END;
-	// int size = str.str().size();
-	cout << "Reporting message to the client: " << str << endl;
+
 	if (send(user_fd, str.c_str(), str.size(), 0) == -1)
 		error("Error sending message", CONTINUE);
 }
@@ -452,19 +442,22 @@ void Server::sendColorMsg(int user_fd, const string &msg, const string &color)
 // Since application is single threaded, is a msg buffer for each client needed?
 // Can't we just process each fd and flush the parsed content one by one?
 
-int Server::receiveMsg(vector<pollfd>::iterator it)
+void Server::receiveMsg(vector<pollfd>::iterator it)
 {
 	User	*user = users.at(it->fd);
 	char	buf[BUFFER + 1] = { 0 };
 	ssize_t	size = recv(user->getFd(), &buf, BUFFER, 0);
 
-	if (size == -1) {
+	if (size == SENDING_ERROR) {
 		error("Failed recv", CONTINUE);
-		return 0;
+		return ;
 	}
 	else if (size == 0) {
 		user->setStatus(OFFLINE); // Perhaps user can be removed instantly
-		return -1;
+		cout << BLUE << "User " << MAGENTA << user->getNick();
+		cout << RED << " disconnected" << WHITE << endl;
+		delUser(*user);
+		return ;
 	}
 
 	struct s_msg msg = this->parseMessage(user, buf);
@@ -488,12 +481,8 @@ int Server::receiveMsg(vector<pollfd>::iterator it)
 
 	// printMsg(it);
 	Channel *channel = user->getChannel();
-	channel->setMsg(user->buffer, user->getNick());
-
-	if (!msg.command.compare("QUIT"))
-		return -1;
-
-	return 0;
+	if (!msg.command)
+		channel->setMsg(buf, user->getNick());
 }
 
 

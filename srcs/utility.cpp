@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:06 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/08 12:33:18 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/09 11:49:49 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void error(std::string str, bool quit)
 {
-	std::cout << RED << "Error: " << WHITE << str <<std::endl;
+	std::cout << RED_BG << "Error: " << RED << str << RESET << endl;
 	if (quit)
 		exit(EXIT_FAILURE);
 }

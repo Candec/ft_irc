@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/08 16:39:24 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/09 14:49:14 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,13 @@
 
 # include "main.hpp"
 
-# define QUIT -1
-# define BUFFER 1024
-# define MESSAGE_END "\r\n"
-
 enum Switch { OFF, ON };
 
 struct s_msg {
 	User	*src;
 	time_t	timestamp;
 	char	buffer[BUFFER + 1];
-	string	command;
+	bool	command;
 	// string	nick;
 	// string	user;
 	// string	password;
@@ -81,7 +77,7 @@ class Server
 		vector< vector<string> > splitBuffer(char* buffer);
 		void lookForCmd(User *user, struct s_msg& msg, vector<string> words);
 
-		int receiveMsg(vector<pollfd>::iterator it);
+		void receiveMsg(vector<pollfd>::iterator it);
 		int receiveMsg2(int user_fd);
 		void printMsg(vector<pollfd>::const_iterator it);
 		void printMsg2(const int user_fd, const char *msg);
@@ -90,11 +86,13 @@ class Server
 		** LIST OF CMDS
 		*/
 
-		void passCmd(User *user, vector<string> words);
-		void nickCmd(User *user, vector<string> words);
-		void userCmd(User *user, vector<string> words);
-		void joinCmd(User *user, vector<string> words);
-		void colorCmd(User *user, vector<string> words);
+		void passCmd(User *user, vector<string> words, struct s_msg& msg);
+		void nickCmd(User *user, vector<string> words, struct s_msg& msg);
+		void userCmd(User *user, vector<string> words, struct s_msg& msg);
+		void joinCmd(User *user, vector<string> words, struct s_msg& msg);
+		void colorCmd(User *user, vector<string> words, struct s_msg& msg);
+		void quitCmd(User *user, vector<string> words, struct s_msg& msg);
+
 
 
 
