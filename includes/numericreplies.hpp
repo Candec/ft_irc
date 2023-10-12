@@ -1,30 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ircserv.cpp                                        :+:      :+:    :+:   */
+/*   numericreplies.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/11 19:40:16 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/11 19:40:16 by fporto           ###   ########.fr       */
+/*   Created: 2023/10/11 19:20:00 by fporto            #+#    #+#             */
+/*   Updated: 2023/10/12 16:21:26 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.hpp"
+#ifndef NUMERICREPLIES_HPP
+# define NUMERICREPLIES_HPP
 
-Server *server;
+# define RPL_TOPIC 332
+# define RPL_NAMREPLY 353
+# define RPL_ENDOFNAMES 366
 
-void handler(int) { delete server; }
+# define ERR_NONICKNAMEGIVEN 431
+# define ERR_ERRONEUSNICKNAME 432
+# define ERR_NICKNAMEINUSE 433
+# define ERR_NEEDMOREPARAMS 461
+# define ERR_ALREADYREGISTERED 462
+# define ERR_PASSWDMISMATCH 464
 
-int main(int argc, char *argv[])
-{
-	if (argc != 3)
-		error("./ircserv <port> <password>", EXIT);
-
-	signal(SIGINT, handler);
-
-	server = new Server(argv[1], argv[2]);
-	server->run();
-
-	return (EXIT_SUCCESS);
-}
+#endif

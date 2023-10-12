@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 17:05:34 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/09 12:28:10 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/12 13:28:32 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ using namespace std;
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <unistd.h>
+# include <stdint.h>
 # include <fcntl.h>
 # include <netdb.h>
 # include <poll.h>
@@ -97,6 +98,7 @@ using namespace std;
 # include "server.hpp"
 # include "utility.hpp"
 # include "message.hpp"
+# include "numericreplies.hpp"
 
 
 

@@ -17,8 +17,9 @@
 
 enum {CONTINUE, EXIT};
 
-void error(std::string str, bool exit);
-string to_string(int);
-string timestamp();
+void error(const string str, bool exit);
+const string toString(const int n);
+const string timestamp();
+bool isValidChannelName(const string& name);
 
 #endif

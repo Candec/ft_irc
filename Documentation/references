@@ -7,7 +7,7 @@ Beej's Guide to Network Programming:
 -- A useful and lengthy explanation about socket development.
 It is a great point to start at to grasp the concepts of what a socket is,
 the different types there are and how to work with them, even on different
-platforms. 
+platforms.
 
 2.- Byte transforming functions
 #############################
@@ -21,3 +21,9 @@ viceversa.
 @link: https://beej.us/guide/bgnet/html/#system-calls-or-bust
 
 -- Here is how to build the connection
+
+4.- Modern IRC Client Protocol Specification
+#############################
+@link: https://modern.ircdocs.horse/
+
+-- Describes the entire protocol

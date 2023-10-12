@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/08 17:41:15 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/12 15:43:14 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,71 +18,101 @@
 class Server;
 class User;
 
+// Maybe later change enums to arrays for pattern matching
+
+enum ChannelTypes {
+	REGULAR = '#',
+	LOCAL = '&'
+};
+
+enum ChannelStatus {
+	PUBLIC = '=',
+	SECRET = '@', // Channel mode +s
+	PRIVATE = '*' // Channel mode +p (deprecated)
+};
+
+enum ChannelModes {
+	INVITE_ONLY = 'i',
+	PROTECTED_TOPIC = 't',
+	KEY_CHANNEL = 'k',
+	// OPERATOR = 'o',
+	CLIENT_LIMIT = 'l'
+};
+
+enum Op_Cmds {
+	KICK,
+	INVITE,
+	TOPIC,
+	MODE
+};
+
 class Channel
 {
+	private:
+		string	_name;
+		string	_mode;
+		string	_topic;
+		string	_key; // Password
+		char	_type;
+		char	_status;
+
+		string	_users_max;
+		map<int, string>	_user_mode;
+		map<int, User *>	_users;
+
+		vector<User *>		_invitations;
+
+		map<int, string>	_history;
+		Server	*_server;
+
 	public:
 		Channel();
-		Channel(std::string name, Server *server);
-
+		Channel(const string name, Server *server);
 		~Channel();
 
-		void setName(string name);
-		string getName();
+		// Setters
+		void setName(const string name);
+		void setMode(const string mode);
+		void setTopic(const string topic);
+		void setKey(const string key);
+		void setType(const char type);
+		void setStatus(const char status);
 
-		void setMode(string mode);
-		string getMode();
+		void setMaxUsers(const string users_max);
+		void setUserMode(const User *user, string mode);
+		void setHistory(const string line);
 
-		void setHistory(string line);
+		// Getters
+		const string getName() const;
+		const string getMode() const;
+		const string getTopic() const;
+		const string getKey() const;
+		char getType() const;
+		char getStatus() const;
 
-		void setUserMode(User &user, string mode);
-		string getUserMode(User &user);
+		const string getMaxUsers() const;
+		const string getUserMode(User *user) const;
+		vector<User *> getUsers() const;
 
-		void setMaxUsers(string users_max);
-		string getMaxUsers();
-
-		void setDescription(string Description);
-		string getDescription();
-
-		void setPass(string key);
-		string getPass();
-
-		void addUser(User &user);
-		void removeUser(User &user);
+		void addUser(User *user);
+		void removeUser(User *user);
 		void removeUser(const string &nick);
-		vector<User *> getUsers();
 
-		bool isUser(User &user);
+		bool isUser(User *user);
 		bool isOnChannel(int const &fd);
 
-		void addInvitedUser(User &user);
-		bool isInvitedUser(User &user);
-		void revokeInvitation(User &user);
+		void addInvitedUser(User *user);
+		bool isInvitedUser(User *user) const;
+		void revokeInvitation(User *user);
 
-		void broadcast(User &user, string message);
+		void broadcast(User *user, const string &message);
 
 		void update();
-		void set(string line);
-		void setLog(string line);
-		void setMsg(string line, string nick);
+		void set(const string &line);
+		void setLog(const string &line);
+		void setMsg(const string &line, const string &nick);
 
-		void remove(unsigned int i);
-
-
-
-	private:
-		string _name;
-		string _mode;
-		string _description;
-		string _pass;
-
-		map<int, string> _user_mode;
-		map<int, User *> _users;
-		string _users_max;
-
-		vector<User *> _invitations;
-
-		Server *_server;
-		map<int, string> _history;
+		void remove(const unsigned int i);
 };
 
 #endif

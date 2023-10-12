@@ -17,6 +17,18 @@
 
 enum Switch { OFF, ON };
 
+# define CONFIG_FILE "./Configuration/irc.config"
+
+const string Commands[7] = {
+	"PASS",
+	"NICK",
+	"USER",
+	"COLOR",
+	"JOIN",
+	"QUIT",
+	"CAP"
+};
+
 struct s_msg {
 	User	*src;
 	time_t	timestamp;
@@ -32,33 +44,33 @@ struct s_msg {
 class Server
 {
 	private:
-		int listen_fd;
+		int _listen_fd;
 
 		// History history;
 
-		map<std::string, Channel *> channels;
-		map<int, User *> operators;
-		map<int, User *> users;
-		vector<pollfd> pollfds;
+		map<string, Channel *> _channels;
+		map<int, User *> _operators;
+		map<int, User *> _users;
+		vector<pollfd> _pollfds;
 
-		time_t upTime;
-		time_t previousPing;
+		const time_t _upTime;
+		time_t _previousPing;
 		void updatePing();
 		void updatePoll();
 
-		void addUser();
+		void createUser();
 		// void printUsers();
 		// void printChannels();
 
 
 		// # Configs
-		string serverName;
-		string password;
-		unsigned int port;
+		string _serverName;
+		string _password;
+		uint16_t _port;
 
-		unsigned int ping;
-		unsigned int timeout;
-		unsigned int maxUsers;
+		unsigned int _ping;
+		unsigned int _timeout;
+		unsigned int _maxUsers;
 
 		// void setOperator();
 		// User *getOperator();
@@ -67,57 +79,56 @@ class Server
 
 		// void setUser();
 		// User *getUser();
-		vector<User *> getUsers();
-		void delUser(User &user);
+		vector<User *> getUsers() const;
+		void delUser(User *user);
 
-		bool isChannel(string const &channel);
-		void delChannel(Channel &channel);
+		bool isChannel(const string &channel) const;
+		void delChannel(const Channel *channel);
 
-		struct s_msg parseMessage(User *user, char* buffer);
-		vector< vector<string> > splitBuffer(char* buffer);
-		void lookForCmd(User *user, struct s_msg& msg, vector<string> words);
+		struct s_msg parseMessage(User *user, const char * const buffer);
+		vector< vector<string> >splitBuffer(const char * const buffer);
+		bool isCmd(const string &word);
+		void lookForCmd(User *user, vector<string> words, struct s_msg &msg);
+		bool hasSpace(const string &str) const;
 
-		void receiveMsg(vector<pollfd>::iterator it);
-		int receiveMsg2(int user_fd);
+		void receiveMsg(vector<pollfd>::const_iterator it);
+		int receiveMsg2(const int user_fd);
 		void printMsg(vector<pollfd>::const_iterator it);
 		void printMsg2(const int user_fd, const char *msg);
 
 		/*
 		** LIST OF CMDS
 		*/
-
-		void passCmd(User *user, vector<string> words, struct s_msg& msg);
-		void nickCmd(User *user, vector<string> words, struct s_msg& msg);
-		void userCmd(User *user, vector<string> words, struct s_msg& msg);
-		void joinCmd(User *user, vector<string> words, struct s_msg& msg);
-		void colorCmd(User *user, vector<string> words, struct s_msg& msg);
-		void quitCmd(User *user, vector<string> words, struct s_msg& msg);
-
-
-
-
-
-
+		void passCmd(User *user, const vector<string> words);
+		void nickCmd(User *user, const vector<string> &words);
+		void userCmd(User *user, const vector<string> &words);
+		void joinCmd(User *user, vector<string> words);
+		void colorCmd(User *user, const vector<string> &words);
+		void quitCmd(User *user);
+		void capCmd(User *user, vector<string> &words);
 
 	public:
 		Server();
-		Server(string _port, string _password);
+		Server(const char * const port, const string password);
 		~Server();
 
+		void parseConfig();
 		void setup();
 		void run();
 
-		void setPort(string _port);
-		void setPassword(string _password);
+		void setPort(const char * const arg);
+		void setPassword(const string &password);
 
-		void sendClear(int user_fd);
-		void sendMsg(int user_fd, const string &msg);
-		void sendColorMsg(int user_fd, const string &msg, const string &color);
+		void sendClear(const int user_fd);
+		void sendMsg(const int user_fd, const string &msg);
+		void sendMsg(const int user_fd, const int n);
+		void sendColorMsg(const int user_fd, const string &msg, const string &color);
+		void sendError(const int user_fd, const string &reason);
 
-		void setChannel(string channelName);
-		Channel *getChannel(const std::string &channelName);
+		void createChannel(const string &channelName);
+		Channel *getChannel(const string &channelName);
 
-		vector<Channel *> getChannels();
+		vector<Channel *> getChannels() const;
 
 
 };

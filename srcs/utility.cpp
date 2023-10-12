@@ -6,36 +6,59 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:06 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/09 11:49:49 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/12 10:35:56 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utility.hpp"
 
-void error(std::string str, bool quit)
+void error(const string str, bool quit)
 {
-	std::cout << RED_BG << "Error: " << RED << str << RESET << endl;
+	cout << RED_BG << "Error: " << RED << str << RESET << endl;
 	if (quit)
 		exit(EXIT_FAILURE);
 }
 
-string to_string(int n)
+const string toString(const int n)
 {
 	ostringstream str;
 	str << n;
-	string ret = str.str();
-	return (ret);
+	return (str.str());
 }
 
-string timestamp()
+const string timestamp()
 {
-	time_t		now = time(NULL);
-	struct tm	t = *localtime(&now);
+	const time_t	now = time(NULL);
+	const struct tm	t = *localtime(&now);
 	ostringstream str;
 
 	str << "[" << t.tm_hour << ":" << t.tm_min << ":" << t.tm_sec << "] ";
-	string ret = str.str();
-	return (ret);
+
+	return (str.str());
 }
 
-/* ************************************************************************** */
+bool isValidChannelName(const string& name)
+{
+	/*
+	** Name max length is 200 chars
+	** Name must begin with '&' or '#'
+	** '#' -> distributed channel known to all servers on the network
+	** '&' -> channel only available to clients connected to it's server
+	** Can't contain ' ', ascii 7 or ','
+	*/
+	if (name.size() > 200) {
+		error("Channel name too long", CONTINUE);
+		return false;
+	}
+	if (name[0] != '&' && name[0] != '#') {
+		error("Missing \"" + name + "\" &/# channel identifier", CONTINUE);
+		return false;
+	}
+	if (name.find(' ') != string::npos \
+	|| name.find(7) != string::npos \
+	|| name.find(',') != string::npos) {
+		error("Invalid character in name", CONTINUE);
+		return false;
+	}
+	return true;
+}
