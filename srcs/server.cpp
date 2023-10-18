@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/12 11:40:06 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/18 11:48:32 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,6 +291,7 @@ void Server::createChannel(const string &channelName)
 	if (!isValidChannelName(channelName))
 		return;
 
+	cout << GREEN << "creating channel " << YELLOW << channelName << RESET << endl << flush;
 	Channel *channel = new Channel(channelName, this);
 	// _channels.insert( pair<string, Channel *>(channelName, channel));
 	_channels[channelName] = channel;

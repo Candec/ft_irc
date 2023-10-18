@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/12 15:45:53 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/18 11:43:47 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,6 +230,12 @@ Server::joinCmd(User *user, vector<string> words)
 	if (user->getAtChannel() == words[1])
 		return ;
 
+	if (!isValidChannelName(words[1]))
+	{
+		sendColorMsg(user->getFd(), CH_NAMING_ERR, RED);
+		return;
+	}
+
 	// cout << "user wasn't already in channel" << endl << flush;
 	if (!isChannel(words[1]))
 		createChannel(words[1]);
@@ -247,6 +253,7 @@ Server::joinCmd(User *user, vector<string> words)
 	Channel *channel = getChannel(words[1]);
 	user->setChannel(channel);
 	channel->addUser(user);
+
 
 	// Send reply
 	string reply;
