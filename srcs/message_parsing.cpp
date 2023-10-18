@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/18 11:43:47 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/18 12:29:13 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,7 +253,6 @@ Server::joinCmd(User *user, vector<string> words)
 	Channel *channel = getChannel(words[1]);
 	user->setChannel(channel);
 	channel->addUser(user);
-
 
 	// Send reply
 	string reply;
