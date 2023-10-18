@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/18 12:29:13 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/18 22:01:51 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,7 +233,7 @@ Server::joinCmd(User *user, vector<string> words)
 	if (!isValidChannelName(words[1]))
 	{
 		sendColorMsg(user->getFd(), CH_NAMING_ERR, RED);
-		return;
+		return ;
 	}
 
 	// cout << "user wasn't already in channel" << endl << flush;
