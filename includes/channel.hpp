@@ -57,8 +57,8 @@ class Channel
 		char	_status;
 
 		string	_users_max;
-		map<int, string>	_user_mode;
 		map<int, User *>	_users;
+		map<int, string>	_user_mode;
 
 		vector<User *>		_invitations;
 

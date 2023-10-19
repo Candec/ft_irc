@@ -56,7 +56,11 @@ vector<User *> Channel::getUsers() const
 }
 
 
-void Channel::addUser(User *user) { _users[user->getFd()] = user; }
+void Channel::addUser(User *user)
+{
+	_users[user->getFd()] = user;
+	_user_mode[user->getFd()] = "";
+}
 void Channel::removeUser(User *user) { _users.erase(_users.find(user->getFd())); }
 void Channel::removeUser(const string &nick)
 {
