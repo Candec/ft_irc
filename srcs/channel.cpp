@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.hpp"
+#include "../includes/main.hpp"
 
 Channel::Channel() : _mode("n") {}
 Channel::Channel(const string name, Server *server) : _name(name), _mode("n"), _server(server)
@@ -61,15 +61,8 @@ void Channel::addUser(User *user)
 	_users[user->getFd()] = user;
 	_user_mode[user->getFd()] = "";
 }
+
 void Channel::removeUser(User *user) { _users.erase(_users.find(user->getFd())); }
-void Channel::removeUser(const string &nick)
-{
-	for (map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
-		if (i->second->getNick() == nick) {
-			_users.erase(i);
-			return;
-		}
-}
 
 
 bool Channel::isUser(User *user) { return _users.find(user->getFd()) != _users.end(); }

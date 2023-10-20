@@ -6,11 +6,11 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/18 22:01:51 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/20 03:53:35 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.hpp"
+#include "../includes/main.hpp"
 
 struct s_msg
 Server::parseMessage(User *user, const char * const buffer)
@@ -278,15 +278,14 @@ Server::joinCmd(User *user, vector<string> words)
 	reply = user->getNick() + " " + channel->getName() + " :End of /NAMES list";
 	sendMsg(user->getFd(), reply);
 
-	string tmp;
 	if (!user->getCapable())
-		tmp = BLACK + user->getNick() + " joined the channel" + RESET;
+		channel->setLog(YELLOW + user->getNick() + " joined the channel" + RESET);
 	else
-		tmp = user->getNick() + " joined the channel";
-	channel->setLog(tmp);
+		channel->setLog(user->getNick() + " joined the channel");
 
 	// removes the user from the previous channel list of users
-	// prevChannel->removeUser(*user);
+	if (prevChannel)
+		prevChannel->removeUser(user);
 }
 
 void

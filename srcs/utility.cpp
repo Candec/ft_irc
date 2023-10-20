@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "utility.hpp"
+#include "../includes/utility.hpp"
 
 void error(const string str, bool quit)
 {

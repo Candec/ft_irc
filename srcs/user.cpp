@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "user.hpp"
+#include "../includes/user.hpp"
 
 User::User(const int fd, struct sockaddr_in addr, Server *server) : _fd(fd), _status(VERIFY), _previousPing(time(0)), _role("user"), _server(server)
 {

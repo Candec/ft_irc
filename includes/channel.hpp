@@ -96,7 +96,6 @@ class Channel
 
 		void addUser(User *user);
 		void removeUser(User *user);
-		void removeUser(const string &nick);
 
 		bool isUser(User *user);
 		bool isOnChannel(int const &fd);
