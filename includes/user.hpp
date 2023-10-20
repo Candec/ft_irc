@@ -25,10 +25,6 @@ enum UserStatus {
 	OFFLINE
 };
 
-enum UserModes {
-	OPERATOR = 'o'
-};
-
 class User
 {
 	private:
@@ -72,8 +68,12 @@ class User
 		User(const int fd, struct sockaddr_in addr, Server *server);
 		~User();
 
+		enum UserModes {
+			OPERATOR = 'o'
+		};
+
 		string buffer;
-		void sendPrivateMessage(User *To, const string Message);
+		void sendPrivateMessage(User *To, const string &Message);
 		void write(const string Message);
 		void push();
 		bool isRegistered() const;

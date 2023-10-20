@@ -16,6 +16,7 @@
 #include "main.hpp"
 
 # define WELCOME_MSG "Welcome to 42IRC server.\n"
+# define NETWORK_NAME "42IRC"
 # define SEPARATOR_MSG "<++++++++++++++++++++++++++++++>\n"
 # define COMMAND_MSG "Use one of the following commands:"
 # define CMD_LIST_MSG "\nNICK [nickname]\nNAME [name]\nCOLOR [color]\nJOIN [channel]\nKICK [user]"

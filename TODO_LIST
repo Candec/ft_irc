@@ -7,8 +7,10 @@ https://netcat.sourceforge.net/
 
 Roadmap and recommended order:
 --------------------------------------------------------------------------------
-1- Establish a working client/server socket connection, 
-2- Add the signals handling (CTRL+C, CTRL+D, CTRL+Z); 
-3- Client registration system (NICK, USER, PASS), 
-4- Server commands (PING, OPER, KILL...) and 
+1- Establish a working client/server socket connection,
+2- Add the signals handling (CTRL+C, CTRL+D, CTRL+Z);
+3- Client registration system (NICK, USER, PASS),
+4- Server commands (PING, OPER, KILL...) and
 5- Channel operations commands (JOIN, PART, INVITE, KICK, PRIVMSG, NOTICE...).
+
+Handle ERR_INPUTTOOLONG

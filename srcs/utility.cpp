@@ -19,7 +19,8 @@ void error(const string str, bool quit)
 		exit(EXIT_FAILURE);
 }
 
-const string toString(const int n)
+template<typename T>
+const string toString(T n)
 {
 	ostringstream str;
 	str << n;
@@ -46,7 +47,7 @@ bool isValidChannelName(const string& name)
 	** '&' -> channel only available to clients connected to it's server
 	** Can't contain ' ', ascii 7 or ','
 	*/
-	if (name.size() > 200) {
+	if (name.size() > CHANNEL_NAME_MAX_LEN) {
 		error("Channel name too long", CONTINUE);
 		return false;
 	}

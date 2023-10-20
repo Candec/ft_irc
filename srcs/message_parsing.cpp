@@ -26,7 +26,8 @@ Server::parseMessage(User *user, const char * const buffer)
 
 	vector< vector<string> >::iterator line;
 	for (line = lines.begin(); line != lines.end(); line++)
-		lookForCmd(user, *line, msg);
+		lookForCmd(user, Commands::toEnum((*line)[0]), *line, msg);
+		// lookForCmd(user, *line, msg);
 
 	return msg;
 }
@@ -39,6 +40,11 @@ Server::splitBuffer(const char * const buffer)
 	string						line;
 
 	while (getline(lines_iss, line) && !line.empty()) {
+		//? Maybe ignore empty lines but keep parsing
+		//? https://modern.ircdocs.horse/#compatibility-with-incorrect-software
+		// if (line.empty())
+		// 	continue;
+
 		vector<string>	words;
 		istringstream	words_iss(line);
 		string			word;
@@ -83,45 +89,73 @@ expectedArgs(const vector<string> &args, const size_t n)
 }
 
 bool
-Server::isCmd(const string &word)
+Server::isCmd(const string &param)
 {
-	for (size_t i = 0; !Commands[i].empty(); ++i) {
-		if (word == Commands[i])
-			return true;
-	}
+	if (Commands::toEnum(param) != Commands::UNKNOWN)
+		return true;
 	return false;
 }
 
+// void
+// Server::lookForCmd(User *user, vector<string> words, struct s_msg &msg)
+// {
+// 	if (words.empty() || !isCmd(words[0]))
+// 		return;
+
+// 	const string cmd = words[0];
+// 	msg.command = true;
+
+// 	if (!cmd.compare("PASS")) {
+// 		passCmd(user, words);
+
+// 	} else if (!cmd.compare("NICK")) {
+// 		nickCmd(user, words);
+
+// 	} else if (!cmd.compare("USER")) {
+// 		userCmd(user, words);
+
+// 	} else if (!cmd.compare("COLOR")) {
+// 		colorCmd(user, words);
+
+// 	} else if (!cmd.compare("JOIN")) {
+// 		joinCmd(user, words);
+
+// 	} else if (!cmd.compare("QUIT")) {
+// 		quitCmd(user);
+
+// 	} else if (!cmd.compare("CAP")) {
+// 		capCmd(user, words);
+
+// 	}
+// }
+
 void
-Server::lookForCmd(User *user, vector<string> words, struct s_msg &msg)
+Server::lookForCmd(User *user, e_Cmds cmd, vector<string> params, struct s_msg &msg)
 {
-	if (words.empty() || !isCmd(words[0]))
+	if (params.empty())
 		return;
 
-	const string cmd = words[0];
+	params.erase(params.begin());
 	msg.command = true;
 
-	if (!cmd.compare("PASS")) {
-		passCmd(user, words);
-
-	} else if (!cmd.compare("NICK")) {
-		nickCmd(user, words);
-
-	} else if (!cmd.compare("USER")) {
-		userCmd(user, words);
-
-	} else if (!cmd.compare("COLOR")) {
-		colorCmd(user, words);
-
-	} else if (!cmd.compare("JOIN")) {
-		joinCmd(user, words);
-
-	} else if (!cmd.compare("QUIT")) {
-		quitCmd(user);
-
-	} else if (!cmd.compare("CAP")) {
-		capCmd(user, words);
-
+	switch (cmd)
+	{
+	case Commands::PASS:
+		return passCmd(user, params);
+	case Commands::NICK:
+		return nickCmd(user, params);
+	case Commands::USER:
+		return userCmd(user, params);
+	case Commands::COLOR:
+		return colorCmd(user, params);
+	case Commands::JOIN:
+		return joinCmd(user, params);
+	case Commands::QUIT:
+		return quitCmd(user);
+	case Commands::CAP:
+		return capCmd(user, params);
+	default:
+		return;
 	}
 }
 
@@ -152,20 +186,51 @@ Server::passCmd(User *user, const vector<string> words)
 	user->setStatus(ACCEPT);
 }
 
+// /*
+// * Command: NICK
+// * Parameters: <nickname>
+// */
+// void
+// Server::nickCmd(User *user, const vector<string> &words)
+// {
+// 	if (words.size() != 2) {
+// 		sendMsg(user->getFd(), ERR_NONICKNAMEGIVEN);
+// 		return;
+// 	}
+
+// 	// Sanitize nickname
+// 	const string nickname = words[1];
+// 	if (nickname[0] == '#' \
+// 	|| nickname[0] == ':' \
+// 	|| hasSpace(nickname)) {
+// 		sendMsg(user->getFd(), ERR_ERRONEUSNICKNAME);
+// 		return;
+// 	}
+
+// 	// Find duplicate
+// 	for (map<int, User *>::const_iterator it = _users.begin(); it != _users.end(); ++it)
+// 		if (it->second->getNick() == nickname) {
+// 			sendMsg(user->getFd(), ERR_NICKNAMEINUSE);
+// 			return;
+// 		}
+
+// 	user->setNick(nickname);
+// }
+
 /*
 * Command: NICK
 * Parameters: <nickname>
 */
 void
-Server::nickCmd(User *user, const vector<string> &words)
+Server::nickCmd(User *user, const vector<string> &params)
 {
-	if (words.size() != 2) {
-		sendMsg(user->getFd(), ERR_NONICKNAMEGIVEN);
+	if (params.empty()) {
+		sendError(ERR_NONICKNAMEGIVEN, user, "", "", "NICK", params);
 		return;
 	}
 
 	// Sanitize nickname
-	const string nickname = words[1];
+	const string nickname = params[0];
 	if (nickname[0] == '#' \
 	|| nickname[0] == ':' \
 	|| hasSpace(nickname)) {
@@ -176,21 +241,52 @@ Server::nickCmd(User *user, const vector<string> &words)
 	// Find duplicate
 	for (map<int, User *>::const_iterator it = _users.begin(); it != _users.end(); ++it)
 		if (it->second->getNick() == nickname) {
-			sendMsg(user->getFd(), ERR_NICKNAMEINUSE);
+			sendError(ERR_NICKNAMEINUSE, user, "", "", "NICK", params);
 			return;
 		}
 
 	user->setNick(nickname);
 }
 
+// /*
+// * Command: USER
+// * Parameters: <username> 0 * <realname>
+// */
+// void
+// Server::userCmd(User *user, const vector<string> &words)
+// {
+// 	const size_t n_args = words.size();
+
+// 	if (user->isRegistered()) {
+// 		sendMsg(user->getFd(), ERR_ALREADYREGISTERED);
+// 		return;
+// 	}
+
+// 	if (n_args < 5) {
+// 		sendMsg(user->getFd(), ERR_NEEDMOREPARAMS);
+// 		return;
+// 	}
+
+// 	user->setUser(words[1]);
+// 	user->setHostname(words[2]);
+// 	user->setServername(words[3]);
+
+// 	string word = words[4];
+// 	for (size_t i = 5; i < n_args; ++i)
+// 		word += " " + words[i];
+// 	if (word[0] == ':')
+// 		word.erase(word.begin());
+// 	user->setName(word);
+// }
+
 /*
 * Command: USER
 * Parameters: <username> 0 * <realname>
 */
 void
-Server::userCmd(User *user, const vector<string> &words)
+Server::userCmd(User *user, const vector<string> &params)
 {
-	const size_t n_args = words.size();
+	const size_t n_args = params.size();
 
 	if (user->isRegistered()) {
 		sendMsg(user->getFd(), ERR_ALREADYREGISTERED);
@@ -202,17 +298,96 @@ Server::userCmd(User *user, const vector<string> &words)
 		return;
 	}
 
-	user->setUser(words[1]);
-	user->setHostname(words[2]);
-	user->setServername(words[3]);
+	user->setUser(params[1]);
+	user->setHostname(params[2]);
+	user->setServername(params[3]);
 
-	string word = words[4];
+	string word = params[4];
 	for (size_t i = 5; i < n_args; ++i)
-		word += " " + words[i];
+		word += " " + params[i];
 	if (word[0] == ':')
 		word.erase(word.begin());
 	user->setName(word);
 }
+
+// /*
+// * Command: JOIN
+// * Parameters: <channel>{,<channel>} [<key>{,<key>}]
+// * Alt Params: 0
+// */
+// void
+// Server::joinCmd(User *user, vector<string> words)
+// {
+// 	// cout << "User " << user->getNick() << " is going to join the channel" << endl << flush;
+// 	if (!expectedArgs(words, 2))
+// 		return ;
+
+// 	string channelName = words[1];
+
+// 	// cout << "args are fine" << endl << flush;
+
+// 	// User is already in said channel
+// 	if (user->getAtChannel() == channelName)
+// 		return ;
+
+// 	if (!isValidChannelName(channelName))
+// 	{
+// 		sendColorMsg(user->getFd(), CH_NAMING_ERR, RED);
+// 		return;
+// 	}
+
+// 	// cout << "user wasn't already in channel" << endl << flush;
+// 	if (!isChannel(channelName))
+// 		createChannel(channelName);
+
+// 	// cout << "back in the joinCmd" << endl << flush;
+// 	//leaving channel msg
+// 	Channel *prevChannel = getChannel(user->getAtChannel());
+// 	if (prevChannel)
+// 		prevChannel->setLog(user->getNick() + " left " + prevChannel->getName());
+
+// 	//joining channel msg
+// 	// cout << "user fd: " << user->getFd() << endl << flush;
+// 	sendClear(user->getFd());
+// 	user->setAtChannel(channelName);
+// 	Channel *channel = getChannel(channelName);
+// 	user->setChannel(channel);
+// 	channel->addUser(user);
+
+// 	// Send reply
+// 	string reply;
+// 	// JOIN ACK
+// 	reply = ":" + user->getNick() + " JOIN " + channel->getName();
+// 	sendMsg(user->getFd(), reply);
+// 	// Channel topic
+// 	if (!channel->getTopic().empty()) {
+// 		reply = user->getNick() + " " + channel->getName() + " :" + channel->getTopic();
+// 		sendMsg(user->getFd(), reply);
+// 	}
+// 	// List of users in the channel
+// 	reply = user->getNick() + " " + channel->getStatus() + " " + channel->getName() + " :";
+// 	const vector<User *> users = channel->getUsers();
+// 	for (vector<User *>::const_iterator i = users.begin(); i != users.end(); ++i) {
+// 		if (channel->getUserModes(*i) == "o")
+// 			reply += '@';
+// 		reply += (*i)->getNick();
+// 		if (i + 1 != users.end())
+// 			reply += ' ';
+// 		sendMsg(user->getFd(), reply);
+// 	}
+// 	reply = user->getNick() + " " + channel->getName() + " :End of /NAMES list";
+// 	sendMsg(user->getFd(), reply);
+
+// 	string tmp;
+// 	if (!user->getCapable())
+// 		tmp = BLACK + user->getNick() + " joined the channel" + RESET;
+// 	else
+// 		tmp = user->getNick() + " joined the channel";
+// 	channel->setLog(tmp);
+
+// 	// removes the user from the previous channel list of users
+// 	// prevChannel->removeUser(*user);
+// }
 
 /*
 * Command: JOIN
@@ -220,25 +395,28 @@ Server::userCmd(User *user, const vector<string> &words)
 * Alt Params: 0
 */
 void
-Server::joinCmd(User *user, vector<string> words)
+Server::joinCmd(User *user, vector<string> params)
 {
 	// cout << "User " << user->getNick() << " is going to join the channel" << endl << flush;
-	if (!expectedArgs(words, 2))
-		return ;
+
+
+	string channelName = params[1];
 
 	// cout << "args are fine" << endl << flush;
-	if (user->getAtChannel() == words[1])
+
+	// User is already in said channel
+	if (user->getAtChannel() == channelName)
 		return ;
 
-	if (!isValidChannelName(words[1]))
+	if (!isValidChannelName(channelName))
 	{
 		sendColorMsg(user->getFd(), CH_NAMING_ERR, RED);
 		return;
 	}
 
 	// cout << "user wasn't already in channel" << endl << flush;
-	if (!isChannel(words[1]))
-		createChannel(words[1]);
+	if (!isChannel(channelName))
+		createChannel(channelName);
 
 	// cout << "back in the joinCmd" << endl << flush;
 	//leaving channel msg
@@ -249,8 +427,8 @@ Server::joinCmd(User *user, vector<string> words)
 	//joining channel msg
 	// cout << "user fd: " << user->getFd() << endl << flush;
 	sendClear(user->getFd());
-	user->setAtChannel(words[1]);
-	Channel *channel = getChannel(words[1]);
+	user->setAtChannel(channelName);
+	Channel *channel = getChannel(channelName);
 	user->setChannel(channel);
 	channel->addUser(user);
 
@@ -268,7 +446,7 @@ Server::joinCmd(User *user, vector<string> words)
 	reply = user->getNick() + " " + channel->getStatus() + " " + channel->getName() + " :";
 	const vector<User *> users = channel->getUsers();
 	for (vector<User *>::const_iterator i = users.begin(); i != users.end(); ++i) {
-		if (channel->getUserMode(*i) == "o")
+		if (channel->isOperator(*i))
 			reply += '@';
 		reply += (*i)->getNick();
 		if (i + 1 != users.end())

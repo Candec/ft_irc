@@ -13,21 +13,14 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
+# include "commands.hpp"
+using Commands::e_Cmds;
+
 # include "main.hpp"
 
 enum Switch { OFF, ON };
 
 # define CONFIG_FILE "./Configuration/irc.config"
-
-const string Commands[7] = {
-	"PASS",
-	"NICK",
-	"USER",
-	"COLOR",
-	"JOIN",
-	"QUIT",
-	"CAP"
-};
 
 struct s_msg {
 	User	*src;
@@ -41,6 +34,7 @@ struct s_msg {
 	bool	away;
 };
 
+extern Server *g_server;
 class Server
 {
 	private:
@@ -87,8 +81,9 @@ class Server
 
 		struct s_msg parseMessage(User *user, const char * const buffer);
 		vector< vector<string> >splitBuffer(const char * const buffer);
-		bool isCmd(const string &word);
-		void lookForCmd(User *user, vector<string> words, struct s_msg &msg);
+		bool isCmd(const string &param);
+		// void lookForCmd(User *user, vector<string> words, struct s_msg &msg);
+		void lookForCmd(User *user, e_Cmds cmd, vector<string> params, struct s_msg &msg);
 		bool hasSpace(const string &str) const;
 
 		void receiveMsg(vector<pollfd>::const_iterator it);
@@ -120,10 +115,11 @@ class Server
 		void setPassword(const string &password);
 
 		void sendClear(const int user_fd);
+		void sendMsg(const User *user, const string &msg);
 		void sendMsg(const int user_fd, const string &msg);
 		void sendMsg(const int user_fd, const int n);
 		void sendColorMsg(const int user_fd, const string &msg, const string &color);
-		void sendError(const int user_fd, const string &reason);
+		void sendErrFatal(const int user_fd, const string &reason);
 
 		void createChannel(const string &channelName);
 		Channel *getChannel(const string &channelName);

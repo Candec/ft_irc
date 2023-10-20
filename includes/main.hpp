@@ -93,13 +93,12 @@ using namespace std;
 # include <cstring>
 
 // # include "history.hpp"
+# include "commands.hpp"
 # include "user.hpp"
 # include "channel.hpp"
 # include "server.hpp"
 # include "utility.hpp"
 # include "message.hpp"
 # include "numericreplies.hpp"
-
-
 
 #endif

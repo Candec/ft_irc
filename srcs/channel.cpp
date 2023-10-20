@@ -12,8 +12,8 @@
 
 #include "main.hpp"
 
-Channel::Channel() : _mode("n") {}
-Channel::Channel(const string name, Server *server) : _name(name), _mode("n"), _server(server)
+Channel::Channel() : _modes("n") {}
+Channel::Channel(const string name, Server *server) : _name(name), _modes("n"), _server(server)
 {
 	_type = _name[0];
 
@@ -27,26 +27,26 @@ Channel::~Channel() {} // ? Missing any handling of players' current channel?
 
 // Setters
 void Channel::setName(const string name) { _name = name; }
-void Channel::setMode(const string mode) { _mode = mode; }
+void Channel::setMode(const string modes) { _modes = modes; }
 void Channel::setTopic(const string topic) { _topic = topic; }
 void Channel::setKey(const string key) { _key = key; }
 void Channel::setType(const char type) { _type = type; }
 void Channel::setStatus(const char status) { _status = status; }
 
-void Channel::setMaxUsers(const string users_max) { _users_max = users_max; }
-void Channel::setUserMode(const User *user, string mode) { _user_mode[user->getFd()] = mode; }
+void Channel::setMaxUsers(const uint users_max) { _users_max = users_max; }
+// void Channel::setUserModes(const User *user, const string modes) { _user_modes.at(user->getFd()) = modes; }
 
 // Getters
-const string Channel::getName() const { return _name; }
-const string Channel::getMode() const { return _mode; }
-const string Channel::getTopic() const { return _topic; }
-const string Channel::getKey() const { return _key; }
-char Channel::getType() const { return _type; }
-char Channel::getStatus() const { return _status; }
+const string	Channel::getName() const { return _name; }
+const string	Channel::getMode() const { return _modes; }
+const string	Channel::getTopic() const { return _topic; }
+const string	Channel::getKey() const { return _key; }
+char			Channel::getType() const { return _type; }
+char			Channel::getStatus() const { return _status; }
 
-const string Channel::getMaxUsers() const { return _users_max; }
-const string Channel::getUserMode(User *user) const { return _user_mode.at(user->getFd()); }
-vector<User *> Channel::getUsers() const
+uint			Channel::getMaxUsers() const { return _users_max; }
+// const string	Channel::getUserModes(const User *user) const { return _user_modes.at(user->getFd()); }
+vector<User *>	Channel::getUsers() const
 {
 	vector<User *> users = vector<User *>();
 
@@ -59,7 +59,8 @@ vector<User *> Channel::getUsers() const
 void Channel::addUser(User *user)
 {
 	_users[user->getFd()] = user;
-	_user_mode[user->getFd()] = "";
+	_operators[user] = false;
+	// _user_modes[user->getFd()] = "";
 }
 void Channel::removeUser(User *user) { _users.erase(_users.find(user->getFd())); }
 void Channel::removeUser(const string &nick)
@@ -75,11 +76,12 @@ void Channel::removeUser(const string &nick)
 bool Channel::isUser(User *user) { return _users.find(user->getFd()) != _users.end(); }
 bool Channel::isOnChannel(int const &fd)
 {
-	 for (map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
+	for (map<int, User *>::const_iterator i = _users.begin(); i != _users.end(); ++i)
 		if (i->second->getFd() == fd)
 			return true;
 	return false;
 }
+bool Channel::isOperator(User *user) { return _operators.at(user); }
 
 
 

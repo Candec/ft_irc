@@ -63,31 +63,31 @@ void User::setCapable(bool capable) { _capable = capable; }
 
 // Getters
 
-int User::getFd() const { return (_fd); }
-int User::getStatus() const { return (_status); }
-time_t User::getPreviousPing() const { return (_previousPing); }
-const string User::getHostaddr() const { return (_hostaddr); }
-const string User::getHostname() const { return (_hostname); }
-const string User::getServername() const { return (_servername); }
-const string User::getHost() const { return (_hostname.size() ? _hostname : _hostaddr); } // Not in use
-const string User::getNick() const
+int				User::getFd() const { return (_fd); }
+int				User::getStatus() const { return (_status); }
+time_t			User::getPreviousPing() const { return (_previousPing); }
+const string	User::getHostaddr() const { return (_hostaddr); }
+const string	User::getHostname() const { return (_hostname); }
+const string	User::getServername() const { return (_servername); }
+const string	User::getHost() const { return (_hostname.size() ? _hostname : _hostaddr); } // Not in use
+const string	User::getNick() const
 {
 	if (!_color.empty())
 		return (_color + _nick + RESET);
 	return (_nick);
 }
-const string User::getUser() const { return (_user); }
-const string User::getName() const { return (_name); }
-const string User::getRole() const { return (_role); }
-const string User::getColor() const { return (_color); }
-const string User::getPreviousNick() const { return (_previousNick); }
-const string User::getAtChannel() const { return (_atChannel); }
-Channel * User::getChannel() const { return (_channel); }
-uint16_t User::getPort() const { return ntohs(_hostport); }
-bool User::getCapable() const { return (_capable); }
+const string	User::getUser() const { return (_user); }
+const string	User::getName() const { return (_name); }
+const string	User::getRole() const { return (_role); }
+const string	User::getColor() const { return (_color); }
+const string	User::getPreviousNick() const { return (_previousNick); }
+const string	User::getAtChannel() const { return (_atChannel); }
+Channel *		User::getChannel() const { return (_channel); }
+uint16_t		User::getPort() const { return ntohs(_hostport); }
+bool			User::getCapable() const { return (_capable); }
 
 // Functions
-void User::sendPrivateMessage(User *To, const string Message) { To->write(":" + Message); }
+void User::sendPrivateMessage(User *To, const string &Message) { To->write(":" + Message); }
 void User::write(const string Message) { _waitToSend.push_back(Message); }
 
 void User::push()

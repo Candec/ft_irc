@@ -18,6 +18,8 @@
 class Server;
 class User;
 
+# define CHANNEL_NAME_MAX_LEN 200
+
 // Maybe later change enums to arrays for pattern matching
 
 enum ChannelTypes {
@@ -35,7 +37,7 @@ enum ChannelModes {
 	INVITE_ONLY = 'i',
 	PROTECTED_TOPIC = 't',
 	KEY_CHANNEL = 'k',
-	// OPERATOR = 'o',
+	OPERATOR = 'o',
 	CLIENT_LIMIT = 'l'
 };
 
@@ -50,15 +52,16 @@ class Channel
 {
 	private:
 		string	_name;
-		string	_mode;
+		string	_modes;
 		string	_topic;
 		string	_key; // Password
 		char	_type;
 		char	_status;
 
-		string	_users_max;
+		uint	_users_max;
 		map<int, User *>	_users;
-		map<int, string>	_user_mode;
+		map<User *, bool>	_operators;
+		// map<int, string>	_user_modes;
 
 		vector<User *>		_invitations;
 
@@ -78,21 +81,21 @@ class Channel
 		void setType(const char type);
 		void setStatus(const char status);
 
-		void setMaxUsers(const string users_max);
-		void setUserMode(const User *user, string mode);
+		void setMaxUsers(const uint users_max);
+		// void setUserModes(const User *user, const string mode);
 		void setHistory(const string line);
 
 		// Getters
-		const string getName() const;
-		const string getMode() const;
-		const string getTopic() const;
-		const string getKey() const;
-		char getType() const;
-		char getStatus() const;
+		const string	getName() const;
+		const string	getMode() const;
+		const string	getTopic() const;
+		const string	getKey() const;
+		char			getType() const;
+		char			getStatus() const;
 
-		const string getMaxUsers() const;
-		const string getUserMode(User *user) const;
-		vector<User *> getUsers() const;
+		uint			getMaxUsers() const;
+		// const string	getUserModes(const User *user) const;
+		vector<User *>	getUsers() const;
 
 		void addUser(User *user);
 		void removeUser(User *user);
@@ -100,6 +103,7 @@ class Channel
 
 		bool isUser(User *user);
 		bool isOnChannel(int const &fd);
+		bool isOperator(User *user);
 
 		void addInvitedUser(User *user);
 		bool isInvitedUser(User *user) const;

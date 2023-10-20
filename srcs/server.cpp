@@ -59,6 +59,8 @@ Server::Server() : _upTime(time(0))
 
 Server::Server(const char * const port, const string password) : _upTime(time(0))
 {
+	g_server = this;
+
 	setPort(port);
 	setPassword(password);
 	setup();
@@ -228,10 +230,7 @@ vector<User *> Server::getUsers() const
 	return (usersV);
 }
 
-Channel *Server::getChannel(const string &channelName)
-{
-	return (_channels[channelName]);
-}
+Channel *Server::getChannel(const string &channelName) { return _channels.at(channelName); }
 
 vector<Channel *> Server::getChannels() const
 {
@@ -471,16 +470,22 @@ void Server::sendClear(const int user_fd)
 		error("Error sending message", CONTINUE);
 }
 
+void Server::sendMsg(const User *user, const string &msg)
+{
+	if (send(user->getFd(), (msg + " " + MESSAGE_END).c_str(), msg.size() + 2, 0) == SENDING_ERROR)
+		error("Error sending message", CONTINUE);
+}
+
 void Server::sendMsg(const int user_fd, const string &msg)
 {
-	if (send(user_fd, (msg + MESSAGE_END).c_str(), msg.size() + 2, 0) == SENDING_ERROR)
+	if (send(user_fd, (msg + " " + MESSAGE_END).c_str(), msg.size() + 2, 0) == SENDING_ERROR)
 		error("Error sending message", CONTINUE);
 }
 
 void Server::sendMsg(const int user_fd, const int n)
 {
 	const string msg = toString(n);
-	if (send(user_fd, (msg + MESSAGE_END).c_str(), msg.size() + 2, 0) == SENDING_ERROR)
+	if (send(user_fd, (msg + " " + MESSAGE_END).c_str(), msg.size() + 2, 0) == SENDING_ERROR)
 		error("Error sending message", CONTINUE);
 }
 
@@ -503,7 +508,7 @@ void Server::sendColorMsg(const int user_fd, const string &msg, const string &co
 This message is sent from a server to a client to report a fatal error, before terminating the client’s connection
 This MUST only be used to report fatal errors. Regular errors should use the appropriate numerics or the IRCv3 standard replies framework.
 */
-void Server::sendError(const int user_fd, const string &reason)
+void Server::sendErrFatal(const int user_fd, const string &reason)
 {
 	sendMsg(user_fd, "ERROR :" + reason);
 	delUser(_users.at(user_fd));
@@ -558,19 +563,19 @@ void Server::receiveMsg(vector<pollfd>::const_iterator it)
 
 
 
-void Server::printMsg(vector<pollfd>::const_iterator it)
-{
-	cout << timestamp();
+// void Server::printMsg(vector<pollfd>::const_iterator it)
+// {
+// 	cout << timestamp();
 
-	const int	user_fd = it->fd;
-	User		*user = _users.at(user_fd);
+// 	const int	user_fd = it->fd;
+// 	User		*user = _users.at(user_fd);
 
-	cout << MAGENTA << user->getNick() << WHITE << " @ FD# " << user_fd << ":" << endl;
-	cout << user->buffer;
-	cout << "*end of message*" << endl;
+// 	cout << MAGENTA << user->getNick() << WHITE << " @ FD# " << user_fd << ":" << endl;
+// 	cout << user->buffer;
+// 	cout << "*end of message*" << endl;
 
-	user->buffer.clear();
-}
+// 	user->buffer.clear();
+// }
 
 void Server::printMsg2(const int user_fd, const char *msg)
 {
