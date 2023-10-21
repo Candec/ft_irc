@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 17:05:34 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/12 13:28:32 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/21 10:03:41 by tpereira         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ htonl, ntohs, ntohl, inet_addr, inet_ntoa, send,
 recv, signal, sigaction, lseek, fstat, fcntl, poll
 */
 
-using namespace std;
 
 # include <string>
 # include <map>
@@ -100,6 +99,17 @@ using namespace std;
 # include "message.hpp"
 # include "numericreplies.hpp"
 
+using std::map;
+using std::string;
+using std::vector;
+using std::ostringstream;
+using std::cout;
+using std::endl;
+using std::flush;
+using std::ifstream;
+using std::ios;
+using std::istringstream;
+using std::pair;
 
 
 #endif

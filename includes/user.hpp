@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/12 15:45:59 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/21 10:03:41 by tpereira         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,17 @@
 # define USER_HPP
 
 # include "main.hpp"
+using std::map;
+using std::string;
+using std::vector;
+using std::ostringstream;
+using std::cout;
+using std::endl;
+using std::flush;
+using std::ifstream;
+using std::ios;
+using std::istringstream;
+using std::pair;
 
 class Server;
 class Channel;
