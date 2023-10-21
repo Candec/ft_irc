@@ -6,7 +6,7 @@
 /*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/21 10:09:52 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/10/21 10:22:14 by tpereira         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,7 +230,10 @@ vector<User *> Server::getUsers() const
 
 Channel *Server::getChannel(const string &channelName)
 {
-	return (_channels[channelName]);
+    map<string, Channel *>::const_iterator it = _channels.find(channelName);
+    if (it == _channels.end())
+        return NULL;
+    return _channels.at(channelName);
 }
 
 vector<Channel *> Server::getChannels() const

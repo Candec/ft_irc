@@ -6,7 +6,7 @@
 /*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/07 11:06:59 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/21 10:03:41 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/10/21 10:14:49 by tpereira         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,6 @@
 # define MESSAGE_HPP
 
 #include "main.hpp"
-using std::map;
-using std::string;
-using std::vector;
-using std::ostringstream;
-using std::cout;
-using std::endl;
-using std::flush;
-using std::ifstream;
-using std::ios;
-using std::istringstream;
-using std::pair;
 
 # define WELCOME_MSG "Welcome to 42IRC server.\n"
 # define SEPARATOR_MSG "<++++++++++++++++++++++++++++++>\n"
