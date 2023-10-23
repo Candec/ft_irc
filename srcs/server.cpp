@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/21 10:22:14 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/10/23 17:47:31 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,17 +43,17 @@ Server::Server() : _upTime(time(0))
 		if (line.substr(0, line.find(":")) == "timeout")
 			_timeout = atoi(line.substr(1, line.find(":")).c_str());
 
-		if (line.substr(0, line.find(":")) == "default_channels")
-		{
-			string channel;
-			size_t pos = 0;
-			while ((pos = line.find(',')) != string::npos)
-			{
-				channel = line.substr(0, pos);
-				createChannel(channel);
-				line.erase(0, pos + 1);
-			}
-		}
+		// if (line.substr(0, line.find(":")) == "default_channels")
+		// {
+		// 	string channel;
+		// 	size_t pos = 0;
+		// 	while ((pos = line.find(',')) != string::npos)
+		// 	{
+		// 		channel = line.substr(0, pos);
+		// 		createChannel(channel);
+		// 		line.erase(0, pos + 1);
+		// 	}
+		// }
 	}
 }
 
@@ -101,20 +101,20 @@ void Server::parseConfig()
 		if (line.substr(0, line.find(":")) == "timeout")
 			_timeout = atoi(line.erase(0, line.find(":") + 1).c_str());
 
-		if (line.substr(0, line.find(":")) == "default_channels")
-		{
-			string channel;
-			size_t pos = 0;
-			line.erase(0, line.find(":") + 1);
-			while ((pos = line.find(',')) != string::npos)
-			{
-				channel = line.substr(0, pos);
-				createChannel(channel);
-				line.erase(0, pos + 1);
-			}
-			channel = line.substr(0, pos);
-			createChannel(channel);
-		}
+		// if (line.substr(0, line.find(":")) == "default_channels")
+		// {
+		// 	string channel;
+		// 	size_t pos = 0;
+		// 	line.erase(0, line.find(":") + 1);
+		// 	while ((pos = line.find(',')) != string::npos)
+		// 	{
+		// 		channel = line.substr(0, pos);
+		// 		createChannel(channel);
+		// 		line.erase(0, pos + 1);
+		// 	}
+		// 	channel = line.substr(0, pos);
+		// 	createChannel(channel);
+		// }
 	}
 }
 
@@ -289,16 +289,17 @@ void Server::createUser()
 		error("Failed shutdown of receptions on listening socket", CONTINUE);
 }
 
-void Server::createChannel(const string &channelName)
+void Server::createChannel(const string &channelName, User *user)
 {
 	if (!isValidChannelName(channelName))
 		return;
 
 	cout << GREEN << "creating channel " << YELLOW << channelName << RESET << endl << flush;
 	Channel *channel = new Channel(channelName, this);
-	// _channels.insert( pair<string, Channel *>(channelName, channel));
 	_channels[channelName] = channel;
-	// cout << "channel [ mem: " << _channels[channelName] << " | << name: " << _channels[channelName]->getName() << " ] created" << endl << flush;
+
+	cout << "setting operator" << endl;
+	channel->setUserMode(user, "o");
 }
 
 

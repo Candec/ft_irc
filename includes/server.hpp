@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/21 10:16:00 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/10/23 17:33:04 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,13 @@ enum Switch { OFF, ON };
 
 # define CONFIG_FILE "./Configuration/irc.config"
 
-const string Commands[7] = {
+const string Commands[8] = {
 	"PASS",
 	"NICK",
 	"USER",
 	"COLOR",
 	"JOIN",
+	"TOPIC",
 	"QUIT",
 	"CAP"
 };
@@ -89,7 +90,6 @@ class Server
 		vector< vector<string> >splitBuffer(const char * const buffer);
 		bool isCmd(const string &word);
 		void lookForCmd(User *user, vector<string> words, struct s_msg &msg);
-		bool hasSpace(const string &str) const;
 
 		void receiveMsg(vector<pollfd>::const_iterator it);
 		int receiveMsg2(const int user_fd);
@@ -104,8 +104,12 @@ class Server
 		void userCmd(User *user, const vector<string> &words);
 		void joinCmd(User *user, vector<string> words);
 		void colorCmd(User *user, const vector<string> &words);
-		void quitCmd(User *user);
 		void capCmd(User *user, vector<string> &words);
+		void kickCmd(User *user, vector<string> &words);
+		void inviteCmd(User *user, vector<string> &words);
+		void topicCmd(User *user, vector<string> &words);
+		void modeCmd(User *user, vector<string> &words);
+		void quitCmd(User *user);
 
 	public:
 		Server();
@@ -125,7 +129,7 @@ class Server
 		void sendColorMsg(const int user_fd, const string &msg, const string &color);
 		void sendError(const int user_fd, const string &reason);
 
-		void createChannel(const string &channelName);
+		void createChannel(const string &channelName, User *user);
 		Channel *getChannel(const string &channelName);
 
 		vector<Channel *> getChannels() const;

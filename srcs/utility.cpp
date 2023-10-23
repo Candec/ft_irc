@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:06 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/18 11:48:08 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/23 13:38:22 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,13 @@ const string toString(const int n)
 	ostringstream str;
 	str << n;
 	return (str.str());
+}
+
+// Checks for ASCII space withing given string
+bool
+hasSpace(const string &str)
+{
+	return (str.find(' ') != string::npos);
 }
 
 const string timestamp()

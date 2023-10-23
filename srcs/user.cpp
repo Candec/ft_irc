@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/21 10:03:55 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/10/23 18:28:43 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,7 @@ User::User(const int fd, struct sockaddr_in addr, Server *server) : _fd(fd), _st
 
 User::~User() { close(_fd); }
 
-
-
 //Setters
-
 void User::setPassword(const string passwd) { _password = passwd; }
 void User::setStatus(const int status) { _status = status; }
 void User::setPreviousPing(const time_t ping) { _previousPing = ping; }
@@ -60,10 +57,7 @@ void User::setAtChannel(const string atChannel)
 void User::setChannel(Channel *channel) { _channel = channel; }
 void User::setCapable(bool capable) { _capable = capable; }
 
-
-
 // Getters
-
 int User::getFd() const { return (_fd); }
 int User::getStatus() const { return (_status); }
 time_t User::getPreviousPing() const { return (_previousPing); }
@@ -113,4 +107,15 @@ bool User::isRegistered() const
 	return (!_user.empty() \
 		|| !_hostname.empty() \
 		|| !_servername.empty());
+}
+
+bool User::isOperator()
+{
+	cout << "isOP User mode [ " << _fd << " ]: " << _channel->getUserMode(_fd) << endl;
+	if (_channel->getUserMode(_fd) != "o")
+	{
+		_server->sendMsg(_fd, ERR_CHANOPRIVSNEEDED);
+		return (false);
+	}
+	return (true);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 17:05:34 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/21 10:03:41 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/10/23 17:25:02 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ recv, signal, sigaction, lseek, fstat, fcntl, poll
 # include <fstream>
 # include <sstream>
 
+
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>
@@ -109,6 +110,7 @@ using std::flush;
 using std::ifstream;
 using std::ios;
 using std::istringstream;
+using std::stringstream;
 using std::pair;
 
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   numericreplies.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:20:00 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/12 16:21:26 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/23 16:42:22 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,9 @@
 # define ERR_NEEDMOREPARAMS 461
 # define ERR_ALREADYREGISTERED 462
 # define ERR_PASSWDMISMATCH 464
+
+# define ERR_NOPRIVILEGES 481
+# define ERR_CHANOPRIVSNEEDED 482
+
 
 #endif

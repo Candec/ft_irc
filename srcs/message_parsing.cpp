@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/21 10:02:43 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/10/23 17:52:59 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,20 +53,6 @@ Server::splitBuffer(const char * const buffer)
 
 	return lines;
 }
-
-// template <typename T>
-// bool expectedArgs(T args, size_t n)
-// {
-// 	if (args.size() == n)
-// 		return(true);
-
-// 	error(args, CONTINUE);
-// 	if (args.size() > n)
-// 		error("too many arguments", CONTINUE);
-// 	else
-// 		error("not enough arguments", CONTINUE);
-// 	return(false);
-// }
 
 static bool
 expectedArgs(const vector<string> &args, const size_t n)
@@ -122,7 +108,11 @@ Server::lookForCmd(User *user, vector<string> words, struct s_msg &msg)
 	} else if (!cmd.compare("CAP")) {
 		capCmd(user, words);
 
+	} else if (!cmd.compare("TOPIC")) {
+		topicCmd(user, words);
+
 	}
+
 }
 
 
@@ -140,7 +130,7 @@ Server::passCmd(User *user, const vector<string> words)
 	if (words.size() < 2) {
 		sendMsg(user->getFd(), ERR_NEEDMOREPARAMS);
 		return;
-	} else if (!expectedArgs(words, 2)) // There's a numeric reply for roo little but not too many
+	} else if (!expectedArgs(words, 2)) // There's a numeric reply for too little but not too many
 		return;
 
 	if (words[1] != _password) {
@@ -238,7 +228,7 @@ Server::joinCmd(User *user, vector<string> words)
 
 	// cout << "user wasn't already in channel" << endl << flush;
 	if (!isChannel(words[1]))
-		createChannel(words[1]);
+		createChannel(words[1], user);
 
 	// cout << "back in the joinCmd" << endl << flush;
 	//leaving channel msg
@@ -351,9 +341,42 @@ Server::capCmd(User *user, vector<string> &words)
 		user->setCapable(true);
 }
 
-// Checks for ASCII space withing given string
-bool
-Server::hasSpace(const string &str) const
+// void
+// Server::kickCmd(User *user, vector<string> &words)
+// {
+
+// }
+
+// void
+// Server::inviteCmd(User *user, vector<string> &words)
+// {
+
+// }
+
+void
+Server::topicCmd(User *user, vector<string> &words)
 {
-	return (str.find(' ') != string::npos);
+	// Checks there is text to set at the topic
+	if (words.empty()) {
+		sendMsg(user->getFd(), ERR_NEEDMOREPARAMS);
+		return;
+	}
+
+	if (!user->isOperator())
+		return ;
+
+	Channel *channel = user->getChannel();
+	string topic;
+
+	for (vector<string>::const_iterator i = words.begin(); i != words.end(); ++i)
+		topic += *i;
+	
+	cout << topic << endl << flush;
+	channel->setTopic(topic);
 }
+
+// void
+// Server::modeCmd(User *user, vector<string> &words)
+// {
+
+// }
