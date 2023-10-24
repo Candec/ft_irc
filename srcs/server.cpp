@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/24 01:23:30 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/24 01:31:40 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -541,10 +541,7 @@ void Server::receiveMsg(vector<pollfd>::const_iterator it)
 		return ;
 	}
 	else if (size == 0) {
-		user->setStatus(OFFLINE); // Perhaps user can be removed instantly
-		// cout << BLUE << "User " << MAGENTA << user->getNick();
-		// cout << RED << " disconnected" << WHITE << endl;
-		// delUser(user);
+		user->setStatus(OFFLINE); // Perhaps user can be removed instantly - J Not, as it is a vector
 		return ;
 	}
 
