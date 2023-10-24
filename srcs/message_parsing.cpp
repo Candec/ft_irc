@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/23 17:52:59 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/23 23:15:47 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -362,8 +362,8 @@ Server::topicCmd(User *user, vector<string> &words)
 		return;
 	}
 
-	if (!user->isOperator())
-		return ;
+	// if (!user->isOperator())
+	// 	return ;
 
 	Channel *channel = user->getChannel();
 	string topic;

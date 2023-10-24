@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/23 18:28:43 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/23 23:15:30 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,13 +109,13 @@ bool User::isRegistered() const
 		|| !_servername.empty());
 }
 
-bool User::isOperator()
-{
-	cout << "isOP User mode [ " << _fd << " ]: " << _channel->getUserMode(_fd) << endl;
-	if (_channel->getUserMode(_fd) != "o")
-	{
-		_server->sendMsg(_fd, ERR_CHANOPRIVSNEEDED);
-		return (false);
-	}
-	return (true);
-}
+// bool User::isOperator()
+// {
+// 	cout << "isOP User mode [ " << _fd << " ]: " << _channel->getUserMode(_fd) << endl;
+// 	if (_channel->getUserMode(_fd) != "o")
+// 	{
+// 		_server->sendMsg(_fd, ERR_CHANOPRIVSNEEDED);
+// 		return (false);
+// 	}
+// 	return (true);
+// }

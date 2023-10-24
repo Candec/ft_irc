@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/23 17:47:31 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/24 01:23:30 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -356,12 +356,14 @@ void Server::delUser(User *user)
 {
 	vector<User *>	others = vector<User *>();
 
-	for (map<string, Channel *>::iterator i = _channels.begin(); i != _channels.end(); ++i) {
+	for (map<string, Channel *>::iterator i = _channels.begin(); i != _channels.end(); ++i)
+	{
 		Channel	*channel = i->second;
 		if (!channel)
 			break;
 
-		if (channel->isUser(user)) {
+		if (channel->isUser(user))
+		{
 			channel->removeUser(user);
 
 			vector<User *>	chUsers = channel->getUsers();
@@ -377,6 +379,7 @@ void Server::delUser(User *user)
 	}
 
 	const string message = MAGENTA + user->getNick() + " has " + RED + "quit" + WHITE;
+
 
 	for (vector<User *>::iterator k = others.begin(); k != others.end(); ++k)
 		user->sendPrivateMessage(*k, message);
@@ -454,7 +457,7 @@ void Server::updatePing()
 
 void Server::updatePoll()
 {
-	for (vector<pollfd>::iterator i = _pollfds.begin(); i != _pollfds.end(); i++)
+	for (vector<pollfd>::iterator i = _pollfds.begin(); i != _pollfds.end(); ++i)
 	{
 		if (i->revents & POLLIN) {
 			if (_users.find(i->fd) != _users.end()) {
@@ -462,8 +465,17 @@ void Server::updatePoll()
 			}
 		}
 	}
-}
 
+	for (map<const int, User *>::iterator it = _users.begin(); it != _users.end(); ++it)
+	{
+		if (it->second->getStatus() == OFFLINE)
+		{
+			cout << BLUE << "User " << MAGENTA << it->second->getNick();
+			cout << RED << " disconnected" << WHITE << endl;
+			delUser(it->second);
+		}
+	}
+}
 
 
 void Server::sendClear(const int user_fd)
@@ -530,9 +542,9 @@ void Server::receiveMsg(vector<pollfd>::const_iterator it)
 	}
 	else if (size == 0) {
 		user->setStatus(OFFLINE); // Perhaps user can be removed instantly
-		cout << BLUE << "User " << MAGENTA << user->getNick();
-		cout << RED << " disconnected" << WHITE << endl;
-		delUser(user);
+		// cout << BLUE << "User " << MAGENTA << user->getNick();
+		// cout << RED << " disconnected" << WHITE << endl;
+		// delUser(user);
 		return ;
 	}
 
