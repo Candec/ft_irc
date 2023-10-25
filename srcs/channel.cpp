@@ -3,37 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/18 11:49:14 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/25 17:15:21 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main.hpp"
 
 Channel::Channel() : _modes("n") {}
-Channel::Channel(const string name, Server *server) : _name(name), _modes("n"), _server(server)
+Channel::Channel(const string &name) : _name(name), _modes("n")
 {
 	_type = _name[0];
 
 	const string str = WLC_CH_MSG + name + RESET;
 
+	setStatus(ChannelFlags::PUBLIC);
+
 	set(YELLOW_BG + str);
 	if (!_topic.empty())
 		set(_topic);
 }
-Channel::~Channel() {} // ? Missing any handling of players' current channel?
+Channel::~Channel() {} //? Missing any handling of players' current channel?
 
 // Setters
-void Channel::setName(const string name) { _name = name; }
-void Channel::setMode(const string modes) { _modes = modes; }
-void Channel::setTopic(const string topic) { _topic = topic; }
-void Channel::setKey(const string key) { _key = key; }
-void Channel::setType(const char type) { _type = type; }
-void Channel::setStatus(const char status) { _status = status; }
+void Channel::setName(const string &name) { _name = name; }
+void Channel::setMode(const string &modes) { _modes = modes; }
+void Channel::setTopic(const string &topic) { _topic = topic; }
+void Channel::setKey(const string &key, const User *src)
+{
+	if (key.find(' ') != string::npos)
+		return src->sendError(ERR_INVALIDKEY, "MODE", _name);
+	_key = key;
+}
+void Channel::setType(ChannelFlags::Type type) { _type = (char)type; }
+void Channel::setStatus(ChannelFlags::Status status) { _status = status; }
 
-void Channel::setMaxUsers(const uint users_max) { _users_max = users_max; }
+void Channel::setClientLimit(const uint limit) { _client_limit = limit; }
 // void Channel::setUserModes(const User *user, const string modes) { _user_modes.at(user->getFd()) = modes; }
 
 // Getters
@@ -44,7 +51,7 @@ const string	Channel::getKey() const { return _key; }
 char			Channel::getType() const { return _type; }
 char			Channel::getStatus() const { return _status; }
 
-uint			Channel::getMaxUsers() const { return _users_max; }
+uint			Channel::getClientLimit() const { return _client_limit; }
 // const string	Channel::getUserModes(const User *user) const { return _user_modes.at(user->getFd()); }
 vector<User *>	Channel::getUsers() const
 {
@@ -55,34 +62,135 @@ vector<User *>	Channel::getUsers() const
 	return users;
 }
 
+bool Channel::isModeImplemented(ChannelFlags::Mode modeLetter) const
+{
+	switch (modeLetter)
+	{
+	case ChannelFlags::INVITE_ONLY:
+	case ChannelFlags::PROTECTED_TOPIC:
+	case ChannelFlags::KEY_CHANNEL:
+	case ChannelFlags::OPERATOR:
+	case ChannelFlags::CLIENT_LIMIT:
+		return true;
+	default:
+		return false;
+	}
+}
+void Channel::addMode(ChannelFlags::Mode letter, std::vector<std::string> &arguments, User *caller)
+{
+	switch (letter)
+	{
+	case ChannelFlags::OPERATOR:
+		_operators.push_back(server->getUser(arguments[0]));
+		arguments.erase(arguments.begin());
+		break;
+	case ChannelFlags::KEY_CHANNEL:
+		setKey(arguments[0], caller);
+		arguments.erase(arguments.begin());
+		__attribute__ ((fallthrough));
+	default:
+		const char mode = letter;
+
+		log(_name + ": Adding mode " + mode);
+
+		if (_modes.find(mode) != string::npos)
+			_modes += mode;
+		else
+			log("Channel already had that mode");
+	}
+}
+void Channel::removeMode(ChannelFlags::Mode letter, std::vector<std::string> &arguments, User *caller)
+{
+	User *user;
+	switch (letter)
+	{
+	case ChannelFlags::OPERATOR:
+		user = server->getUser(arguments[0]);
+		arguments.erase(arguments.begin());
+		for (std::vector<User *>::iterator it = _operators.begin(); it != _operators.end(); ++it)
+			if (*it == user)
+				_operators.erase(it);
+		break;
+	case ChannelFlags::CLIENT_LIMIT:
+		setKey("", caller);
+		__attribute__ ((fallthrough));
+	case ChannelFlags::INVITE_ONLY:
+	case ChannelFlags::PROTECTED_TOPIC:
+	case ChannelFlags::KEY_CHANNEL:
+	default:
+		const char mode = letter;
+
+		log(_name + ": Removing mode " + mode);
+
+		size_t pos = _modes.find(mode);
+		if (pos != string::npos)
+			_modes.erase(pos);
+		else
+			log("Channel didn't have that mode");
+	}
+}
 
 void Channel::addUser(User *user)
 {
+	log(_name + ": Adding user " + toString(user->getFd()));
+
 	_users[user->getFd()] = user;
-	_operators[user] = false;
+
+	if (!_topic.empty())
+		user->sendReply(RPL_TOPIC, "TOPIC", _name);
+	else
+		user->sendReply(RPL_NOTOPIC, "TOPIC", _name);
+	// _operators[user] = false;
 	// _user_modes[user->getFd()] = "";
 }
-void Channel::removeUser(User *user) { _users.erase(_users.find(user->getFd())); }
+void Channel::removeUser(User *user)
+{
+	log(_name + ": Removing user " + toString(user->getFd()));
+
+	_users.erase(_users.find(user->getFd()));
+}
 void Channel::removeUser(const string &nick)
 {
 	for (map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
 		if (i->second->getNick() == nick) {
-			_users.erase(i);
-			return;
+			log(_name + ": Removing user " + toString(i->second->getFd()));
+
+			return _users.erase(i);
 		}
 }
 
-
-bool Channel::isUser(User *user) { return _users.find(user->getFd()) != _users.end(); }
-bool Channel::isOnChannel(int const &fd)
+void Channel::ban(User *user)
 {
-	for (map<int, User *>::const_iterator i = _users.begin(); i != _users.end(); ++i)
-		if (i->second->getFd() == fd)
+	if (!isBanned(user))
+		_banned.push_back(user);
+}
+void Channel::unban(const User *user)
+{
+	if (isBanned(user))
+		for (vector<User *>::iterator it = _banned.begin(); it != _banned.end(); ++it)
+			if (*it == user)
+				_banned.erase(it);
+}
+
+bool Channel::isMember(User *user) const { return _users.find(user->getFd()) != _users.end(); }
+bool Channel::isOperator(User *user) const
+{
+	for (vector<User *>::const_iterator it = _operators.begin(); it != _operators.end(); ++it)
+		if (*it == user)
 			return true;
 	return false;
 }
-bool Channel::isOperator(User *user) { return _operators.at(user); }
-
+bool Channel::isFull() const { return (_users.size() == _client_limit); }
+bool Channel::isBanned(const User *user) const
+{
+	for (vector<User *>::const_iterator it = _banned.begin(); it != _banned.end(); ++it)
+		if (*it == user)
+			return true;
+	return false;
+}
+bool Channel::isInviteOnly() const { return (_modes.find('i') != string::npos); }
+bool Channel::noExternalMessages() const { return (_modes.find('n') != string::npos); }
+bool Channel::isTopicProtected() const { return(_modes.find('t') != string::npos); }
 
 
 void Channel::addInvitedUser(User *user) { _invitations.push_back(user); }
@@ -94,23 +202,35 @@ void Channel::revokeInvitation(User *user)
 		_invitations.erase(i);
 }
 
-void Channel::broadcast(User *user, const string &message)
+void Channel::broadcast(const string &msg) const
 {
-	for (map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
-		user->sendPrivateMessage(i->second, message);
+	// for (map<int, User *>::const_iterator it = _users.begin(); it != _users.end(); ++it)
+	// 	server->sendMsg(it->second, msg);
+	broadcast(msg, NULL);
+}
+void Channel::broadcast(const string &msg, const User *exclude, const string &src) const
+{
+	broadcast(":" + src + " " + msg, exclude);
+}
+void Channel::broadcast(const string &msg, const User *exclude) const
+{
+	for (map<int, User *>::const_iterator it = _users.begin(); it != _users.end(); ++it)
+		if (it->second != exclude)
+			server->sendMsg(it->second, msg);
 }
 
 void Channel::update()
 {
 	// clear();
-	for (map<int, User *>::iterator it = _users.begin(); it != _users.end(); it++)
+	for (map<int, User *>::const_iterator it = _users.begin(); it != _users.end(); it++)
 	{
 		User *user = it->second;
-		if (isOnChannel(user->getFd()))
+		if (isMember(user))
 		{
-			_server->sendClear(user->getFd());
+			// server->sendClear(user->getFd());
+			server->sendClear(user);
 			for (map<int, string>::iterator i = _history.begin(); i != _history.end(); i++)
-				_server->sendMsg(user->getFd(), i->second);
+				server->sendMsg(user, i->second);
 		}
 	}
 	// cout << i->second << RESET << endl << flush;

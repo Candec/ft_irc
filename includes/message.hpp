@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/07 11:06:59 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/18 11:41:32 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/23 22:56:26 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # define NETWORK_NAME "42IRC"
 # define SEPARATOR_MSG "<++++++++++++++++++++++++++++++>\n"
 # define COMMAND_MSG "Use one of the following commands:"
-# define CMD_LIST_MSG "\nNICK [nickname]\nNAME [name]\nCOLOR [color]\nJOIN [channel]\nKICK [user]"
+# define CMD_LIST_MSG "\n-NICK [nickname]\n-NAME [name]\n-COLOR [color]\n-JOIN [channel]\n-KICK [user]"
 # define WLC_CH_MSG "Welcome to "
 
 # define COLOR_ERR "Color not found\nTry: red, black, green, yellow, blue, pink cyan, white, none."

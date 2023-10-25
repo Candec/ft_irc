@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:20:00 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/12 16:21:26 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/25 12:00:52 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,53 +16,40 @@
 # include <string>
 # include <vector>
 
-# include "User.hpp"
-// # include "main.hpp"
+# include "user.hpp"
+# include "main.hpp"
 
-enum Replies {
-	RPL_WELCOME = 001,
-	RPL_ISUPPORT = 005,
-	RPL_LIST = 322,
-	RPL_TOPIC = 332,
-	RPL_NAMREPLY = 353,
-	RPL_ENDOFNAMES = 366
-};
+const std::string rpl_welcome(const User *dest);
+const std::string rpl_issupport(const User *dest);
+const std::string rpl_umodeis(const User *dest);
+const std::string rpl_away(const User *dest, const string &targetNick, const string &msg);
+const std::string rpl_list(const User *dest);
+const std::string rpl_channelmodeis(const User *dest, const vector<string> &params);
+const std::string rpl_notopic(const User *dest, const std::string &channelName);
+const std::string rpl_topic(const User *dest, const std::string &channelName);
+const std::string rpl_namreply(const User *dest, const string &channelName);
+const std::string rpl_endofnames(const User *dest, const std::string &channelName);
 
-const std::string getReply(Replies type, User *dest, const std::string &tags, const std::string &src, const std::string &cmd, const vector<std::string> &params);
-
-const std::string rpl_welcome(User *dest);
-const std::string rpl_issupport(User *dest);
-const std::string rpl_list(User *dest);
-const std::string rpl_topic(User *dest);
-const std::string rpl_namreply(User *dest);
-const std::string rpl_endofnames(User *dest, const std::string &channelName);
-
-enum Errors {
-	ERR_NOSUCHCHANNEL = 403,
-	ERR_INPUTTOOLONG = 417,
-	ERR_TOOMANYCHANNELS = 405,
-	ERR_NONICKNAMEGIVEN = 431,
-	ERR_ERRONEUSNICKNAME = 432,
-	ERR_NICKNAMEINUSE = 433,
-	ERR_NEEDMOREPARAMS = 461,
-	ERR_ALREADYREGISTERED = 462,
-	ERR_PASSWDMISMATCH = 464,
-	ERR_BADCHANNELKEY = 475,
-	ERR_INVALIDKEY = 525
-};
-
-void sendError(Errors type, User *dest, const std::string &tags, const std::string &src, const std::string &cmd, const vector<std::string> &params);
-
-const std::string err_nosuchchannel(User *dest, const std::string &channelName);
-const std::string err_inputtoolong(User *dest);
-const std::string err_toomanychannels(User *dest);
-const std::string err_nonicknamegiven(User *dest);
-const std::string err_erroneusnickname(User *dest, const std::string &nick);
-const std::string err_nicknameinuser(User *dest, const std::string &nick);
-const std::string err_needmoreparams(User *dest, const std::string &command);
-const std::string err_alreadyregistered(User *dest);
-const std::string err_passwdmismatch(User *dest);
-const std::string err_badchannelkey(User *dest);
-const std::string err_invalidkey(User *dest, const std::string targetChannel);
+const std::string err_nosuchnick(const User *dest, const std::string &nick);
+const std::string err_nosuchserver(const User *dest, const std::string &serverName);
+const std::string err_nosuchchannel(const User *dest, const std::string &channelName);
+const std::string err_cannotsendtochan(const User *dest, const std::string &channelName);
+const std::string err_norecipient(const User *dest, const string &cmd);
+const std::string err_notexttosend(const User *dest);
+const std::string err_inputtoolong(const User *dest);
+const std::string err_toomanychannels(const User *dest, const string &attemptedChannel);
+const std::string err_nonicknamegiven(const User *dest);
+const std::string err_erroneusnickname(const User *dest, const std::string &nick);
+const std::string err_nicknameinuser(const User *dest, const std::string &nick);
+const std::string err_needmoreparams(const User *dest, const std::string &command);
+const std::string err_alreadyregistered(const User *dest);
+const std::string err_passwdmismatch(const User *dest);
+const std::string err_channelisfull(const User *dest, const std::string &channelName);
+const std::string err_badchannelkey(const User *dest, const std::string &channelName);
+const std::string err_badchanmask(const std::string &channelName);
+const std::string err_chanoprivsneeded(const User *dest, const std::string &channelName);
+const std::string err_umodeunknownflag(const User *dest);
+const std::string err_usersdontmatch(const User *dest);
+const std::string err_invalidkey(const User *dest, const std::string &targetChannel);
 
 #endif

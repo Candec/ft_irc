@@ -1,7 +1,7 @@
 // # include "main.hpp"
 #include "commands.hpp"
 
-const std::string	toString(e_Cmds cmd)
+const std::string cmdToString(int cmd)
 {
 	switch (cmd)
 	{
@@ -19,28 +19,48 @@ const std::string	toString(e_Cmds cmd)
 		return "QUIT";
 	case Commands::CAP:
 		return "CAP";
+	case Commands::TOPIC:
+		return "TOPIC";
+	case Commands::PRIVMSG:
+		return "PRIVMSG";
+	case Commands::AWAY:
+		return "AWAY";
+	case Commands::PING:
+		return "PING";
+	case Commands::MODE:
+		return "MODE";
 	default:
-		error("Unrecognized command: " + cmd, CONTINUE);
+		error("Unrecognized command: " + toString(cmd), CONTINUE);
 		return "UNKNOWN";
 	}
 }
 
-e_Cmds	toEnum(const std::string &cmd)
+int cmdToEnum(const std::string &cmd)
 {
-	if (!cmd.compare("PASS")) {
+	if (cmd == "PASS") {
 		return Commands::PASS;
-	} else if (!cmd.compare("NICK")) {
+	} else if (cmd == "NICK") {
 		return Commands::NICK;
-	} else if (!cmd.compare("USER")) {
+	} else if (cmd == "USER") {
 		return Commands::USER;
-	} else if (!cmd.compare("COLOR")) {
+	} else if (cmd == "COLOR") {
 		return Commands::COLOR;
-	} else if (!cmd.compare("JOIN")) {
+	} else if (cmd == "JOIN") {
 		return Commands::JOIN;
-	} else if (!cmd.compare("QUIT")) {
+	} else if (cmd == "QUIT") {
 		return Commands::QUIT;
-	} else if (!cmd.compare("CAP")) {
+	} else if (cmd == "CAP") {
 		return Commands::CAP;
+	} else if (cmd == "TOPIC") {
+		return Commands::TOPIC;
+	} else if (cmd == "PRIVMSG") {
+		return Commands::PRIVMSG;
+	} else if (cmd == "AWAY") {
+		return Commands::AWAY;
+	} else if (cmd == "PING") {
+		return Commands::PING;
+	} else if (cmd == "MODE") {
+		return Commands::MODE;
 	} else
 		return Commands::UNKNOWN;
 }

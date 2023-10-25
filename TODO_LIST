@@ -13,4 +13,21 @@ Roadmap and recommended order:
 4- Server commands (PING, OPER, KILL...) and
 5- Channel operations commands (JOIN, PART, INVITE, KICK, PRIVMSG, NOTICE...).
 
-Handle ERR_INPUTTOOLONG
+Use insert in maps
+Fix user.getChannel (i.e.: in rpl_list())
+Make sure all rpl_ and err_ functions are mapped to the switch statements
+Debug privmsgCmd
+
+Test commands:
+	PASS
+	NICK works
+	USER
+	COLOR
+	JOIN
+	QUIT
+	CAP
+	TOPIC
+	PRIVMSG
+	AWAY
+	PING
+	MODE

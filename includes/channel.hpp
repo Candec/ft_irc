@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/12 15:43:14 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/25 17:03:20 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,19 +21,21 @@ class User;
 # define CHANNEL_NAME_MAX_LEN 200
 
 // Maybe later change enums to arrays for pattern matching
+namespace ChannelFlags {
 
-enum ChannelTypes {
+enum Type {
 	REGULAR = '#',
 	LOCAL = '&'
 };
 
-enum ChannelStatus {
+enum Status {
 	PUBLIC = '=',
 	SECRET = '@', // Channel mode +s
 	PRIVATE = '*' // Channel mode +p (deprecated)
 };
 
-enum ChannelModes {
+// When making changes, certify that they're reflected in isModeImplemented()
+enum Mode {
 	INVITE_ONLY = 'i',
 	PROTECTED_TOPIC = 't',
 	KEY_CHANNEL = 'k',
@@ -41,12 +43,18 @@ enum ChannelModes {
 	CLIENT_LIMIT = 'l'
 };
 
-enum Op_Cmds {
+}
+
+namespace Operator {
+
+enum Command {
 	KICK,
 	INVITE,
 	TOPIC,
 	MODE
 };
+
+}
 
 class Channel
 {
@@ -58,32 +66,33 @@ class Channel
 		char	_type;
 		char	_status;
 
-		uint	_users_max;
+		uint	_client_limit;
 		map<int, User *>	_users;
-		map<User *, bool>	_operators;
+		// map<User *, bool>	_operators;
+		vector<User *>	_operators;
 		// map<int, string>	_user_modes;
 
 		vector<User *>		_invitations;
+		vector<User *>		_banned;
 
 		map<int, string>	_history;
-		Server	*_server;
 
 	public:
 		Channel();
-		Channel(const string name, Server *server);
+		Channel(const string &name);
 		~Channel();
 
 		// Setters
-		void setName(const string name);
-		void setMode(const string mode);
-		void setTopic(const string topic);
-		void setKey(const string key);
-		void setType(const char type);
-		void setStatus(const char status);
+		void setName(const string &name);
+		void setMode(const string &mode);
+		void setTopic(const string &topic);
+		void setKey(const string &key, const User *src);
+		void setType(ChannelFlags::Type type);
+		void setStatus(ChannelFlags::Status status);
 
-		void setMaxUsers(const uint users_max);
+		void setClientLimit(const uint limit);
 		// void setUserModes(const User *user, const string mode);
-		void setHistory(const string line);
+		void setHistory(const string &line);
 
 		// Getters
 		const string	getName() const;
@@ -93,23 +102,38 @@ class Channel
 		char			getType() const;
 		char			getStatus() const;
 
-		uint			getMaxUsers() const;
+		uint			getClientLimit() const;
 		// const string	getUserModes(const User *user) const;
 		vector<User *>	getUsers() const;
+
+		bool isModeImplemented(ChannelFlags::Mode mode) const;
+		void addMode(ChannelFlags::Mode letter, std::vector<std::string> &arguments, User *caller);
+		// void addMode(ChannelFlags::Mode letter);
+		void removeMode(ChannelFlags::Mode letter, std::vector<std::string> &arguments, User *caller);
+		// void removeMode(ChannelFlags::Mode letter);
 
 		void addUser(User *user);
 		void removeUser(User *user);
 		void removeUser(const string &nick);
 
-		bool isUser(User *user);
-		bool isOnChannel(int const &fd);
-		bool isOperator(User *user);
+		void ban(User *user);
+		void unban(const User *user);
+
+		bool isMember(User *user) const;
+		bool isOperator(User *user) const;
+		bool isFull() const;
+		bool isBanned(const User *user) const;
+		bool isInviteOnly() const;
+		bool noExternalMessages() const;
+		bool isTopicProtected() const;
 
 		void addInvitedUser(User *user);
 		bool isInvitedUser(User *user) const;
 		void revokeInvitation(User *user);
 
-		void broadcast(User *user, const string &message);
+		void broadcast(const string &msg) const;
+		void broadcast(const string &msg, const User *exclude, const string &src) const;
+		void broadcast(const string &msg, const User *exclude) const;
 
 		void update();
 		void set(const string &line);
@@ -117,6 +141,8 @@ class Channel
 		void setMsg(const string &line, const string &nick);
 
 		void remove(const unsigned int i);
+
+		// void join(const string &channelName, const string &key);
 };
 
 #endif

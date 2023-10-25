@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/09 14:49:14 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/24 18:11:51 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 # define SERVER_HPP
 
 # include "commands.hpp"
-using Commands::e_Cmds;
-
 # include "main.hpp"
 
 enum Switch { OFF, ON };
@@ -34,7 +32,8 @@ struct s_msg {
 	bool	away;
 };
 
-extern Server *g_server;
+extern Server *server;
+
 class Server
 {
 	private:
@@ -76,31 +75,34 @@ class Server
 		vector<User *> getUsers() const;
 		void delUser(User *user);
 
-		bool isChannel(const string &channel) const;
 		void delChannel(const Channel *channel);
 
 		struct s_msg parseMessage(User *user, const char * const buffer);
 		vector< vector<string> >splitBuffer(const char * const buffer);
 		bool isCmd(const string &param);
 		// void lookForCmd(User *user, vector<string> words, struct s_msg &msg);
-		void lookForCmd(User *user, e_Cmds cmd, vector<string> params, struct s_msg &msg);
-		bool hasSpace(const string &str) const;
+		void lookForCmd(User *user, const int cmd, vector<string> params, struct s_msg &msg);
 
 		void receiveMsg(vector<pollfd>::const_iterator it);
-		int receiveMsg2(const int user_fd);
-		void printMsg(vector<pollfd>::const_iterator it);
+		// void printMsg(vector<pollfd>::const_iterator it);
 		void printMsg2(const int user_fd, const char *msg);
 
 		/*
 		** LIST OF CMDS
 		*/
-		void passCmd(User *user, const vector<string> words);
-		void nickCmd(User *user, const vector<string> &words);
-		void userCmd(User *user, const vector<string> &words);
-		void joinCmd(User *user, vector<string> words);
-		void colorCmd(User *user, const vector<string> &words);
-		void quitCmd(User *user);
-		void capCmd(User *user, vector<string> &words);
+		void passCmd(User *user, const vector<string> &params);
+		void nickCmd(User *user, const vector<string> &params);
+		void userCmd(User *user, const vector<string> &params);
+		void joinCmd(User *user, const vector<string> &params);
+		void colorCmd(User *user, const vector<string> &params);
+		void quitCmd(User *user, const string &reason);
+		void capCmd(User *user, const vector<string> &params);
+		void topicCmd(User *user, const vector<string> &params);
+		void privmsgCmd(User *user, const vector<string> &params);
+		void awayCmd(User *user, const vector<string> &params);
+		void pingCmd(User *user, const vector<string> &token);
+		void modeCmd(User *user, const vector<string> &params);
+
 
 	public:
 		Server();
@@ -114,19 +116,29 @@ class Server
 		void setPort(const char * const arg);
 		void setPassword(const string &password);
 
-		void sendClear(const int user_fd);
-		void sendMsg(const User *user, const string &msg);
-		void sendMsg(const int user_fd, const string &msg);
-		void sendMsg(const int user_fd, const int n);
-		void sendColorMsg(const int user_fd, const string &msg, const string &color);
+		void sendMsg(const User *user, const string &msg) const;
+		void sendMsg(const User *user, const int n) const;
+		void sendMsg(const int user_fd, const string &msg) const;
+		void sendMsg(const int user_fd, const int n) const;
+		void sendMsg(const User *user, const string &msg, const string &src) const;
+
+		void broadcast(const string &message) const;
+
+		void sendClear(const User *user) const;
+		void sendClear(const int user_fd) const;
+
+		void sendColorMsg(const int user_fd, const string &msg, const string &color) const;
+		void sendColorMsg(const User *user, const string &msg, const string &color) const;
+
 		void sendErrFatal(const int user_fd, const string &reason);
 
-		void createChannel(const string &channelName);
-		Channel *getChannel(const string &channelName);
-
+		Channel *createChannel(const string &channelName);
+		Channel *createChannel(const string &channelName, const User *creator);
+		Channel *getChannel(const string &channelName) const;
 		vector<Channel *> getChannels() const;
 
-
+		User *getUser(const int user_fd) const;
+		User *getUser(const string &nick) const;
 };
 
 #endif

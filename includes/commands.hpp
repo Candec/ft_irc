@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/20 11:26:25 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/20 12:27:16 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/24 17:50:41 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 
 namespace Commands {
 
-enum e_Cmds {
+enum {
 	UNKNOWN = -1,
 	PASS,
 	NICK,
@@ -27,14 +27,19 @@ enum e_Cmds {
 	COLOR,
 	JOIN,
 	QUIT,
-	CAP
+	CAP,
+	TOPIC,
+	PRIVMSG,
+	AWAY,
+	PING,
+	MODE
 };
-
-const std::string	toString(e_Cmds cmd);
-e_Cmds				toEnum(const std::string &cmd);
 
 }
 
-using Commands::e_Cmds;
+const std::string	cmdToString(int cmd);
+int					cmdToEnum(const std::string &cmd);
+
+// using Commands::e_Cmds;
 
 #endif
