@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/25 22:54:18 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/28 19:16:52 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,8 @@ Server::userCmd(User *user, const vector<string> &params)
 	user->setName(realName);
 
 	if (user->isRegistered())
-		log("User " + toString(user->getFd()) + GREEN + " is registered");
+		log(MAGENTA + user->getNick() + BLUE + " (" \
+			+ MAGENTA + toString(user->getFd()) + BLUE + ") is " + GREEN + "registered");
 
 	user->sendReply(RPL_WELCOME, "USER", "");
 }
@@ -225,17 +226,24 @@ Server::joinCmd(User *user, const vector<string> &params)
 	const string channelNames = params[0];
 	const vector<string> names = splitString(channelNames, ",");
 
-	log(string(MAGENTA + user->getNick() + BLUE + " is joining channels " + YELLOW + channelNames));
+	log(string(MAGENTA + user->getNick() + BLUE + ": " \
+		+ GREEN + "Joining" + BLUE + " channels " + YELLOW + channelNames));
 
-	const string channelKeys = params[1];
+	string channelKeys;
+	if (params.size() > 1)
+		channelKeys = params[1];
 	const vector<string> keys = splitString(channelKeys, ",");
 
 	vector<string>::const_iterator names_it = names.begin();
 	vector<string>::const_iterator key_it = keys.begin();
 	for (; names_it != names.end(); ++names_it) {
-		user->joinChannel(*names_it, *key_it);
-		if (!channelKeys.empty())
+		if (channelKeys.empty())
+			user->joinChannel(*names_it);
+		else
+		{
+			user->joinChannel(*names_it, *key_it);
 			++key_it;
+		}
 	}
 
 	// removes the user from the previous channel list of users
@@ -292,21 +300,12 @@ Server::colorCmd(User *user, const vector<string> &words)
 void
 Server::quitCmd(User *user, const string &reason)
 {
-	cout << BLUE << "User " << user->getNick() << RED << " disconnected" << RESET << endl;
-	sendErrFatal(user->getFd(), "");
-
+	// cout << BLUE << "User " << user->getNick() << RED << " disconnected" << RESET << endl;
 	const vector<Channel *> channels = user->getJoinedChannels();
+	for (vector<Channel *>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+		(*it)->broadcast(user->getNick() + ": Quit: " + reason);
 
-	for (vector<Channel *>::const_iterator it = channels.begin(); it != channels.end(); ++it) {
-		const Channel *channel = *it;
-		const vector<User *> users = channel->getUsers();
-
-		for (vector<User *>::const_iterator it2 = users.begin(); it2 != users.end(); ++it2)
-			sendMsg(*it2, user->getNick() + ": Quit: " + reason);
-	}
-
-
-	// delUser(user);
+	sendErrFatal(user, "");
 }
 
 // void
@@ -390,38 +389,31 @@ Server::privmsgCmd(User *user, const vector<string> &params)
 {
 	const vector<string> targets = splitString(params[0], ",");
 
-	vector<string> message_words = targets;
-	if (message_words.size())
-		message_words.erase(message_words.begin());
-
-	const string msg = joinStrings(message_words);
+	const string msg = "PRIVMSG " + joinStrings(params);
 	vector<string>::const_iterator it;
 	for (it = targets.begin(); it != targets.end(); ++it) {
 		const string targetName = *it;
 
-		cout << RED << "test0" << WHITE << endl << flush;
 		if (targetName[0] == '$') {
-			cout << RED << "test0-1" << WHITE << endl << flush;
 			broadcast(msg);
 		}
 		else if (getChannel(targetName) != NULL) {
 			Channel *channel = getChannel(targetName);
-			cout << RED << "test1" << WHITE << endl << flush;
+
 			if (channel->isBanned(user))
 				return;
-			if (channel->noExternalMessages())
+			if (channel->noExternalMessages() && !channel->isMember(user))
 				return user->sendError(ERR_CANNOTSENDTOCHAN, "PRIVMSG", channel->getName());
-			cout << RED << "test2" << WHITE << endl << flush;
+
 			channel->broadcast(msg, user, user->getNick());
-			cout << RED << "test3" << WHITE << endl << flush;
 		}
 		else if (getUser(targetName) != NULL) {
 			User *user = getUser(targetName);
-			cout << RED << "test4" << WHITE << endl << flush;
+
 			vector<string>::const_iterator it;
 			for (it = targets.begin(); it != targets.end(); ++it) {
 				User *target = getUser(targetName);
-				cout << RED << "test5" << WHITE << endl << flush;
+
 				if (!target->getAway().empty()) {
 					vector<string> tmp;
 					tmp.push_back(target->getNick());
@@ -432,7 +424,6 @@ Server::privmsgCmd(User *user, const vector<string> &params)
 			}
 		}
 		else {
-			cout << RED << "test6" << WHITE << endl << flush;
 			user->sendError(ERR_NOSUCHNICK, "PRIVMSG", targetName);
 		}
 	}

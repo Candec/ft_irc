@@ -16,15 +16,14 @@ Roadmap and recommended order:
 Use insert in maps
 Fix user.getChannel (i.e.: in rpl_list())
 Make sure all rpl_ and err_ functions are mapped to the switch statements
-Debug privmsgCmd
 
 Test commands:
 	PASS
 	NICK works
 	USER
 	COLOR
-	JOIN
-	QUIT
+	JOIN works
+	QUIT works
 	CAP
 	TOPIC
 	PRIVMSG

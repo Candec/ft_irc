@@ -6,22 +6,20 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/25 17:15:21 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/28 19:17:59 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main.hpp"
 
 Channel::Channel() : _modes("n") {}
-Channel::Channel(const string &name) : _name(name), _modes("n")
+Channel::Channel(const string &name) : _name(name), _modes("n"), _type(name[0])
 {
-	_type = _name[0];
-
-	const string str = WLC_CH_MSG + name + RESET;
+	// const string str = WLC_CH_MSG + name + RESET;
 
 	setStatus(ChannelFlags::PUBLIC);
 
-	set(YELLOW_BG + str);
+	// set(YELLOW_BG + str);
 	if (!_topic.empty())
 		set(_topic);
 }
@@ -91,7 +89,8 @@ void Channel::addMode(ChannelFlags::Mode letter, std::vector<std::string> &argum
 	default:
 		const char mode = letter;
 
-		log(_name + ": Adding mode " + mode);
+		log(YELLOW + _name + BLUE + ": " \
+			+ GREEN + "Adding" + BLUE + " mode " + mode);
 
 		if (_modes.find(mode) != string::npos)
 			_modes += mode;
@@ -120,7 +119,8 @@ void Channel::removeMode(ChannelFlags::Mode letter, std::vector<std::string> &ar
 	default:
 		const char mode = letter;
 
-		log(_name + ": Removing mode " + mode);
+		log(YELLOW + _name + BLUE + ": " \
+			+ RED + "Removing" + BLUE + " mode " + mode);
 
 		size_t pos = _modes.find(mode);
 		if (pos != string::npos)
@@ -132,7 +132,9 @@ void Channel::removeMode(ChannelFlags::Mode letter, std::vector<std::string> &ar
 
 void Channel::addUser(User *user)
 {
-	log(_name + ": Adding user " + toString(user->getFd()));
+	log(YELLOW + _name + BLUE + ": " \
+		+ GREEN + "Adding" + BLUE + " user " \
+		+ MAGENTA + toString(user->getFd()));
 
 	_users[user->getFd()] = user;
 
@@ -145,18 +147,18 @@ void Channel::addUser(User *user)
 }
 void Channel::removeUser(User *user)
 {
-	log(_name + ": Removing user " + toString(user->getFd()));
+	log(YELLOW + _name + RESET + ": " \
+		+ RED + "Removing " + RESET \
+		+ MAGENTA + user->getNick() + RESET + " (" \
+		+ MAGENTA + toString(user->getFd()) + RESET + ")");
 
 	_users.erase(_users.find(user->getFd()));
 }
 void Channel::removeUser(const string &nick)
 {
 	for (map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
-		if (i->second->getNick() == nick) {
-			log(_name + ": Removing user " + toString(i->second->getFd()));
-
-			return _users.erase(i);
-		}
+		if (i->second->getNick() == nick)
+			return removeUser(i->second);
 }
 
 void Channel::ban(User *user)

@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:06 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/25 16:03:49 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/28 18:19:43 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,13 +101,16 @@ const std::vector<std::string> splitString(std::string str, const std::string &d
 	std::vector<std::string> ret;
 
 	if (!str.empty()) {
-		size_t n_channels = 0;
+		// size_t n_channels = 0;
 		size_t pos = 0;
 		while ((pos = str.find(delimiter)) != std::string::npos) {
-			ret[n_channels++] = str.substr(0, pos);
-			std::cout << str << std::endl;
+			// ret[n_channels++] = str.substr(0, pos);
+			cout << "pushing_back: " << str.substr(0, pos) << endl << flush;
+			ret.push_back(str.substr(0, pos));
 			str.erase(0, pos + delimiter.length());
 		}
+		if (ret.empty())
+			ret = std::vector<std::string>(1, str);
 	}
 	return ret;
 }
@@ -128,7 +131,7 @@ const std::string joinStrings(const std::vector<std::string> &strings)
 	std::vector<std::string>::const_iterator it;
 	for (it = strings.begin(); it != strings.end(); ++it) {
 		ret += *it;
-		if (it + 1 == strings.end())
+		if (it + 1 != strings.end())
 			ret += " ";
 	}
 	return ret;

@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/25 18:05:05 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/28 19:19:17 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,9 @@ bool			User::isCapable() const { return (_capable); }
 const vector<Channel *> User::getJoinedChannels() const
 {
 	vector<Channel *> channels;
-	for (map<string, Channel *>::const_iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
-		channels.push_back(it->second);
+	if (_joinedChannels.size() > 0)
+		for (map<string, Channel *>::const_iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
+			channels.push_back(it->second);
 	return channels;
 }
 
@@ -131,10 +132,14 @@ bool User::isChannelMember(const string &channelName)
 	return (_joinedChannels.find(channelName) != _joinedChannels.end());
 }
 
+void User::joinChannel(const string &channelName)
+{
+	joinChannel(channelName, "");
+}
 void User::joinChannel(const string &channelName, const string &key)
 {
 	// cout << "User " << MAGENTA + _nick + WHITE + " is joining the channel \"" + YELLOW + channelName + WHITE + "\"" << endl << flush;
-	log(string("User ") + MAGENTA + _nick + BLUE + " is joining the channel " + YELLOW + channelName);
+	log(MAGENTA + _nick + BLUE + ": " + GREEN + "Joining" + BLUE + " the channel " + YELLOW + channelName);
 
 	Channel *channel = server->getChannel(channelName);
 	if (!channel) {
@@ -178,18 +183,27 @@ void User::joinChannel(const string &channelName, const string &key)
 		this->sendReply(RPL_ENDOFNAMES, "JOIN", "");
 	}
 }
-
-void User::leaveChannel(const string &channelName)
+void User::leaveChannel(Channel *channel)
 {
-	_joinedChannels.at(channelName)->removeUser(this);
-}
+	if (!channel)
+		return;
+	if (!channel->isMember(this))
+		return log("User was not member of " + channel->getName());
 
+	channel->removeUser(this);
+	_joinedChannels.erase(channel->getName());
+
+	log(MAGENTA + _nick + RED + " left " + BLUE + "channel " + YELLOW + channel->getName() + WHITE);
+
+	if (channel->getUsers().size() == 0)
+		server->delChannel(channel);
+}
 void User::leaveAllChannels()
 {
-	map<string, Channel *>::iterator it;
-	for (it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
-		it->second->removeUser(this);
+	for (map<string, Channel *>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
+		leaveChannel(it->second);
 }
+
 
 
 bool User::isModeImplemented(UserFlags::Mode modeLetter) const
@@ -210,7 +224,7 @@ void User::addMode(UserFlags::Mode modeLetter)
 
 	const char mode = modeLetter;
 
-	log(_name + ": Adding mode " + mode);
+	log(MAGENTA + _name + BLUE + ": " + GREEN + "Adding" + BLUE + " mode " + mode);
 
 	if (_modes.find(mode) != string::npos)
 		_modes += mode;
@@ -222,7 +236,7 @@ void User::removeMode(UserFlags::Mode modeLetter)
 
 	const char mode = modeLetter;
 
-	log(_name + ": Removing mode " + mode);
+	log(MAGENTA + _name + BLUE + ": " + RED + "Removing" + BLUE + " mode " + mode);
 
 	size_t pos = _modes.find(mode);
 	if (pos != string::npos)

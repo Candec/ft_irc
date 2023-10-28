@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/25 17:28:08 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/28 17:31:06 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,8 +170,10 @@ class User
 		const vector<Channel *> getJoinedChannels() const;
 
 		bool			isChannelMember(const string &channelName);
+		void			joinChannel(const string &channelName);
 		void			joinChannel(const string &channelName, const string &key);
-		void			leaveChannel(const string &channelName);
+		// void			leaveChannel(const string &channelName);
+		void			leaveChannel(Channel *channel);
 		void			leaveAllChannels();
 
 		bool			isModeImplemented(UserFlags::Mode mode) const;

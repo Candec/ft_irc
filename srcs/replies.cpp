@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 15:56:34 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/25 17:28:26 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/28 17:55:14 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ const std::string rpl_namreply(const User *dest, const string &channelName) {
 	const Channel *ch = server->getChannel(channelName);
 	const std::vector<User *> users = ch->getUsers();
 
-	std::string reply = dest->getNick() + " " + ch->getStatus() + " " + ch->getName();
+	std::string reply = dest->getNick() + " " + ch->getStatus() + " " + channelName + " :";
 
 	for (std::vector<User *>::const_iterator it = users.begin(); it != users.end(); ++it) {
 		User *user = *it;
@@ -52,7 +52,6 @@ const std::string rpl_namreply(const User *dest, const string &channelName) {
 
 		if (ch->isOperator(user))
 			reply += '@';
-
 		reply += user->getNick();
 
 		if (it + 1 != users.end())

@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/25 16:03:11 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/28 19:19:52 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ Server::Server(const char * const port, const string password) : _upTime(time(0)
 
 Server::~Server()
 {
-	cout << endl << BLUE << "Shutting down server" << WHITE << endl;
+	cout << endl << RED << "Shutting down server" << WHITE << endl;
 
 	for (map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
 		delUser(i->second);
@@ -163,7 +163,7 @@ void Server::setup()
 void Server::run()
 {
 	// cout << BLUE << "Listening on port " << YELLOW << this->_port << WHITE << endl;
-	log("Server: Listening on port " + toString(_port));
+	log(string("Server: ") + GREEN + "Listening" + BLUE + " on port " + YELLOW + toString(_port));
 
 	while (true) {
 		if (poll(&_pollfds[0], _pollfds.size(), (_ping * 1000) / 100) == SENDING_ERROR)
@@ -257,7 +257,7 @@ vector<Channel *> Server::getChannels() const
 void Server::createUser()
 {
 	// cout << BLUE << "Adding user..." << WHITE << endl << flush;
-	log("Server: Adding user...");
+	log(string("Server: ") + GREEN + "Adding" + BLUE + " user...");
 
 	struct sockaddr_in addr;
 	socklen_t socklen = sizeof(addr);
@@ -303,19 +303,19 @@ Channel *Server::createChannel(const string &channelName)
 		return NULL;
 
 	// cout << GREEN << "Creating channel " << YELLOW << channelName << RESET << flush;
-	log("Server: Creating channel " + channelName);
+	log(string("Server: ") + GREEN + "Creating" + BLUE + " channel " + YELLOW + channelName + RESET);
 
 	Channel *channel = new Channel(channelName);
 	if (!channel) {
 		cout << RED << " failed" << WHITE << endl << flush;
 		// error("Channel " + channelName + " creation failed", CONTINUE);
-		log(channelName + " not created");
+		log(YELLOW + channelName + RED + " not created");
 	}
 	else {
 		_channels.insert(pair<string, Channel *>(channelName, channel));
 		// _channels[channelName] = channel;
 		// cout << GREEN << " created" << WHITE << endl << flush;
-		log(channelName + " created");
+		log(YELLOW + channelName + GREEN + " created");
 	}
 	// cout << "channel [ mem: " << _channels[channelName] << " | << name: " << _channels[channelName]->getName() << " ] created" << endl << flush;
 	return channel;
@@ -378,45 +378,68 @@ Channel *Server::createChannel(const string &channelName, const User *creator)
 // 	delete &user;
 // }
 
+// void Server::delUser(User *user)
+// {
+// 	log("Server: Removing user " + toString(user->getFd()));
+
+// 	vector<User *>	others = vector<User *>();
+
+// 	for (map<string, Channel *>::iterator i = _channels.begin(); i != _channels.end(); ++i) {
+// 		Channel	*channel = i->second;
+// 		if (!channel)
+// 			break;
+
+// 		if (channel->isMember(user)) {
+// 			channel->removeUser(user);
+
+// 			vector<User *>	chUsers = channel->getUsers();
+
+// 			if (!chUsers.size())
+// 				delChannel(channel);
+// 			else
+// 				for (vector<User *>::iterator j = chUsers.begin(); j != chUsers.end(); ++j) {
+// 					if (find(others.begin(), others.end(), *j) == others.end())
+// 						others.push_back(*j);
+// 				}
+// 		}
+// 	}
+
+// 	const string message = MAGENTA + user->getNick() + " has " + RED + "quit" + WHITE;
+
+// 	for (vector<User *>::iterator k = others.begin(); k != others.end(); ++k)
+// 		user->sendPrivateMessage(*k, message);
+// 	user->push();
+// 	// history.remove(user->getFd());
+
+// 	for (vector<pollfd>::iterator l = _pollfds.begin(); l != _pollfds.end(); ++l)
+// 		if (l->fd == user->getFd())
+// 		{
+// 			_pollfds.erase(l);
+// 			break;
+// 		}
+// 	_users.erase(user->getFd());
+
+// 	delete user;
+// }
+
 void Server::delUser(User *user)
 {
-	log("Server: Removing user " + toString(user->getFd()));
+	if (!user)
+		return;
 
-	vector<User *>	others = vector<User *>();
+	log(string("Server: ") + RED + "Removing " + RESET + MAGENTA + user->getNick() + RESET + " (" \
+		+ MAGENTA + toString(user->getFd()) + RESET + ")");
 
-	for (map<string, Channel *>::iterator i = _channels.begin(); i != _channels.end(); ++i) {
-		Channel	*channel = i->second;
-		if (!channel)
-			break;
-
-		if (channel->isMember(user)) {
-			channel->removeUser(user);
-
-			vector<User *>	chUsers = channel->getUsers();
-
-			if (!chUsers.size())
-				delChannel(channel);
-			else
-				for (vector<User *>::iterator j = chUsers.begin(); j != chUsers.end(); ++j) {
-					if (find(others.begin(), others.end(), *j) == others.end())
-						others.push_back(*j);
-				}
-		}
-	}
-
-	const string message = MAGENTA + user->getNick() + " has " + RED + "quit" + WHITE;
-
-	for (vector<User *>::iterator k = others.begin(); k != others.end(); ++k)
-		user->sendPrivateMessage(*k, message);
-	user->push();
-	// history.remove(user->getFd());
+	user->leaveAllChannels();
 
 	for (vector<pollfd>::iterator l = _pollfds.begin(); l != _pollfds.end(); ++l)
+	{
 		if (l->fd == user->getFd())
 		{
 			_pollfds.erase(l);
 			break;
 		}
+	}
 	_users.erase(user->getFd());
 
 	delete user;
@@ -424,7 +447,7 @@ void Server::delUser(User *user)
 
 void Server::delChannel(const Channel *channel)
 {
-	log("Server: Deleting channel " + channel->getName());
+	log(string("Server: ") + RED + "Deleting" + BLUE + " channel " + YELLOW + channel->getName());
 
 	_channels.erase(channel->getName());
 	delete channel;
@@ -481,34 +504,39 @@ void Server::updatePoll()
 {
 	// log("Server: Updating poll...");
 
-	for (vector<pollfd>::iterator i = _pollfds.begin(); i != _pollfds.end(); i++) {
+	for (vector<pollfd>::iterator i = _pollfds.begin(); i != _pollfds.end(); ++i) {
 		if (i->revents & POLLIN) {
-			if (_users.find(i->fd) != _users.end()) {
+			if (_users.find(i->fd) != _users.end())
 				receiveMsg(i);
-			}
 		}
-		if (i->revents & POLLNVAL) {
-			// _msgs_buffer.erase(i->fd);
-			_pollfds.erase(i);
-			break;
-		}
-		if (i->revents & POLLHUP) {
-			cout << "Client " << RED << "disconnected" << WHITE << ": " << i->fd;
-			// _msgs_buffer.erase(i->fd);
-			// server.deleteClient(i->fd);
-			server->delUser(getUser(i->fd));
-			_pollfds.erase(i);
-			break;
+		// if (i->revents & POLLNVAL) {
+		// 	// _msgs_buffer.erase(i->fd);
+		// 	_pollfds.erase(i);
+		// 	break;
+		// }
+		// if (i->revents & POLLHUP) {
+		// 	cout << "Client " << RED << "disconnected" << WHITE << ": " << i->fd;
+		// 	// _msgs_buffer.erase(i->fd);
+		// 	// server.deleteClient(i->fd);
+		// 	delUser(getUser(i->fd));
+		// 	_pollfds.erase(i);
+		// 	break;
+		// }
+	}
+
+	for (map<const int, User *>::iterator it = _users.begin(); it != _users.end(); ++it)
+	{
+		if (it->second->getStatus() == UserFlags::OFFLINE)
+		{
+			cout << BLUE << "User " << MAGENTA << it->second->getNick();
+			cout << RED << " disconnected" << WHITE << endl;
+			delUser(it->second);
 		}
 	}
 }
 
 
 
-void Server::sendMsg(const User *user, const string &msg) const
-{
-	sendMsg(user->getFd(), msg);
-}
 void Server::sendMsg(const User *user, const int n) const
 {
 	sendMsg(user, toString(n));
@@ -523,10 +551,16 @@ void Server::sendMsg(const int user_fd, const int n) const
 }
 void Server::sendMsg(const int user_fd, const string &msg) const
 {
-	log("Server: Sending to " + toString(user_fd) + ":\n" + WHITE + msg);
+	sendMsg(_users.at(user_fd), msg);
+}
+void Server::sendMsg(const User *user, const string &msg) const
+{
+	const int fd = user->getFd();
+	log(string("Server: Sending to ") + MAGENTA + user->getNick() + RESET + " (" \
+		+ MAGENTA + toString(fd) + RESET + ")" + ":\n" + msg);
 
 	const string tmp = msg + " " + MESSAGE_END;
-	if (send(user_fd, tmp.c_str(), tmp.size(), 0) == SENDING_ERROR)
+	if (send(fd, tmp.c_str(), tmp.size(), 0) == SENDING_ERROR)
 		error("Error sending message", CONTINUE);
 }
 
@@ -553,7 +587,7 @@ void Server::sendColorMsg(const User *user, const string &msg, const string &col
 
 void Server::sendClear(const User *user) const
 {
-	if (!user->isCapable())
+	if (user->isCapable())
 		return;
 	sendMsg(user, CLEAR_MSG);
 }
@@ -572,13 +606,14 @@ void Server::sendClear(const int user_fd) const
 This message is sent from a server to a client to report a fatal error, before terminating the client’s connection
 This MUST only be used to report fatal errors. Regular errors should use the appropriate numerics or the IRCv3 standard replies framework.
 */
-void Server::sendErrFatal(const int user_fd, const string &reason)
+void Server::sendErrFatal(User *user, const string &reason)
 {
 	if (!reason.empty())
-		sendMsg(user_fd, "ERROR :" + reason);
+		sendMsg(user, "ERROR :" + reason);
 	else
-		sendMsg(user_fd, "ERROR");
-	delUser(_users.at(user_fd));
+		sendMsg(user, "ERROR");
+	// delUser(user);
+	user->setStatus(UserFlags::OFFLINE);
 }
 
 
@@ -600,13 +635,13 @@ void Server::receiveMsg(vector<pollfd>::const_iterator it)
 	}
 	else if (size == 0) {
 		user->setStatus(UserFlags::OFFLINE); // Perhaps user can be removed instantly
-		cout << BLUE << "User " << MAGENTA << user->getNick();
-		cout << RED << " disconnected" << WHITE << endl;
-		delUser(user);
+		// cout << BLUE << "User " << MAGENTA << user->getNick();
+		// cout << RED << " disconnected" << WHITE << endl;
+		// delUser(user);
 		return ;
 	}
 
-	printMsg2(it->fd, buf);
+	printMsg2(user, buf);
 	struct s_msg msg = parseMessage(user, buf);
 	// cout << "in pckg: " << buf << endl << flush;
 
@@ -646,21 +681,17 @@ void Server::receiveMsg(vector<pollfd>::const_iterator it)
 // 	user->buffer.clear();
 // }
 
-void Server::printMsg2(const int user_fd, const char *msg)
+void Server::printMsg2(User *user, const char *msg)
 {
 	cout << timestamp();
 
-	if (_users.find(user_fd) == _users.end())
-		error("User not found @printMsg2", EXIT);
-	User *user = _users.at(user_fd);
-
-	cout << MAGENTA << user->getNick();
+	cout << MAGENTA << user->getNick() << RESET << " (" \
+	<< MAGENTA << user->getFd() << RESET << ")";
 	if (user->isCapable())
 		cout << GREEN;
 	else
 		cout << RED;
-	cout << " CAP" << WHITE << " @ FD# " << user_fd << ":" << endl  << flush;
-	cout << msg << flush;
+	cout << " CAP" << RESET << ":" << endl << msg << flush;
 	// cout << YELLOW << "*end of message*" << RESET << endl << endl << flush;
 }
 

@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/24 18:11:51 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/28 18:17:31 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,6 @@ class Server
 		vector<User *> getUsers() const;
 		void delUser(User *user);
 
-		void delChannel(const Channel *channel);
-
 		struct s_msg parseMessage(User *user, const char * const buffer);
 		vector< vector<string> >splitBuffer(const char * const buffer);
 		bool isCmd(const string &param);
@@ -85,7 +83,7 @@ class Server
 
 		void receiveMsg(vector<pollfd>::const_iterator it);
 		// void printMsg(vector<pollfd>::const_iterator it);
-		void printMsg2(const int user_fd, const char *msg);
+		void printMsg2(User *user, const char *msg);
 
 		/*
 		** LIST OF CMDS
@@ -130,7 +128,7 @@ class Server
 		void sendColorMsg(const int user_fd, const string &msg, const string &color) const;
 		void sendColorMsg(const User *user, const string &msg, const string &color) const;
 
-		void sendErrFatal(const int user_fd, const string &reason);
+		void sendErrFatal(User *user, const string &reason);
 
 		Channel *createChannel(const string &channelName);
 		Channel *createChannel(const string &channelName, const User *creator);
@@ -139,6 +137,8 @@ class Server
 
 		User *getUser(const int user_fd) const;
 		User *getUser(const string &nick) const;
+
+		void delChannel(const Channel *channel);
 };
 
 #endif
