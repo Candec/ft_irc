@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/28 19:19:52 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/29 15:32:57 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.hpp"
-#include "main.hpp"
+#include "../includes/server.hpp"
+#include "../includes/main.hpp"
 
 /*
 	CONSTRUCTORS

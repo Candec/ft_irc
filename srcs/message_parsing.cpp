@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/28 19:16:52 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/29 15:32:44 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "commands.hpp"
-#include "main.hpp"
+#include "../includes/commands.hpp"
+#include "../includes/main.hpp"
 
 struct s_msg
 Server::parseMessage(User *user, const char * const buffer)
