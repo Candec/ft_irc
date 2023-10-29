@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/28 19:19:17 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/29 22:28:45 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,7 +226,7 @@ void User::addMode(UserFlags::Mode modeLetter)
 
 	log(MAGENTA + _name + BLUE + ": " + GREEN + "Adding" + BLUE + " mode " + mode);
 
-	if (_modes.find(mode) != string::npos)
+	if (_modes.find(mode) == string::npos)
 		_modes += mode;
 }
 void User::removeMode(UserFlags::Mode modeLetter)

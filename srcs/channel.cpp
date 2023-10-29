@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/28 19:17:59 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/29 22:29:22 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void Channel::addMode(ChannelFlags::Mode letter, std::vector<std::string> &argum
 		log(YELLOW + _name + BLUE + ": " \
 			+ GREEN + "Adding" + BLUE + " mode " + mode);
 
-		if (_modes.find(mode) != string::npos)
+		if (_modes.find(mode) == string::npos)
 			_modes += mode;
 		else
 			log("Channel already had that mode");
