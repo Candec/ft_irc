@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 17:05:34 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/25 11:57:28 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/29 21:12:34 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,5 +66,9 @@ using namespace std;
 # include "server.hpp"
 # include "utility.hpp"
 # include "message.hpp"
+
+extern bool logging;
+extern bool logToFile;
+extern std::string startTime;
 
 #endif

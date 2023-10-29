@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:06 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/28 18:19:43 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/29 22:12:50 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void error(const std::string &str, const bool quit)
 {
+	log("Error: " + str, false);
 	std::cout << RED_BG << "Error: " << RED << str << RESET << std::endl;
 	if (quit)
 		exit(EXIT_FAILURE);
@@ -115,14 +116,24 @@ const std::vector<std::string> splitString(std::string str, const std::string &d
 	return ret;
 }
 
+void log(const std::string &info, const bool outputToTerminal)
+{
+	if (logging) {
+		if (logToFile) {
+			std::ofstream logFile;
+			const std::string fileName = startTime + "log.txt";
+			logFile.open(fileName.c_str(), ios_base::app);
+			logFile << timestamp() <<  removeColor(info) << std::endl << std::flush;
+			logFile.close();
+		}
+		if (outputToTerminal)
+			std::cout << BLUE + info + RESET << std::endl << std::flush;
+	}
+
+}
 void log(const std::string &info)
 {
-	std::ofstream logFile;
-	const std::string fileName = "log.txt";
-	logFile.open(fileName.c_str());
-	logFile << timestamp() <<  info << std::endl << std::flush;
-	logFile.close();
-	std::cout << BLUE + info + RESET << std::endl << std::flush;
+	log(info, true);
 }
 
 const std::string joinStrings(const std::vector<std::string> &strings)
@@ -135,4 +146,16 @@ const std::string joinStrings(const std::vector<std::string> &strings)
 			ret += " ";
 	}
 	return ret;
+}
+
+const std::string removeColor(std::string str)
+{
+	size_t pos;
+
+	while ((pos = str.find('\033')) != std::string::npos) {
+		size_t lastPos = str.find('m', pos);
+		if (lastPos != std::string::npos)
+			str.erase(pos, lastPos - pos + 1);
+	}
+	return str;
 }

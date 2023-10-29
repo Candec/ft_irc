@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/28 19:19:52 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/29 22:14:05 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ Server::Server(const char * const port, const string password) : _upTime(time(0)
 
 Server::~Server()
 {
+	log(string(RED) + "Shutting down server", false);
 	cout << endl << RED << "Shutting down server" << WHITE << endl;
 
 	for (map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
@@ -162,8 +163,8 @@ void Server::setup()
 
 void Server::run()
 {
-	// cout << BLUE << "Listening on port " << YELLOW << this->_port << WHITE << endl;
-	log(string("Server: ") + GREEN + "Listening" + BLUE + " on port " + YELLOW + toString(_port));
+	log(string("Server: ") + GREEN + "Listening" + BLUE + " on port " + YELLOW + toString(_port), false);
+	cout << BLUE << "Listening on port " << YELLOW << this->_port << WHITE << endl;
 
 	while (true) {
 		if (poll(&_pollfds[0], _pollfds.size(), (_ping * 1000) / 100) == SENDING_ERROR)
@@ -309,13 +310,13 @@ Channel *Server::createChannel(const string &channelName)
 	if (!channel) {
 		cout << RED << " failed" << WHITE << endl << flush;
 		// error("Channel " + channelName + " creation failed", CONTINUE);
-		log(YELLOW + channelName + RED + " not created");
+		log(string("    ") + YELLOW + channelName + RED + " not created");
 	}
 	else {
 		_channels.insert(pair<string, Channel *>(channelName, channel));
 		// _channels[channelName] = channel;
 		// cout << GREEN << " created" << WHITE << endl << flush;
-		log(YELLOW + channelName + GREEN + " created");
+		log(string("    ") + YELLOW + channelName + GREEN + " created");
 	}
 	// cout << "channel [ mem: " << _channels[channelName] << " | << name: " << _channels[channelName]->getName() << " ] created" << endl << flush;
 	return channel;
@@ -455,7 +456,7 @@ void Server::delChannel(const Channel *channel)
 
 void Server::updatePing()
 {
-	log("Server: Updating ping...");
+	// log("Server: Updating ping...");
 
 	_previousPing = time(0);
 

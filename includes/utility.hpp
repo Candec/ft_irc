@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:19 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/28 18:09:54 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/29 22:13:06 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 
 enum {CONTINUE, EXIT};
 
+void log(const std::string &info, const bool outputToTerminal);
 void log(const std::string &info);
 void error(const std::string &str, const bool exit);
 
@@ -40,5 +41,7 @@ bool				isValidChannelName(const std::string& name);
 
 const std::vector<std::string>	splitString(std::string str, const std::string &delimiter);
 const std::string				joinStrings(const std::vector<std::string> &strings);
+
+const std::string	removeColor(std::string str);
 
 #endif
