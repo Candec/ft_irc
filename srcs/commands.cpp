@@ -1,5 +1,5 @@
 // # include "main.hpp"
-#include "commands.hpp"
+#include "../includes/commands.hpp"
 
 const std::string cmdToString(int cmd)
 {

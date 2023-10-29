@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ircserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:16 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/24 09:20:13 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/29 14:55:42 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.hpp"
+#include "../includes/main.hpp"
 
 Server *server;
 

@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   replies.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 15:56:34 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/25 17:28:26 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/29 14:55:53 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "numericreplies.hpp"
-#include "user.hpp"
+#include "../includes/numericreplies.hpp"
+#include "../includes/user.hpp"
 // #include "main.hpp"
 
 const std::string rpl_welcome(const User *dest) {

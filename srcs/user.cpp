@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/25 18:05:05 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/29 14:55:58 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "user.hpp"
+#include "../includes/user.hpp"
 
 User::User(const int fd, struct sockaddr_in addr) : _fd(fd), _status(UserFlags::VERIFY), _previousPing(time(0)), _role("user")
 {
