@@ -29,6 +29,10 @@ const std::string cmdToString(int cmd)
 		return "PING";
 	case Commands::MODE:
 		return "MODE";
+	case Commands::KICK:
+		return "KICK";
+	case Commands::INVITE:
+		return "INVITE";
 	default:
 		error("Unrecognized command: " + toString(cmd), CONTINUE);
 		return "UNKNOWN";
@@ -61,6 +65,10 @@ int cmdToEnum(const std::string &cmd)
 		return Commands::PING;
 	} else if (cmd == "MODE") {
 		return Commands::MODE;
+	} else if (cmd == "KICK") {
+		return Commands::KICK;
+	} else if (cmd == "INVITE") {
+		return Commands::INVITE;
 	} else
 		return Commands::UNKNOWN;
 }

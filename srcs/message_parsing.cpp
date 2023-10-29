@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/29 19:14:08 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/29 23:04:02 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -530,3 +530,24 @@ Server::modeCmd(User *user, const vector<string> &params)
 		target->broadcast("MODE " + joinStrings(params));
 	}
 }
+
+/*
+* Command: KICK
+* Parameters: [<channel>] <nicks> [<reason>]
+*/
+void
+Server::kickCmd(User *user, const vector<string> &params)
+{
+
+}
+
+/*
+* Command: INVITE
+* Parameters: <nick> [<channel>]
+*/
+void
+Server::inviteCmd(User *user, const vector<string> &params)
+{
+
+}
+

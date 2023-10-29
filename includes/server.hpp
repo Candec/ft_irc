@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/28 18:17:31 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/29 23:05:49 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,9 @@ class Server
 		void awayCmd(User *user, const vector<string> &params);
 		void pingCmd(User *user, const vector<string> &token);
 		void modeCmd(User *user, const vector<string> &params);
+		void kickCmd(User *user, const vector<string> &params);
+		void inviteCmd(User *user, const vector<string> &params);
+
 
 
 	public:

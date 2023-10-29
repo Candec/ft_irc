@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/20 11:26:25 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/24 17:50:41 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/29 23:04:01 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,9 @@ enum {
 	PRIVMSG,
 	AWAY,
 	PING,
-	MODE
+	MODE,
+	KICK,
+	INVITE
 };
 
 }
