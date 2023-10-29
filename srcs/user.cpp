@@ -6,13 +6,13 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/29 15:33:00 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/29 17:10:38 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/user.hpp"
 
-User::User(const int fd, struct sockaddr_in addr) : _fd(fd), _status(UserFlags::VERIFY), _previousPing(time(0)), _role("user")
+User::User(const int fd, struct sockaddr_in addr) : _fd(fd), _status(UserFlags::UNVERIFY), _previousPing(time(0)), _role("user")
 {
 	//Shouldn't be required in linux. It is to block simultanious accesses to the fd
 	fcntl(fd, F_SETFL, O_NONBLOCK);

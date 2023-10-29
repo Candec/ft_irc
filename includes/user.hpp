@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/28 17:31:06 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/29 15:50:13 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ enum Errors {
 namespace UserFlags {
 
 enum Status {
-	VERIFY,
+	UNVERIFY,
 	ACCEPT,
 	ONLINE,
 	OFFLINE

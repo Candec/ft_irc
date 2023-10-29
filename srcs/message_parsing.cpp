@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/29 15:32:44 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/29 19:14:08 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,15 +135,21 @@ Server::lookForCmd(User *user, const int cmd, vector<string> params, struct s_ms
 void
 Server::passCmd(User *user, const vector<string> &params)
 {
-	if (params.size() < 2) {
+	if (params.size() < 1) {
 		return sendMsg(user, ERR_NEEDMOREPARAMS);
-	} else if (!expectedArgs(params, 2)) // There's a numeric reply for too little but not too many
+	} else if (!expectedArgs(params, 1)) // There's a numeric reply for too little but not too many
 		return;
 
 	const string password = params[0];
 	if (password != _password)
-		return sendMsg(user, ERR_PASSWDMISMATCH);
+	{
+		sendMsg(user, ERR_PASSWDMISMATCH);
+		user->setStatus(UserFlags::OFFLINE);
+		return;
+	}
 
+	cout << "++++++++++++++++++++" << endl;
+	cout << GREEN << "Password given by " << user->getNick() << " was valid" << RESET << endl;
 	user->setPassword(password);
 	user->setStatus(UserFlags::ACCEPT);
 }

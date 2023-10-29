@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/29 15:32:57 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/29 19:20:20 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,14 +170,9 @@ void Server::run()
 			error("Failed poll", EXIT);
 
 		if (time(0) - _previousPing >= _ping)
-		{
-			// cout << BLUE << "updating ping" << WHITE << endl << flush;
 			updatePing();
-		}
 		else if (_pollfds[0].revents == POLLIN)
-		{
 			createUser();
-		}
 		else
 			updatePoll();
 
@@ -261,7 +256,9 @@ void Server::createUser()
 
 	struct sockaddr_in addr;
 	socklen_t socklen = sizeof(addr);
+
 	const int user_fd = accept(_listen_fd, (struct sockaddr *)&addr, &socklen);
+
 	if (user_fd == SENDING_ERROR) {
 		error("Failed accept", CONTINUE);
 		return ;
@@ -274,20 +271,12 @@ void Server::createUser()
 	}
 
 	User *user = new User(user_fd, addr);
-	user->setStatus(UserFlags::VERIFY);
+	user->setStatus(UserFlags::UNVERIFY);
+
 	_users[user_fd] = user;
 
 	cout << BLUE << "User " << GREEN << "connected" << BLUE << " from ";
-	cout << user->getHostaddr() << ":" << user->getPort() << WHITE << endl;
-
-	// sendClear(user_fd);
-	// sendClear(user);
-	// sendMsg(user, WELCOME_MSG);
-	// sendColorMsg(user, COMMAND_MSG, BOLD);
-	// sendColorMsg(user, CMD_LIST_MSG, YELLOW);
-
-	// strncpy(buffer, "Server connected\n", 18);
-	// send(c_fd, buffer, BUFFER, 0);
+	cout << "THIS HERE" << user->getHostaddr() << ":" << user->getPort() << WHITE << endl;
 
 	_pollfds.push_back(pollfd());
 	_pollfds.back().fd = user_fd;
@@ -427,6 +416,8 @@ void Server::delUser(User *user)
 	if (!user)
 		return;
 
+	cout << BLUE << "User " << MAGENTA << user->getNick();
+	cout << RED << " disconnected" << WHITE << endl;
 	log(string("Server: ") + RED + "Removing " + RESET + MAGENTA + user->getNick() + RESET + " (" \
 		+ MAGENTA + toString(user->getFd()) + RESET + ")");
 
@@ -502,36 +493,17 @@ void Server::updatePing()
 
 void Server::updatePoll()
 {
-	// log("Server: Updating poll...");
-
-	for (vector<pollfd>::iterator i = _pollfds.begin(); i != _pollfds.end(); ++i) {
-		if (i->revents & POLLIN) {
-			if (_users.find(i->fd) != _users.end())
-				receiveMsg(i);
-		}
-		// if (i->revents & POLLNVAL) {
-		// 	// _msgs_buffer.erase(i->fd);
-		// 	_pollfds.erase(i);
-		// 	break;
-		// }
-		// if (i->revents & POLLHUP) {
-		// 	cout << "Client " << RED << "disconnected" << WHITE << ": " << i->fd;
-		// 	// _msgs_buffer.erase(i->fd);
-		// 	// server.deleteClient(i->fd);
-		// 	delUser(getUser(i->fd));
-		// 	_pollfds.erase(i);
-		// 	break;
-		// }
+	for (vector<pollfd>::iterator i = _pollfds.begin(); i != _pollfds.end(); ++i)
+	{
+		if (i->revents & POLLIN && _users.find(i->fd) != _users.end())
+			receiveMsg(i);
 	}
 
 	for (map<const int, User *>::iterator it = _users.begin(); it != _users.end(); ++it)
 	{
-		if (it->second->getStatus() == UserFlags::OFFLINE)
-		{
-			cout << BLUE << "User " << MAGENTA << it->second->getNick();
-			cout << RED << " disconnected" << WHITE << endl;
+		if (it->second->getStatus() == UserFlags::OFFLINE
+		|| it->second->getStatus() == UserFlags::UNVERIFY)
 			delUser(it->second);
-		}
 	}
 }
 

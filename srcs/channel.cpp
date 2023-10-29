@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/29 15:32:33 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/29 19:22:53 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,7 +230,7 @@ void Channel::update()
 		if (isMember(user))
 		{
 			// server->sendClear(user->getFd());
-			server->sendClear(user);
+			// server->sendClear(user);
 			for (map<int, string>::iterator i = _history.begin(); i != _history.end(); i++)
 				server->sendMsg(user, i->second);
 		}
