@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/29 23:04:02 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/30 16:42:48 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -535,11 +535,11 @@ Server::modeCmd(User *user, const vector<string> &params)
 * Command: KICK
 * Parameters: [<channel>] <nicks> [<reason>]
 */
-void
-Server::kickCmd(User *user, const vector<string> &params)
-{
+// void
+// Server::kickCmd(User *user, const vector<string> &params)
+// {
 
-}
+// }
 
 /*
 * Command: INVITE
@@ -548,6 +548,26 @@ Server::kickCmd(User *user, const vector<string> &params)
 void
 Server::inviteCmd(User *user, const vector<string> &params)
 {
+	Channel *invChannel;
 
+	// Parameters number check
+	if (params.size() < 1)
+		return sendMsg(user, ERR_NEEDMOREPARAMS);
+	else if (params.size() > 2)
+		return sendMsg(user, "Too many arguments");
+	
+	// Getting the channel
+	if (params.size() == 1)
+		invChannel = user->getChannel();
+	else if (isValidChannelName(params[1]))
+		invChannel = server->getChannel(params[1]);
+	else
+		return sendMsg(user, CH_NAMING_ERR);
+
+	// Check if user is operator of the channel
+	if (!invChannel->isOperator(user))
+		return (sendMsg(user, ERR_CHANOPRIVSNEEDED));
+
+	invChannel->addInvitedUser(user);
 }
 

@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 15:56:34 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/29 15:32:49 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/30 16:36:44 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,3 +128,8 @@ const std::string err_usersdontmatch(const User *dest) {
 const std::string err_invalidkey(const User *dest, const std::string &targetChannel) {
 	return dest->getNick() + " " + targetChannel + " :Key is not well-formed";
 }
+const std::string err_inviteonlychan(const User *dest, const std::string &targetChannel) {
+	return dest->getNick() + " " + targetChannel + " :Cannot join channel (+i)";
+}
+
+
