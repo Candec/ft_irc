@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/30 16:42:48 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/30 19:09:24 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -571,3 +571,25 @@ Server::inviteCmd(User *user, const vector<string> &params)
 	invChannel->addInvitedUser(user);
 }
 
+
+/*
+* Command: PART
+* Parameters: [<channels>] [<message>]
+*/
+// void
+// Server::partCmd(User *user, const vector<string> &params)
+// {
+// 	vector<string> channelNames;
+// 	string message = "";
+
+// 	channelNames = splitString(params[0], ",");
+
+// 	if (params.size() > 1)
+// 	{
+// 		for (vector<string>::const_iterator it = ++params.begin(); it != params.end(); ++it)
+// 		{
+// 			message += *it;
+// 			message += " ";
+// 		}
+// 	}
+// }
