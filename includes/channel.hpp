@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/25 17:03:20 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/30 22:07:43 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,11 +69,11 @@ class Channel
 		uint	_client_limit;
 		map<int, User *>	_users;
 		// map<User *, bool>	_operators;
-		vector<User *>	_operators;
+		map<int, User *>	_operators;
 		// map<int, string>	_user_modes;
 
 		vector<User *>		_invitations;
-		vector<User *>		_banned;
+		map<int, User *>	_banned;
 
 		map<int, string>	_history;
 
@@ -107,7 +107,7 @@ class Channel
 		vector<User *>	getUsers() const;
 
 		bool isModeImplemented(ChannelFlags::Mode mode) const;
-		void addMode(ChannelFlags::Mode letter, std::vector<std::string> &arguments, User *caller);
+		void addMode(ChannelFlags::Mode letter, std::vector<std::string> arguments, const User *caller);
 		// void addMode(ChannelFlags::Mode letter);
 		void removeMode(ChannelFlags::Mode letter, std::vector<std::string> &arguments, User *caller);
 		// void removeMode(ChannelFlags::Mode letter);

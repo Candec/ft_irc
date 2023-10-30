@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 17:05:34 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/29 21:12:34 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/30 23:03:15 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ const int SENDING_ERROR = -1;
 # define BUFFER 1024
 # define MESSAGE_END "\r\n"
 
+# define LOG_PINGS 0
 
 
 

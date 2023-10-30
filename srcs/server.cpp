@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/29 22:14:05 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/30 23:13:32 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,11 +73,14 @@ Server::Server(const char * const port, const string password) : _upTime(time(0)
 Server::~Server()
 {
 	log(string(RED) + "Shutting down server", false);
-	cout << endl << RED << "Shutting down server" << WHITE << endl;
+	cout << endl << RED << "Shutting down server" << WHITE << endl << flush;
 
 	for (map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
 		delUser(i->second);
+
 	close(_listen_fd);
+
+	cout << "Server closed" << endl << flush;
 	exit(EXIT_SUCCESS);
 }
 
@@ -304,19 +307,19 @@ Channel *Server::createChannel(const string &channelName)
 		return NULL;
 
 	// cout << GREEN << "Creating channel " << YELLOW << channelName << RESET << flush;
-	log(string("Server: ") + GREEN + "Creating" + BLUE + " channel " + YELLOW + channelName + RESET);
+	log(string("    Server: ") + GREEN + "Creating " + YELLOW + channelName + RESET);
 
 	Channel *channel = new Channel(channelName);
 	if (!channel) {
 		cout << RED << " failed" << WHITE << endl << flush;
 		// error("Channel " + channelName + " creation failed", CONTINUE);
-		log(string("    ") + YELLOW + channelName + RED + " not created");
+		log(string("        ") + YELLOW + channelName + RED + " not created");
 	}
 	else {
 		_channels.insert(pair<string, Channel *>(channelName, channel));
 		// _channels[channelName] = channel;
 		// cout << GREEN << " created" << WHITE << endl << flush;
-		log(string("    ") + YELLOW + channelName + GREEN + " created");
+		log(string("        ") + YELLOW + channelName + GREEN + " created");
 	}
 	// cout << "channel [ mem: " << _channels[channelName] << " | << name: " << _channels[channelName]->getName() << " ] created" << endl << flush;
 	return channel;
@@ -428,7 +431,7 @@ void Server::delUser(User *user)
 	if (!user)
 		return;
 
-	log(string("Server: ") + RED + "Removing " + RESET + MAGENTA + user->getNick() + RESET + " (" \
+	log(string("Server: ") + RED + "Removing " + MAGENTA + user->getNick() + RESET + " (" \
 		+ MAGENTA + toString(user->getFd()) + RESET + ")");
 
 	user->leaveAllChannels();
@@ -448,9 +451,10 @@ void Server::delUser(User *user)
 
 void Server::delChannel(const Channel *channel)
 {
-	log(string("Server: ") + RED + "Deleting" + BLUE + " channel " + YELLOW + channel->getName());
+	log(string("Server: ") + RED + "Deleting " + YELLOW + channel->getName());
 
-	_channels.erase(channel->getName());
+	if (_channels.find(channel->getName()) != _channels.end())
+		_channels.erase(channel->getName());
 	delete channel;
 }
 
@@ -468,12 +472,15 @@ void Server::updatePing()
 		if (now - user->getPreviousPing() >= _timeout)
 		{
 			user->setStatus(UserFlags::OFFLINE);
-			user->write(user->getNick() + "timed out");
+			// user->write(user->getNick() + "timed out");
+			sendMsg(user, user->getNick() + " timed out");
 			sendColorMsg(user->getFd(), TIMEOUT_ERR, RED);
 			delUser(user);
 		}
-		else if (user->getStatus() == UserFlags::ONLINE)
-			user->write("PING " + user->getNick());
+		else if (user->getStatus() == UserFlags::ONLINE) {
+			// user->write("PING " + user->getNick());
+			sendMsg(user, "PING " + user->getNick());
+		}
 	}
 }
 
@@ -529,7 +536,7 @@ void Server::updatePoll()
 	{
 		if (it->second->getStatus() == UserFlags::OFFLINE)
 		{
-			cout << BLUE << "User " << MAGENTA << it->second->getNick();
+			cout << MAGENTA << it->second->getNick();
 			cout << RED << " disconnected" << WHITE << endl;
 			delUser(it->second);
 		}
@@ -556,12 +563,15 @@ void Server::sendMsg(const int user_fd, const string &msg) const
 }
 void Server::sendMsg(const User *user, const string &msg) const
 {
-	const int fd = user->getFd();
-	log(string("Server: Sending to ") + MAGENTA + user->getNick() + RESET + " (" \
-		+ MAGENTA + toString(fd) + RESET + ")" + ":\n" + msg);
+	std::ostringstream oss;
+	oss << "SEND " << RESET << timestamp() << BLUE << "Server: Sending to " \
+		<< MAGENTA << user->getNick() << RESET << " (" \
+		<< MAGENTA << user->getFd() << RESET << "):" << std::endl \
+		<< msg << endl;
+	log(oss.str());
 
 	const string tmp = msg + " " + MESSAGE_END;
-	if (send(fd, tmp.c_str(), tmp.size(), 0) == SENDING_ERROR)
+	if (send(user->getFd(), tmp.c_str(), tmp.size(), 0) == SENDING_ERROR)
 		error("Error sending message", CONTINUE);
 }
 
@@ -684,15 +694,20 @@ void Server::receiveMsg(vector<pollfd>::const_iterator it)
 
 void Server::printMsg2(User *user, const char *msg)
 {
-	cout << timestamp();
+	if (!logging)
+		return;
 
-	cout << MAGENTA << user->getNick() << RESET << " (" \
-	<< MAGENTA << user->getFd() << RESET << ")";
+	std::ostringstream oss;
+	oss << MAGENTA << "RECV " << RESET << timestamp() \
+		<< MAGENTA << user->getNick() << RESET << " (" \
+		<< MAGENTA << user->getFd() << RESET << ")";
 	if (user->isCapable())
-		cout << GREEN;
+		oss << GREEN;
 	else
-		cout << RED;
-	cout << " CAP" << RESET << ":" << endl << msg << flush;
+		oss << RED;
+	oss << " CAP" << RESET << ":" << std::endl << msg;
+
+	log(oss.str());
 	// cout << YELLOW << "*end of message*" << RESET << endl << endl << flush;
 }
 
@@ -705,6 +720,9 @@ User * Server::getUser(const int user_fd) const
 
 User * Server::getUser(const string &nick) const
 {
+	if (nick.empty())
+		return NULL;
+
 	map<int, User *>::const_iterator it;
 	for (it = _users.begin(); it != _users.end(); ++it)
 		if (it->second->getNick() == nick)

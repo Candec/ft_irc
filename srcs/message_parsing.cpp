@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/28 19:16:52 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/29 23:19:18 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,9 +225,6 @@ Server::joinCmd(User *user, const vector<string> &params)
 	// Split vectors by , delimiter -> pair< vector<Channels> vector<Keys> >
 	const string channelNames = params[0];
 	const vector<string> names = splitString(channelNames, ",");
-
-	log(string(MAGENTA + user->getNick() + BLUE + ": " \
-		+ GREEN + "Joining" + BLUE + " channels " + YELLOW + channelNames));
 
 	string channelKeys;
 	if (params.size() > 1)
