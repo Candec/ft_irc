@@ -179,6 +179,8 @@ void User::joinChannel(const string &channelName, const string &key)
 	// List of channel members
 	this->sendReply(RPL_NAMREPLY, "JOIN", channelName);
 	this->sendReply(RPL_ENDOFNAMES, "JOIN", "");
+
+	channel->broadcast(string("JOIN " + channelName), this, getNick());
 }
 void User::leaveChannel(Channel *channel)
 {
