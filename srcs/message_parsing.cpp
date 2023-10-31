@@ -265,8 +265,6 @@ Server::joinCmd(User *user, const vector<string> &params)
 		}
 	}
 
-	// removes the user from the previous channel list of users
-	// prevChannel->removeUser(*user);
 }
 
 void
@@ -622,6 +620,7 @@ Server::partCmd(User *user, const vector<string> &params)
 		sendMsg(user, message);
 		if (user->isChannelMember(channel->getName()))
 		{
+			channel->broadcast(string("PART " + channel->getName(), user->getNick()), NULL, user->getNick());
 			user->leaveChannel(channel);
 		}
 	}
