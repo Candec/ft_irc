@@ -88,6 +88,8 @@ void Channel::addMode(ChannelFlags::Mode letter, std::vector<std::string> argume
 		if (arguments.size())
 			arguments.erase(arguments.begin());
 		break;
+	case ChannelFlags::CLIENT_LIMIT:
+		_client_limit = atoi(arguments[0].c_str());
 	case ChannelFlags::KEY_CHANNEL:
 		setKey(arguments[0], caller);
 		if (arguments.size())
@@ -119,23 +121,24 @@ void Channel::removeMode(ChannelFlags::Mode letter, std::vector<std::string> &ar
 		_operators.erase(_operators.find(user->getFd()));
 		break;
 	case ChannelFlags::CLIENT_LIMIT:
-		setKey("", caller);
-		__attribute__ ((fallthrough));
+		_client_limit = 0;
 	case ChannelFlags::INVITE_ONLY:
 	case ChannelFlags::PROTECTED_TOPIC:
 	case ChannelFlags::KEY_CHANNEL:
+		setKey("", caller);
 	default:
-		const char mode = letter;
-
-		log(YELLOW + _name + BLUE + ": " \
-			+ RED + "Removing" + BLUE + " mode " + mode);
-
-		size_t pos = _modes.find(mode);
-		if (pos != string::npos)
-			_modes.erase(pos);
-		else
-			log("Channel didn't have that mode");
+		break;
 	}
+	const char mode = letter;
+
+	log(YELLOW + _name + BLUE + ": " \
+		+ RED + "Removing" + BLUE + " mode " + mode);
+
+	size_t pos = _modes.find(mode);
+	if (pos != string::npos)
+		_modes.erase(pos);
+	else
+		log("Channel didn't have that mode");
 }
 
 void Channel::addUser(User *user)
