@@ -462,10 +462,11 @@ void Server::updatePing()
 		User *user = i->second;
 		if (now - user->getPreviousPing() >= _timeout)
 		{
-			user->setStatus(UserFlags::OFFLINE);
+			sendErrFatal(user, "Timed out");
+			// user->setStatus(UserFlags::OFFLINE);
 			// user->write(user->getNick() + "timed out");
-			sendMsg(user, user->getNick() + " timed out");
-			sendColorMsg(user->getFd(), TIMEOUT_ERR, RED);
+			// sendMsg(user, user->getNick() + " timed out");
+			// sendColorMsg(user->getFd(), TIMEOUT_ERR, RED);
 			delUser(user);
 		}
 		else if (user->getStatus() == UserFlags::ONLINE) {

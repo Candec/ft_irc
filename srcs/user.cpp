@@ -156,7 +156,7 @@ void User::joinChannel(const string &channelName, const string &key)
 		return this->sendError(ERR_CHANNELISFULL, "JOIN", channelName);
 	if (channel->getKey() != key)
 		return this->sendError(ERR_BADCHANNELKEY, "JOIN", channelName);
-	if (channel->getMode() == "i" && !channel->isInvitedUser(this))
+	if (channel->isInviteOnly() && !channel->isInvitedUser(this))
 		return this->sendError(ERR_INVITEONLYCHAN, "JOIN", channelName);
 
 	channel->addUser(this);
@@ -188,6 +188,8 @@ void User::leaveChannel(Channel *channel)
 		return;
 	if (!channel->isMember(this))
 		return log("User was not member of " + channel->getName());
+
+	channel->broadcast(string("PART " + channel->getName()), NULL, _nick);
 
 	channel->removeUser(this);
 	_joinedChannels.erase(channel->getName());
