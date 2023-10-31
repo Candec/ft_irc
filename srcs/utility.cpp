@@ -130,7 +130,7 @@ void log(const std::string &info, const bool outputToTerminal)
 			logFile.close();
 		}
 		if (outputToTerminal)
-			std::cout << BLUE + info + RESET << std::endl << std::flush;
+			std::cout << BLUE << info << RESET << std::endl << std::flush;
 	}
 }
 void log(const std::string &info)
