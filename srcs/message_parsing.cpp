@@ -227,6 +227,8 @@ Server::userCmd(User *user, const vector<string> &params)
 		log(MAGENTA + user->getNick() + BLUE + " (" \
 			+ MAGENTA + toString(user->getFd()) + BLUE + ") is " + GREEN + "registered");
 
+	user->setStatus(UserFlags::ONLINE);
+
 	user->sendReply(RPL_WELCOME, "USER", "");
 }
 
