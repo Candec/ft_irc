@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/31 13:58:42 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/31 18:47:52 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ void
 Server::nickCmd(User *user, const vector<string> &params)
 {
 	if (!_password.empty() && user->getStatus() != UserFlags::ACCEPT)
-		return sendErrFatal(user, "No password given");
+		return sendErrFatal(user, "NICK: No password given");
 
 	if (params.empty())
 		return user->sendError(ERR_NONICKNAMEGIVEN, "NICK", params);
@@ -208,7 +208,7 @@ void
 Server::userCmd(User *user, const vector<string> &params)
 {
 	if (!_password.empty() && user->getStatus() != UserFlags::ACCEPT)
-		return sendErrFatal(user, "No password given");
+		return sendErrFatal(user, "USER: No password given");
 
 	const size_t n_args = params.size();
 
