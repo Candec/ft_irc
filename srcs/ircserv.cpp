@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ircserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:16 by fporto            #+#    #+#             */
 /*   Updated: 2023/10/30 22:13:38 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.hpp"
+#include "../includes/main.hpp"
 
 bool logging;
 bool logToFile;

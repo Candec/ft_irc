@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/29 23:19:18 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/31 13:58:42 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "commands.hpp"
-#include "main.hpp"
+#include "../includes/commands.hpp"
+#include "../includes/main.hpp"
 
 struct s_msg
 Server::parseMessage(User *user, const char * const buffer)
@@ -83,6 +83,16 @@ Server::isCmd(const string &param)
 	return false;
 }
 
+bool
+Server::isChannel(const string &channel)
+{
+	if (_channels.find(channel) == _channels.end()) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
 void
 Server::lookForCmd(User *user, const int cmd, vector<string> params, struct s_msg &msg)
 {
@@ -118,6 +128,10 @@ Server::lookForCmd(User *user, const int cmd, vector<string> params, struct s_ms
 		return pingCmd(user, params);
 	case Commands::MODE:
 		return modeCmd(user, params);
+	case Commands::INVITE:
+		return inviteCmd(user, params);
+	case Commands::PART:
+		return partCmd(user, params);
 	default:
 		return;
 	}
@@ -135,15 +149,21 @@ Server::lookForCmd(User *user, const int cmd, vector<string> params, struct s_ms
 void
 Server::passCmd(User *user, const vector<string> &params)
 {
-	if (params.size() < 2) {
+	if (params.size() < 1) {
 		return sendMsg(user, ERR_NEEDMOREPARAMS);
-	} else if (!expectedArgs(params, 2)) // There's a numeric reply for too little but not too many
+	} else if (!expectedArgs(params, 1)) // There's a numeric reply for too little but not too many
 		return;
 
 	const string password = params[0];
 	if (password != _password)
-		return sendMsg(user, ERR_PASSWDMISMATCH);
+	{
+		sendMsg(user, ERR_PASSWDMISMATCH);
+		user->setStatus(UserFlags::OFFLINE);
+		return;
+	}
 
+	cout << "++++++++++++++++++++" << endl;
+	cout << GREEN << "Password given by " << user->getNick() << " was valid" << RESET << endl;
 	user->setPassword(password);
 	user->setStatus(UserFlags::ACCEPT);
 }
@@ -519,5 +539,88 @@ Server::modeCmd(User *user, const vector<string> &params)
 				target->removeMode((ChannelFlags::Mode)*it, modeArguments, user);
 		}
 		target->broadcast("MODE " + joinStrings(params));
+	}
+}
+
+/*
+* Command: KICK
+* Parameters: [<channel>] <nicks> [<reason>]
+*/
+// void
+// Server::kickCmd(User *user, const vector<string> &params)
+// {
+
+// }
+
+/*
+* Command: INVITE
+* Parameters: <nick> [<channel>]
+*/
+void
+Server::inviteCmd(User *user, const vector<string> &params)
+{
+	Channel *invChannel;
+
+	// Parameters number check
+	if (params.size() < 1)
+		return sendMsg(user, ERR_NEEDMOREPARAMS);
+	else if (params.size() > 2)
+		return sendMsg(user, "Too many arguments");
+
+	// Getting the channel
+	if (params.size() == 1)
+		invChannel = user->getChannel();
+	else if (isValidChannelName(params[1]))
+		invChannel = server->getChannel(params[1]);
+	else
+		return sendMsg(user, CH_NAMING_ERR);
+
+	// Check if user is operator of the channel
+	if (!invChannel->isOperator(user))
+		return (sendMsg(user, ERR_CHANOPRIVSNEEDED));
+
+	invChannel->addInvitedUser(user);
+}
+
+
+/*
+* Command: PART
+* Parameters: [<channels>] [<message>]
+*/
+void
+Server::partCmd(User *user, const vector<string> &params)
+{
+	vector<string> channelNames;
+	string message = "";
+
+	channelNames = splitString(params[0], ",");
+
+	if (params.size() > 1)
+	{
+		for (vector<string>::const_iterator it = ++params.begin(); it != params.end(); ++it)
+		{
+			message += *it;
+			if (it + 1 != params.end())
+				message += " ";
+		}
+
+		if (message[0] == ':')
+			message.erase(message.begin());
+	}
+
+	for (vector<string>::const_iterator it = channelNames.begin(); it != channelNames.end(); ++it)
+	{
+		if (!isChannel(*it))
+		{
+			sendMsg(user, ERR_NOSUCHCHANNEL);
+			continue;
+		}
+
+		Channel *channel = getChannel(*it);
+		sendMsg(user, message);
+		if (user->isChannelMember(channel->getName()))
+		{
+			user->leaveChannel(channel);
+		}
 	}
 }

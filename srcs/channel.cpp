@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
 /*   Updated: 2023/10/30 22:06:13 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.hpp"
+#include "../includes/main.hpp"
 
 Channel::Channel() : _modes("n") {}
 Channel::Channel(const string &name) : _name(name), _modes("n"), _type(name[0])
@@ -227,7 +227,7 @@ void Channel::update()
 		if (isMember(user))
 		{
 			// server->sendClear(user->getFd());
-			server->sendClear(user);
+			// server->sendClear(user);
 			for (map<int, string>::iterator i = _history.begin(); i != _history.end(); i++)
 				server->sendMsg(user, i->second);
 		}

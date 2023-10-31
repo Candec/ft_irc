@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
 /*   Updated: 2023/10/30 22:17:43 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "user.hpp"
+#include "../includes/user.hpp"
 
-User::User(const int fd, struct sockaddr_in addr) : _fd(fd), _status(UserFlags::VERIFY), _previousPing(time(0)), _role("user")
+User::User(const int fd, struct sockaddr_in addr) : _fd(fd), _status(UserFlags::UNVERIFY), _previousPing(time(0)), _role("user")
 {
 	//Shouldn't be required in linux. It is to block simultanious accesses to the fd
 	fcntl(fd, F_SETFL, O_NONBLOCK);
@@ -156,6 +156,8 @@ void User::joinChannel(const string &channelName, const string &key)
 		return this->sendError(ERR_CHANNELISFULL, "JOIN", channelName);
 	if (channel->getKey() != key)
 		return this->sendError(ERR_BADCHANNELKEY, "JOIN", channelName);
+	if (channel->getMode() == "i" && !channel->isInvitedUser(this))
+		return this->sendError(ERR_INVITEONLYCHAN, "JOIN", channelName);
 
 	channel->addUser(this);
 	_joinedChannels.insert(pair<string, Channel *>(channelName, channel));
@@ -376,6 +378,9 @@ void User::sendError(Errors type, const std::string &cmd, const std::vector<std:
 		break;
 	case ERR_INVALIDKEY:
 		reply += err_invalidkey(this, params[0]);
+		break;
+	case ERR_INVITEONLYCHAN:
+		reply += err_inviteonlychan(this, params[0]);
 		break;
 	default:
 		error("Missing error for numeric " + toString(type), CONTINUE);
