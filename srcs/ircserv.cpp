@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ircserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:16 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/29 21:43:01 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/30 22:13:38 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.hpp"
+#include "../includes/main.hpp"
 
 bool logging;
 bool logToFile;
@@ -40,6 +40,8 @@ int main(int argc, char *argv[])
 				error("./ircserv <port> <password> [--log, --logfile]", EXIT);
 			}
 		}
+	} else {
+		cout << "Logging " << RED << "disabled" << RESET << ". To enable use --log or --logfile" << std::endl << std::flush;
 	}
 
 	signal(SIGINT, handler);

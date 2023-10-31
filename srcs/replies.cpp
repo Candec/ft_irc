@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   replies.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 15:56:34 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/28 17:55:14 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/30 16:36:44 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "numericreplies.hpp"
-#include "user.hpp"
+#include "../includes/numericreplies.hpp"
+#include "../includes/user.hpp"
 // #include "main.hpp"
 
 const std::string rpl_welcome(const User *dest) {
@@ -128,3 +128,8 @@ const std::string err_usersdontmatch(const User *dest) {
 const std::string err_invalidkey(const User *dest, const std::string &targetChannel) {
 	return dest->getNick() + " " + targetChannel + " :Key is not well-formed";
 }
+const std::string err_inviteonlychan(const User *dest, const std::string &targetChannel) {
+	return dest->getNick() + " " + targetChannel + " :Cannot join channel (+i)";
+}
+
+

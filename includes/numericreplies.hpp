@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   numericreplies.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:20:00 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/25 12:00:52 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/30 16:40:32 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,5 +51,6 @@ const std::string err_chanoprivsneeded(const User *dest, const std::string &chan
 const std::string err_umodeunknownflag(const User *dest);
 const std::string err_usersdontmatch(const User *dest);
 const std::string err_invalidkey(const User *dest, const std::string &targetChannel);
+const std::string err_inviteonlychan(const User *dest, const std::string &targetChannel);
 
 #endif

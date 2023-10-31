@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/29 22:29:22 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/30 22:06:13 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.hpp"
+#include "../includes/main.hpp"
 
 Channel::Channel() : _modes("n") {}
 Channel::Channel(const string &name) : _name(name), _modes("n"), _type(name[0])
@@ -74,29 +74,36 @@ bool Channel::isModeImplemented(ChannelFlags::Mode modeLetter) const
 		return false;
 	}
 }
-void Channel::addMode(ChannelFlags::Mode letter, std::vector<std::string> &arguments, User *caller)
+void Channel::addMode(ChannelFlags::Mode letter, std::vector<std::string> arguments, const User *caller)
 {
+	User *user;
+
 	switch (letter)
 	{
 	case ChannelFlags::OPERATOR:
-		_operators.push_back(server->getUser(arguments[0]));
-		arguments.erase(arguments.begin());
+		user = server->getUser(arguments[0]);
+		if (!user)
+			return;
+		_operators.insert(pair<int, User *>(user->getFd(), user));
+		if (arguments.size())
+			arguments.erase(arguments.begin());
 		break;
 	case ChannelFlags::KEY_CHANNEL:
 		setKey(arguments[0], caller);
-		arguments.erase(arguments.begin());
-		__attribute__ ((fallthrough));
+		if (arguments.size())
+			arguments.erase(arguments.begin());
 	default:
-		const char mode = letter;
-
-		log(YELLOW + _name + BLUE + ": " \
-			+ GREEN + "Adding" + BLUE + " mode " + mode);
-
-		if (_modes.find(mode) == string::npos)
-			_modes += mode;
-		else
-			log("Channel already had that mode");
+		break;
 	}
+	const char mode = letter;
+
+	log(YELLOW + _name + BLUE + ": " \
+		+ GREEN + "Adding" + BLUE + " mode " + mode);
+
+	if (_modes.find(mode) == string::npos)
+		_modes += mode;
+	else
+		log("Channel already had that mode");
 }
 void Channel::removeMode(ChannelFlags::Mode letter, std::vector<std::string> &arguments, User *caller)
 {
@@ -105,10 +112,11 @@ void Channel::removeMode(ChannelFlags::Mode letter, std::vector<std::string> &ar
 	{
 	case ChannelFlags::OPERATOR:
 		user = server->getUser(arguments[0]);
-		arguments.erase(arguments.begin());
-		for (std::vector<User *>::iterator it = _operators.begin(); it != _operators.end(); ++it)
-			if (*it == user)
-				_operators.erase(it);
+		if (!user)
+			return;
+		if (arguments.size())
+			arguments.erase(arguments.begin());
+		_operators.erase(_operators.find(user->getFd()));
 		break;
 	case ChannelFlags::CLIENT_LIMIT:
 		setKey("", caller);
@@ -132,8 +140,10 @@ void Channel::removeMode(ChannelFlags::Mode letter, std::vector<std::string> &ar
 
 void Channel::addUser(User *user)
 {
-	log(YELLOW + _name + BLUE + ": " \
-		+ GREEN + "Adding" + BLUE + " user " \
+	if (!user)
+		return;
+
+	log(YELLOW + _name + BLUE + ": " + GREEN + "Adding" + BLUE + " user " \
 		+ MAGENTA + toString(user->getFd()));
 
 	_users[user->getFd()] = user;
@@ -142,16 +152,19 @@ void Channel::addUser(User *user)
 		user->sendReply(RPL_TOPIC, "TOPIC", _name);
 	else
 		user->sendReply(RPL_NOTOPIC, "TOPIC", _name);
-	// _operators[user] = false;
-	// _user_modes[user->getFd()] = "";
 }
 void Channel::removeUser(User *user)
 {
-	log(YELLOW + _name + RESET + ": " \
-		+ RED + "Removing " + RESET \
+	if (!user)
+		return;
+
+	log(string("    ") + YELLOW + _name + RESET + ": " \
+		+ RED + "Removing " \
 		+ MAGENTA + user->getNick() + RESET + " (" \
 		+ MAGENTA + toString(user->getFd()) + RESET + ")");
 
+	if (isOperator(user))
+		_operators.erase(_operators.find(user->getFd()));
 	_users.erase(_users.find(user->getFd()));
 }
 void Channel::removeUser(const string &nick)
@@ -164,32 +177,18 @@ void Channel::removeUser(const string &nick)
 void Channel::ban(User *user)
 {
 	if (!isBanned(user))
-		_banned.push_back(user);
+		_banned.insert(pair<int, User *>(user->getFd(), user));
 }
 void Channel::unban(const User *user)
 {
 	if (isBanned(user))
-		for (vector<User *>::iterator it = _banned.begin(); it != _banned.end(); ++it)
-			if (*it == user)
-				_banned.erase(it);
+		_banned.erase(user->getFd());
 }
 
 bool Channel::isMember(User *user) const { return _users.find(user->getFd()) != _users.end(); }
-bool Channel::isOperator(User *user) const
-{
-	for (vector<User *>::const_iterator it = _operators.begin(); it != _operators.end(); ++it)
-		if (*it == user)
-			return true;
-	return false;
-}
+bool Channel::isOperator(User *user) const { return (_operators.find(user->getFd()) != _operators.end()); }
 bool Channel::isFull() const { return (_users.size() == _client_limit); }
-bool Channel::isBanned(const User *user) const
-{
-	for (vector<User *>::const_iterator it = _banned.begin(); it != _banned.end(); ++it)
-		if (*it == user)
-			return true;
-	return false;
-}
+bool Channel::isBanned(const User *user) const { return (_banned.find(user->getFd()) != _banned.end()); }
 bool Channel::isInviteOnly() const { return (_modes.find('i') != string::npos); }
 bool Channel::noExternalMessages() const { return (_modes.find('n') != string::npos); }
 bool Channel::isTopicProtected() const { return(_modes.find('t') != string::npos); }
@@ -206,8 +205,6 @@ void Channel::revokeInvitation(User *user)
 
 void Channel::broadcast(const string &msg) const
 {
-	// for (map<int, User *>::const_iterator it = _users.begin(); it != _users.end(); ++it)
-	// 	server->sendMsg(it->second, msg);
 	broadcast(msg, NULL);
 }
 void Channel::broadcast(const string &msg, const User *exclude, const string &src) const
@@ -230,7 +227,7 @@ void Channel::update()
 		if (isMember(user))
 		{
 			// server->sendClear(user->getFd());
-			server->sendClear(user);
+			// server->sendClear(user);
 			for (map<int, string>::iterator i = _history.begin(); i != _history.end(); i++)
 				server->sendMsg(user, i->second);
 		}

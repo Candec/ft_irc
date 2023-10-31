@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   utility.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:06 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/29 22:12:50 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/30 23:06:39 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "utility.hpp"
+#include "../includes/utility.hpp"
 
 void error(const std::string &str, const bool quit)
 {
@@ -118,6 +118,9 @@ const std::vector<std::string> splitString(std::string str, const std::string &d
 
 void log(const std::string &info, const bool outputToTerminal)
 {
+	if ((info.find("PING") != std::string::npos || info.find("PONG") != std::string::npos) \
+		&& !LOG_PINGS)
+		return;
 	if (logging) {
 		if (logToFile) {
 			std::ofstream logFile;
@@ -127,9 +130,8 @@ void log(const std::string &info, const bool outputToTerminal)
 			logFile.close();
 		}
 		if (outputToTerminal)
-			std::cout << BLUE + info + RESET << std::endl << std::flush;
+			std::cout << BLUE << info << RESET << std::endl << std::flush;
 	}
-
 }
 void log(const std::string &info)
 {

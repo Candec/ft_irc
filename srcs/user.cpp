@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/29 22:28:45 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/30 22:17:43 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "user.hpp"
+#include "../includes/user.hpp"
 
-User::User(const int fd, struct sockaddr_in addr) : _fd(fd), _status(UserFlags::VERIFY), _previousPing(time(0)), _role("user")
+User::User(const int fd, struct sockaddr_in addr) : _fd(fd), _status(UserFlags::UNVERIFY), _previousPing(time(0)), _role("user")
 {
 	//Shouldn't be required in linux. It is to block simultanious accesses to the fd
 	fcntl(fd, F_SETFL, O_NONBLOCK);
@@ -138,50 +138,47 @@ void User::joinChannel(const string &channelName)
 }
 void User::joinChannel(const string &channelName, const string &key)
 {
+	if (isChannelMember(channelName))
+		return;
 	// cout << "User " << MAGENTA + _nick + WHITE + " is joining the channel \"" + YELLOW + channelName + WHITE + "\"" << endl << flush;
-	log(MAGENTA + _nick + BLUE + ": " + GREEN + "Joining" + BLUE + " the channel " + YELLOW + channelName);
+	log(MAGENTA + _nick + BLUE + ": " + GREEN + "Joining " + YELLOW + channelName);
 
 	Channel *channel = server->getChannel(channelName);
 	if (!channel) {
-		cout << RED << "\tChannel doesn't exist" << WHITE << endl << flush;
-		// if (!isValidChannelName(channelName))
-		// 	return server->sendColorMsg(getFd(), CH_NAMING_ERR, RED);
+		cout << RED << "    Channel doesn't exist" << WHITE << endl << flush;
 		channel = server->createChannel(channelName);
 		if (!channel)
 			return;
+
+		channel->addMode(ChannelFlags::OPERATOR, vector<string>(1, _nick), this);
 	}
-	if (!isChannelMember(channelName)) {
-		if (channel->isFull())
-			return this->sendError(ERR_CHANNELISFULL, "JOIN", channelName);
-		if (channel->getKey() != key)
-			return this->sendError(ERR_BADCHANNELKEY, "JOIN", channelName);
-		// Channel *prevChannel = getChannel(this->getAtChannel());
-		// if (prevChannel)
-		// 	prevChannel->setLog(user->getNick() + " left " + prevChannel->getName());
+	if (channel->isFull())
+		return this->sendError(ERR_CHANNELISFULL, "JOIN", channelName);
+	if (channel->getKey() != key)
+		return this->sendError(ERR_BADCHANNELKEY, "JOIN", channelName);
+	if (channel->getMode() == "i" && !channel->isInvitedUser(this))
+		return this->sendError(ERR_INVITEONLYCHAN, "JOIN", channelName);
 
-		channel->addUser(this);
-		_joinedChannels.insert(pair<string, Channel *>(channelName, channel));
+	channel->addUser(this);
+	_joinedChannels.insert(pair<string, Channel *>(channelName, channel));
 
-		string tmp;
-		if (!_capable)
-			tmp = BLACK + _nick + " joined the channel" + RESET;
-		else
-			tmp = _nick + " joined the channel";
-		channel->setLog(tmp);
+	if (!_capable)
+		channel->setLog(MAGENTA + _nick + " joined the channel" + RESET);
+	else
+		channel->setLog(_nick + " joined the channel");
 
-		cout << GREEN << " OK" << WHITE << endl << flush;
+	cout << GREEN << " OK" << WHITE << endl << flush;
 
-		string reply;
-		// Send JOIN ACK
-		reply = ":" + _nick + " JOIN " + channelName;
-		server->sendMsg(this, reply);
-		// Channel topic
-		if (!channel->getTopic().empty())
-			this->sendReply(RPL_TOPIC, "JOIN", "");
-		// List of channel members
-		this->sendReply(RPL_NAMREPLY, "JOIN", channelName);
-		this->sendReply(RPL_ENDOFNAMES, "JOIN", "");
-	}
+	string reply;
+	// Send JOIN ACK
+	reply = ":" + _nick + " JOIN " + channelName;
+	server->sendMsg(this, reply);
+	// Channel topic
+	if (!channel->getTopic().empty())
+		this->sendReply(RPL_TOPIC, "JOIN", "");
+	// List of channel members
+	this->sendReply(RPL_NAMREPLY, "JOIN", channelName);
+	this->sendReply(RPL_ENDOFNAMES, "JOIN", "");
 }
 void User::leaveChannel(Channel *channel)
 {
@@ -193,7 +190,7 @@ void User::leaveChannel(Channel *channel)
 	channel->removeUser(this);
 	_joinedChannels.erase(channel->getName());
 
-	log(MAGENTA + _nick + RED + " left " + BLUE + "channel " + YELLOW + channel->getName() + WHITE);
+	log(MAGENTA + _nick + RED + " left " + YELLOW + channel->getName() + WHITE);
 
 	if (channel->getUsers().size() == 0)
 		server->delChannel(channel);
@@ -381,6 +378,9 @@ void User::sendError(Errors type, const std::string &cmd, const std::vector<std:
 		break;
 	case ERR_INVALIDKEY:
 		reply += err_invalidkey(this, params[0]);
+		break;
+	case ERR_INVITEONLYCHAN:
+		reply += err_inviteonlychan(this, params[0]);
 		break;
 	default:
 		error("Missing error for numeric " + toString(type), CONTINUE);
