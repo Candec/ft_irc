@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/29 23:05:49 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/31 12:45:16 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ class Server
 		struct s_msg parseMessage(User *user, const char * const buffer);
 		vector< vector<string> >splitBuffer(const char * const buffer);
 		bool isCmd(const string &param);
+		bool isChannel(const string &channel);
 		// void lookForCmd(User *user, vector<string> words, struct s_msg &msg);
 		void lookForCmd(User *user, const int cmd, vector<string> params, struct s_msg &msg);
 
@@ -102,6 +103,8 @@ class Server
 		void modeCmd(User *user, const vector<string> &params);
 		void kickCmd(User *user, const vector<string> &params);
 		void inviteCmd(User *user, const vector<string> &params);
+		void partCmd(User *user, const vector<string> &params);
+
 
 
 

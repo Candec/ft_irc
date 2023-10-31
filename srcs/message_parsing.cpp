@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/30 19:09:24 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/10/31 13:58:42 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,16 @@ Server::isCmd(const string &param)
 	return false;
 }
 
+bool
+Server::isChannel(const string &channel)
+{
+	if (_channels.find(channel) == _channels.end()) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
 void
 Server::lookForCmd(User *user, const int cmd, vector<string> params, struct s_msg &msg)
 {
@@ -118,6 +128,10 @@ Server::lookForCmd(User *user, const int cmd, vector<string> params, struct s_ms
 		return pingCmd(user, params);
 	case Commands::MODE:
 		return modeCmd(user, params);
+	case Commands::INVITE:
+		return inviteCmd(user, params);
+	case Commands::PART:
+		return partCmd(user, params);
 	default:
 		return;
 	}
@@ -576,20 +590,40 @@ Server::inviteCmd(User *user, const vector<string> &params)
 * Command: PART
 * Parameters: [<channels>] [<message>]
 */
-// void
-// Server::partCmd(User *user, const vector<string> &params)
-// {
-// 	vector<string> channelNames;
-// 	string message = "";
+void
+Server::partCmd(User *user, const vector<string> &params)
+{
+	vector<string> channelNames;
+	string message = "";
 
-// 	channelNames = splitString(params[0], ",");
+	channelNames = splitString(params[0], ",");
 
-// 	if (params.size() > 1)
-// 	{
-// 		for (vector<string>::const_iterator it = ++params.begin(); it != params.end(); ++it)
-// 		{
-// 			message += *it;
-// 			message += " ";
-// 		}
-// 	}
-// }
+	if (params.size() > 1)
+	{
+		for (vector<string>::const_iterator it = ++params.begin(); it != params.end(); ++it)
+		{
+			message += *it;
+			if (it + 1 != params.end())
+				message += " ";
+		}
+
+		if (message[0] == ':')
+			message.erase(message.begin());
+	}
+
+	for (vector<string>::const_iterator it = channelNames.begin(); it != channelNames.end(); ++it)
+	{
+		if (!isChannel(*it))
+		{
+			sendMsg(user, ERR_NOSUCHCHANNEL);
+			continue;
+		}
+
+		Channel *channel = getChannel(*it);
+		sendMsg(user, message);
+		if (user->isChannelMember(channel->getName()))
+		{
+			user->leaveChannel(channel);
+		}
+	}
+}
