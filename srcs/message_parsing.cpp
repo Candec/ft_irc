@@ -150,14 +150,14 @@ void
 Server::passCmd(User *user, const vector<string> &params)
 {
 	if (params.size() < 1) {
-		return sendMsg(user, ERR_NEEDMOREPARAMS);
+		return user->sendError(ERR_NEEDMOREPARAMS, "PASS", "");
 	} else if (!expectedArgs(params, 1)) // There's a numeric reply for too little but not too many
 		return;
 
 	const string password = params[0];
 	if (password != _password)
 	{
-		sendMsg(user, ERR_PASSWDMISMATCH);
+		user->sendError(ERR_PASSWDMISMATCH, "PASS", "");
 		user->setStatus(UserFlags::OFFLINE);
 		return;
 	}
@@ -175,6 +175,11 @@ Server::passCmd(User *user, const vector<string> &params)
 void
 Server::nickCmd(User *user, const vector<string> &params)
 {
+	if (user->getStatus() != UserFlags::ACCEPT) {
+		sendErrFatal(user, "No password given");
+		return;
+	}
+
 	if (params.empty())
 		return user->sendError(ERR_NONICKNAMEGIVEN, "NICK", params);
 
@@ -204,6 +209,11 @@ Server::nickCmd(User *user, const vector<string> &params)
 void
 Server::userCmd(User *user, const vector<string> &params)
 {
+	if (user->getStatus() != UserFlags::UNVERIFY || user->getStatus() != UserFlags::OFFLINE)
+		return;
+	if (user->getStatus() != UserFlags::ACCEPT)
+		return sendErrFatal(user, "No password given");
+
 	const size_t n_args = params.size();
 
 	if (user->isRegistered())
@@ -563,7 +573,7 @@ Server::inviteCmd(User *user, const vector<string> &params)
 
 	// Parameters number check
 	if (params.size() < 1)
-		return sendMsg(user, ERR_NEEDMOREPARAMS);
+		user->sendError(ERR_NEEDMOREPARAMS, "INVITE", "");
 	else if (params.size() > 2)
 		return sendMsg(user, "Too many arguments");
 
@@ -577,7 +587,7 @@ Server::inviteCmd(User *user, const vector<string> &params)
 
 	// Check if user is operator of the channel
 	if (!invChannel->isOperator(user))
-		return (sendMsg(user, ERR_CHANOPRIVSNEEDED));
+		return user->sendError(ERR_CHANOPRIVSNEEDED, "INVITE", params[1]);
 
 	invChannel->addInvitedUser(user);
 }
@@ -588,7 +598,7 @@ Server::inviteCmd(User *user, const vector<string> &params)
 * Parameters: [<channels>] [<message>]
 */
 void
-Server::partCmd(User *user, const vector<string> &params)
+Server::partCmd(User *user, vector<string> params)
 {
 	vector<string> channelNames;
 	string message = "";
@@ -597,12 +607,14 @@ Server::partCmd(User *user, const vector<string> &params)
 
 	if (params.size() > 1)
 	{
-		for (vector<string>::const_iterator it = ++params.begin(); it != params.end(); ++it)
-		{
-			message += *it;
-			if (it + 1 != params.end())
-				message += " ";
-		}
+		params.erase(params.begin());
+		// for (vector<string>::const_iterator it = ++params.begin(); it != params.end(); ++it)
+		// {
+		// 	message += *it;
+		// 	if (it + 1 != params.end())
+		// 		message += " ";
+		// }
+		message = joinStrings(params);
 
 		if (message[0] == ':')
 			message.erase(message.begin());
@@ -612,7 +624,7 @@ Server::partCmd(User *user, const vector<string> &params)
 	{
 		if (!isChannel(*it))
 		{
-			sendMsg(user, ERR_NOSUCHCHANNEL);
+			user->sendError(ERR_NOSUCHCHANNEL, "PART", *it);
 			continue;
 		}
 
@@ -620,7 +632,8 @@ Server::partCmd(User *user, const vector<string> &params)
 		sendMsg(user, message);
 		if (user->isChannelMember(channel->getName()))
 		{
-			channel->broadcast(string("PART " + channel->getName() + " " + user->getNick()), NULL, user->getNick());
+			channel->broadcast(string("PART " + channel->getName()), user, user->getNick());
+			sendMsg(user, string("PART " + channel->getName()), user->getNick());
 			user->leaveChannel(channel);
 		}
 	}

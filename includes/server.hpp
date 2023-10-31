@@ -103,7 +103,7 @@ class Server
 		void modeCmd(User *user, const vector<string> &params);
 		void kickCmd(User *user, const vector<string> &params);
 		void inviteCmd(User *user, const vector<string> &params);
-		void partCmd(User *user, const vector<string> &params);
+		void partCmd(User *user, vector<string> params);
 
 
 
