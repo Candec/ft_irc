@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/30 23:13:32 by fporto           ###   ########.fr       */
+/*   Updated: 2023/10/31 18:45:06 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,7 +280,7 @@ void Server::createUser()
 	_users[user_fd] = user;
 
 	cout << BLUE << "User " << GREEN << "connected" << BLUE << " from ";
-	cout << "THIS HERE" << user->getHostaddr() << ":" << user->getPort() << WHITE << endl;
+	cout << user->getHostaddr() << ":" << user->getPort() << WHITE << endl;
 
 	_pollfds.push_back(pollfd());
 	_pollfds.back().fd = user_fd;
