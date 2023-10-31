@@ -84,16 +84,21 @@ void Channel::addMode(ChannelFlags::Mode letter, std::vector<std::string> argume
 		user = server->getUser(arguments[0]);
 		if (!user)
 			return;
+
 		_operators.insert(pair<int, User *>(user->getFd(), user));
+
 		if (arguments.size())
 			arguments.erase(arguments.begin());
 		break;
 	case ChannelFlags::CLIENT_LIMIT:
 		_client_limit = atoi(arguments[0].c_str());
+		break;
 	case ChannelFlags::KEY_CHANNEL:
 		setKey(arguments[0], caller);
+
 		if (arguments.size())
 			arguments.erase(arguments.begin());
+		break;
 	default:
 		break;
 	}
@@ -116,14 +121,19 @@ void Channel::removeMode(ChannelFlags::Mode letter, std::vector<std::string> &ar
 		user = server->getUser(arguments[0]);
 		if (!user)
 			return;
+
 		if (arguments.size())
 			arguments.erase(arguments.begin());
+
 		_operators.erase(_operators.find(user->getFd()));
 		break;
 	case ChannelFlags::CLIENT_LIMIT:
 		_client_limit = 0;
+		break;
 	case ChannelFlags::INVITE_ONLY:
+		break;
 	case ChannelFlags::PROTECTED_TOPIC:
+		break;
 	case ChannelFlags::KEY_CHANNEL:
 		setKey("", caller);
 	default:

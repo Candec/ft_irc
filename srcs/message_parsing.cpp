@@ -175,10 +175,8 @@ Server::passCmd(User *user, const vector<string> &params)
 void
 Server::nickCmd(User *user, const vector<string> &params)
 {
-	if (user->getStatus() != UserFlags::ACCEPT) {
-		sendErrFatal(user, "No password given");
-		return;
-	}
+	if (!_password.empty() && user->getStatus() != UserFlags::ACCEPT)
+		return sendErrFatal(user, "No password given");
 
 	if (params.empty())
 		return user->sendError(ERR_NONICKNAMEGIVEN, "NICK", params);
@@ -209,9 +207,7 @@ Server::nickCmd(User *user, const vector<string> &params)
 void
 Server::userCmd(User *user, const vector<string> &params)
 {
-	if (user->getStatus() != UserFlags::UNVERIFY || user->getStatus() != UserFlags::OFFLINE)
-		return;
-	if (user->getStatus() != UserFlags::ACCEPT)
+	if (!_password.empty() && user->getStatus() != UserFlags::ACCEPT)
 		return sendErrFatal(user, "No password given");
 
 	const size_t n_args = params.size();
@@ -631,10 +627,6 @@ Server::partCmd(User *user, vector<string> params)
 		Channel *channel = getChannel(*it);
 		sendMsg(user, message);
 		if (user->isChannelMember(channel->getName()))
-		{
-			channel->broadcast(string("PART " + channel->getName()), user, user->getNick());
-			sendMsg(user, string("PART " + channel->getName()), user->getNick());
 			user->leaveChannel(channel);
-		}
 	}
 }

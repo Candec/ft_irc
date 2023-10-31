@@ -189,6 +189,8 @@ void User::leaveChannel(Channel *channel)
 	if (!channel->isMember(this))
 		return log("User was not member of " + channel->getName());
 
+	channel->broadcast(string("PART " + channel->getName()), NULL, _nick);
+
 	channel->removeUser(this);
 	_joinedChannels.erase(channel->getName());
 
