@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/31 18:47:52 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/01 15:45:21 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ Server::passCmd(User *user, const vector<string> &params)
 void
 Server::nickCmd(User *user, const vector<string> &params)
 {
-	if (!_password.empty() && user->getStatus() != UserFlags::ACCEPT)
+	if (user->getStatus() == UserFlags::UNVERIFY)
 		return sendErrFatal(user, "NICK: No password given");
 
 	if (params.empty())
@@ -207,7 +207,7 @@ Server::nickCmd(User *user, const vector<string> &params)
 void
 Server::userCmd(User *user, const vector<string> &params)
 {
-	if (!_password.empty() && user->getStatus() != UserFlags::ACCEPT)
+	if (user->getStatus() == UserFlags::UNVERIFY)
 		return sendErrFatal(user, "USER: No password given");
 
 	const size_t n_args = params.size();
@@ -604,12 +604,6 @@ Server::partCmd(User *user, vector<string> params)
 	if (params.size() > 1)
 	{
 		params.erase(params.begin());
-		// for (vector<string>::const_iterator it = ++params.begin(); it != params.end(); ++it)
-		// {
-		// 	message += *it;
-		// 	if (it + 1 != params.end())
-		// 		message += " ";
-		// }
 		message = joinStrings(params);
 
 		if (message[0] == ':')
