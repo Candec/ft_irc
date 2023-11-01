@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/01 15:45:21 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/01 17:20:02 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -413,6 +413,7 @@ Server::privmsgCmd(User *user, const vector<string> &params)
 	const vector<string> targets = splitString(params[0], ",");
 
 	const string msg = "PRIVMSG " + joinStrings(params);
+	cout << msg << endl;
 	vector<string>::const_iterator it;
 	for (it = targets.begin(); it != targets.end(); ++it) {
 		const string targetName = *it;

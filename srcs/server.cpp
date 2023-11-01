@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/01 15:47:11 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/01 19:31:25 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -326,95 +326,6 @@ Channel *Server::createChannel(const string &channelName, const User *creator)
 /*
 	DELETERS
 */
-
-// void Server::delUser(User *user)
-// {
-// 	vector<User *> dUser = vector<User *>();
-// 	dUser.push_back(user);
-
-// 	vector<Channel *> remove;
-// 	for (map<std::string, Channel *>::iterator i = _channels.begin(); i != _channels.end(); ++i)
-// 	{
-// 		Channel *channel = i->second;
-// 		if (channel->isMember(user))
-// 		{
-// 			channel->removeUser(user);
-
-// 			vector<User *> users = channel->getUsers();
-// 			if (!users.size())
-// 				remove.push_back(channel);
-// 			else
-// 				for (vector<User *>::iterator i = users.begin(); i != users.end(); ++i)
-// 					if (find(dUser.begin(), dUser.end(), *i) == dUser.end())
-// 						dUser.push_back(*i);
-// 		}
-// 	}
-
-// 	for (vector<Channel *>::iterator j = remove.begin(); j != remove.end(); ++j)
-// 		delChannel(*j);
-
-// 	string message = "QUIT :" + user->getNick() + " has quit";
-// 	for (vector<User *>::iterator k = dUser.begin(); k != dUser.end(); ++k)
-// 		user->sendPrivateMessage(*k, message);
-// 	user->push();
-
-// 	// history.remove(user.getFd());
-
-// 	for (vector<pollfd>::iterator l = _pollfds.begin(); l != _pollfds.end(); ++l)
-// 		if ((*l).fd == user->getFd())
-// 		{
-// 			_pollfds.erase(l);
-// 			break;
-// 		}
-// 	_users.erase(user->getFd());
-
-// 	delete &user;
-// }
-
-// void Server::delUser(User *user)
-// {
-// 	log("Server: Removing user " + toString(user->getFd()));
-
-// 	vector<User *>	others = vector<User *>();
-
-// 	for (map<string, Channel *>::iterator i = _channels.begin(); i != _channels.end(); ++i) {
-// 		Channel	*channel = i->second;
-// 		if (!channel)
-// 			break;
-
-// 		if (channel->isMember(user)) {
-// 			channel->removeUser(user);
-
-// 			vector<User *>	chUsers = channel->getUsers();
-
-// 			if (!chUsers.size())
-// 				delChannel(channel);
-// 			else
-// 				for (vector<User *>::iterator j = chUsers.begin(); j != chUsers.end(); ++j) {
-// 					if (find(others.begin(), others.end(), *j) == others.end())
-// 						others.push_back(*j);
-// 				}
-// 		}
-// 	}
-
-// 	const string message = MAGENTA + user->getNick() + " has " + RED + "quit" + WHITE;
-
-// 	for (vector<User *>::iterator k = others.begin(); k != others.end(); ++k)
-// 		user->sendPrivateMessage(*k, message);
-// 	user->push();
-// 	// history.remove(user->getFd());
-
-// 	for (vector<pollfd>::iterator l = _pollfds.begin(); l != _pollfds.end(); ++l)
-// 		if (l->fd == user->getFd())
-// 		{
-// 			_pollfds.erase(l);
-// 			break;
-// 		}
-// 	_users.erase(user->getFd());
-
-// 	delete user;
-// }
-
 void Server::delUser(User *user)
 {
 	if (!user)
@@ -463,42 +374,13 @@ void Server::updatePing()
 		if (now - user->getPreviousPing() >= _timeout)
 		{
 			sendErrFatal(user, "Timed out");
-			// user->setStatus(UserFlags::OFFLINE);
-			// user->write(user->getNick() + "timed out");
-			// sendMsg(user, user->getNick() + " timed out");
-			// sendColorMsg(user->getFd(), TIMEOUT_ERR, RED);
+
 			delUser(user);
 		}
-		else if (user->getStatus() == UserFlags::ONLINE) {
-			// user->write("PING " + user->getNick());
+		else if (user->getStatus() == UserFlags::ONLINE)
 			sendMsg(user, "PING " + user->getNick());
-		}
 	}
 }
-
-// void Server::printUsers()
-// {
-// 	char buffer[42];
-// 	snprintf(buffer, sizeof(buffer), "%-4s %-9s %s", "FD", "Nickname", "Host");
-// 	history.set(_listen_fd, string("\n") + buffer);
-// 	for (map<int, User *>::iterator it = _users.begin(); it != _users.end(); ++it)
-// 	{
-// 		User *user = (*it).second;
-// 		snprintf(buffer, sizeof(buffer), "\033[34m%-4i \033[33m%-9s \033[35m", user->getFd(), user->getNick().c_str());
-// 		history.set(user->getFd(), buffer + user->getHost());
-// 	}
-// }
-
-// void Server::printChannels()
-// {
-// 	for (map<string, Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it)
-// 	{
-// 		Channel *channel = (*it).second;
-// 		sendMsg()
-
-// 	}
-
-// }
 
 void Server::updatePoll()
 {
@@ -515,7 +397,6 @@ void Server::updatePoll()
 			delUser(it->second);
 	}
 }
-
 
 
 void Server::sendMsg(const User *user, const int n) const

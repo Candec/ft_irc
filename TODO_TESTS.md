@@ -13,24 +13,24 @@ Your executable will be run as follows:
 - No forking ✔️
 - Only 1 poll() ✔️
 - irssi must be able to connect to your server without encountering any error.
-  - test also with netcat
+  - test also with netcat -- ❌ netcat cannot pass throught the autentication process. A way of creating the server without password should be considered
 - Communication has to be done via TCP ✔️
 - Compare with official IRC servers ❌
-  - Authenticate
+  - Authenticate -- ❌ Connecting to the server with a bad password rejects the first try, but the second the user is accepted, a third time sends an error, a forth accepts the user
   - Set Nickname ✔️
   - Set Username ✔️
-  - Join Channel
+  - Join Channel ✔️
   - Messages to channel must be sent to every other channel member ✔️
   - Operators and regular users ✔️
   - Channel Operators commands:
-    - KICK
-    - INVITE
-    - TOPIC
+    - KICK ❌
+    - INVITE -- ❌ Invitations are not being properly registered
+    - TOPIC -- ❌ Only the first word is being set as topic, even when the whole sentence is between quotes ("")
     - MODE
-      - i: Set/remove Invite-only channel
-      - t: Set/remove the restrictions of the TOPIC command to channel operators
+      - i: Set/remove Invite-only channel -- Invitations are not being properly registered
+      - t: Set/remove the restrictions of the TOPIC command to channel operators ✔️
       - k: Set/remove the channel key (password)
-      - o: Give/take channel operator privilege
+      - o: Give/take channel operator privilege -- ❌ Giving, Removing and then removing op privilage causes "alloc-dealloc-mismatch"
       - l: Set/remove the user limit to channel
 
 ### For MacOS only

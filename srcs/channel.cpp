@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/30 22:06:13 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/01 19:14:27 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,19 +233,15 @@ void Channel::broadcast(const string &msg, const User *exclude) const
 
 void Channel::update()
 {
-	// clear();
 	for (map<int, User *>::const_iterator it = _users.begin(); it != _users.end(); it++)
 	{
 		User *user = it->second;
 		if (isMember(user))
 		{
-			// server->sendClear(user->getFd());
-			// server->sendClear(user);
 			for (map<int, string>::iterator i = _history.begin(); i != _history.end(); i++)
 				server->sendMsg(user, i->second);
 		}
 	}
-	// cout << i->second << RESET << endl << flush;
 }
 
 void Channel::set(const string &line)
