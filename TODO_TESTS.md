@@ -17,20 +17,48 @@ Your executable will be run as follows:
 - Communication has to be done via TCP ✔️
 - Compare with official IRC servers ❌
   - Authenticate -- ❌ Connecting to the server with a bad password rejects the first try, but the second the user is accepted, a third time sends an error, a forth accepts the user
-  - Set Nickname ✔️
+  - Set Nickname (NICK command )✔️
+    - If nickname already in use, reply with *ERR_NICKNAMEINUSE*
+    - If nickname not valid, reply with *ERR_ERRONEUSNICKNAME*
+      - no leading # character or other character advertized in CHANTYPES
+      - no leading colon (:)
+      - no ASCII space
+    - If nickname not received, reply with *ERR_NONICKNAMEGIVEN*
+    - Send NICK message to client as acknowledgement
   - Set Username ✔️
   - Join Channel ✔️
   - Messages to channel must be sent to every other channel member ✔️
   - Operators and regular users ✔️
   - Channel Operators commands:
-    - KICK ❌
-    - INVITE -- ❌ Invitations are not being properly registered
-    - TOPIC -- ❌ Only the first word is being set as topic, even when the whole sentence is between quotes ("")
-    - MODE
+    - KICK `Parameters: <channel> <user> *( "," <user> ) [<comment>]` ❌
+      - If no comment is given, the server SHOULD use a default message instead
+      - The server MUST NOT send KICK messages with multiple users to clients.
+    - INVITE `Parameters: <nickname> <channel>` ❌ -- Invitations are not being properly registered
+      - If \<channel> doesn't exist, reject with *ERR_NOSUCHCHANNEL*
+      - If caller isn't \<channel> member, reject with *ERR_NOTONCHANNEL*
+      - If caller isn't \<channel> operator, reject with *ERR_CHANOPRIVSNEEDED*
+      - If \<user>'s already on \<channel>, reject with *ERR_USERONCHANNEL*
+      - If INVITE is successful, send:
+        - *RPL_INVITING* to caller
+        - INVITE message (with caller as \<source>) to \<user>
+        - Other \<channel> members SHOULD NOT be notified.
+    - TOPIC `Parameters: <channel> [<topic>]` ❌ -- Only the first word is being set as topic, even when the whole sentence is between quotes ("")
+      - If no \<topic> is given, reply with *RPL_TOPIC* or *RPL_NOTOPIC*
+      - If \<topic> is an empty string, the \<channel>'s topic is cleared
+      - ~~If caller isn't on \<channel>, server MAY reject with *ERR_NOTONCHANNEL*~~
+      - If *RPL_TOPIC* is returned to caller, *RPL_TOPICWHOTIME* SHOULD also be sent to that client
+      - If **protected topic** mode is set on \<channel> and caller isn't operator, reject with *ERR_CHANOPRIVSNEEDED*
+      - If topic is set or cleared, every client in \<channel> will receive a TOPIC command with the new topic or an empty string as argument, depending on if the topic was set or cleared
+    - MODE `Parameters: <target> [<modestring> [<mode arguments>...]]`
       - i: Set/remove Invite-only channel -- Invitations are not being properly registered
+        - If this mode is set, users must have received an INVITE to be able to join. If they try joining without it, reject JOIN with *ERR_INVITEONLYCHAN*
       - t: Set/remove the restrictions of the TOPIC command to channel operators ✔️
+        - If mode is set on channel, TOPIC caller isn't operator and is trying to set the topic, reject with *ERR_CHANOPRIVSNEEDED*
       - k: Set/remove the channel key (password)
-      - o: Give/take channel operator privilege -- ❌ Giving, Removing and then removing op privilage causes "alloc-dealloc-mismatch"
+        - If, when setting the key, it's invalid, reject with *ERR_INVALIDMODEPARAM*
+        - If this mode is set and a client doesn't supply the correct key, reject JOIN with *ERR_BADCHANNELKEY*
+      - o: Give/take channel operator privilege ❌ -- Giving, Removing and then removing op privilage causes "alloc-dealloc-mismatch"
+        - Users with this mode may kick users, apply channel modes, and set other users to operator (or lower) status.
       - l: Set/remove the user limit to channel
 
 ### For MacOS only
