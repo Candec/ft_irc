@@ -20,8 +20,9 @@ const std::string rpl_welcome(const User *dest) {
 const std::string rpl_issupport(const User *dest) {
 	return dest->getNick() + " CHANNELLEN=" + toString(CHANNEL_NAME_MAX_LEN) + " :are supported by this server";
 }
-const std::string rpl_umodeis(const User *dest) {
-	return dest->getNick() + " " + dest->getModes();
+const std::string rpl_umodeis(const std::string &nick) {
+	User *user = server->getUser(nick);
+	return user->getNick() + " " + user->getModes();
 }
 const std::string rpl_away(const User *dest, const string &targetNick, const string &msg) {
 	return dest->getNick() + " " + targetNick + " :" + msg;

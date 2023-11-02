@@ -21,7 +21,7 @@
 
 const std::string rpl_welcome(const User *dest);
 const std::string rpl_issupport(const User *dest);
-const std::string rpl_umodeis(const User *dest);
+const std::string rpl_umodeis(const std::string &nick);
 const std::string rpl_away(const User *dest, const string &targetNick, const string &msg);
 const std::string rpl_list(const User *dest);
 const std::string rpl_channelmodeis(const User *dest, const vector<string> &params);

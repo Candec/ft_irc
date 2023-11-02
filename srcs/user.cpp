@@ -283,7 +283,7 @@ void User::sendReply(Replies type, const std::string &tags, const std::string &s
 		reply += rpl_issupport(this);
 		break;
 	case RPL_UMODEIS:
-		reply += rpl_umodeis(this);
+		reply += rpl_umodeis(params[0]);
 		break;
 	case RPL_AWAY:
 		reply += rpl_away(this, params[0], params[1]);
