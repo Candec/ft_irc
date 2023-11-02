@@ -60,6 +60,9 @@ Your executable will be run as follows:
       - o: Give/take channel operator privilege ❌ -- Giving, Removing and then removing op privilage causes "alloc-dealloc-mismatch"
         - Users with this mode may kick users, apply channel modes, and set other users to operator (or lower) status.
       - l: Set/remove the user limit to channel
+	- NAME
+	  - When a user creates a channel, the message points there are 2 normal users and no operator (the creator of the channel should be op by default and there should be no normal users instead of 2)
+	  - When a second user joins, the second user sees all the people in the channel, but previous users do not see the new members added to the list
 
 ### For MacOS only
 
