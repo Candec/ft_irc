@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/02 10:47:40 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/02 14:45:06 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,8 +140,9 @@ Server::passCmd(User *user, const std::vector<std::string> &params)
 	
 	if (_password.empty())
 	{
-		user->setPassword(NULL);
+		// user->setPassword(NULL);
 		user->setStatus(UserFlags::ACCEPT);
+		return;
 	}
 
 	if (params.size() < 1) {
@@ -169,6 +170,7 @@ Server::passCmd(User *user, const std::vector<std::string> &params)
 void
 Server::nickCmd(User *user, const std::vector<std::string> &params)
 {
+	std::cout << "status: " << user->getStatus() << std::endl;
 	if (user->getStatus() == UserFlags::UNVERIFY)
 		return sendErrFatal(user, "NICK: No password given");
 

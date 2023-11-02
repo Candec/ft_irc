@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/02 12:51:43 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/02 15:01:39 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,8 +288,6 @@ void Server::createUser()
 	}
 
 	User *user = new User(user_fd, addr);
-	user->setStatus(UserFlags::UNVERIFY);
-
 	_users[user_fd] = user;
 
 	std::cout << BLUE << "User " << GREEN << "connected" << BLUE << " from ";
@@ -596,3 +594,5 @@ User * Server::getUser(const std::string &nick) const
 			return it->second;
 	return NULL;
 }
+
+std::string Server::getPassword() { return(_password);} 

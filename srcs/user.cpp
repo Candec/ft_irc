@@ -6,14 +6,15 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/30 22:17:43 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/02 15:00:40 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/user.hpp"
 
-User::User(const int fd, struct sockaddr_in addr) : _fd(fd), _status(UserFlags::UNVERIFY), _previousPing(time(0)), _role("user")
+User::User(const int fd, struct sockaddr_in addr) : _fd(fd), _previousPing(time(0)), _role("user")
 {
+	std::cout << "creating user" << std::endl;
 	//Shouldn't be required in linux. It is to block simultanious accesses to the fd
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 
@@ -22,12 +23,20 @@ User::User(const int fd, struct sockaddr_in addr) : _fd(fd), _status(UserFlags::
 	if (getnameinfo((struct sockaddr *)&addr, sizeof(addr), hostname, NI_MAXHOST, NULL, 0, NI_NUMERICSERV) != 0)
 		error("Get Name Info", EXIT);
 
-	// _hostname = hostname;
 	_hostaddr = inet_ntoa(addr.sin_addr);
 
+	if (server->getPassword().empty())
+	{
+		setStatus(UserFlags::ACCEPT);
+		std::cout << "Status set to accept: " << getStatus() << std::endl;
+	}
+	else
+	{
+		setStatus(UserFlags::UNVERIFY);
+		std::cout << "Status set to unverify: " << getStatus() << std::endl;
+	}
+
 	setNick("Annon-" + toString(fd));
-	// setAtChannel("general");
-	// setChannel(server->getChannel("general"));
 	setCapable(false);
 }
 

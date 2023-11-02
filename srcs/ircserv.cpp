@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:16 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/02 12:11:21 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/02 14:42:37 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,25 +24,28 @@ void enableLogsAndPassword(int argc, char *argv[])
 {
 	int count = 2;
 	int i = 2;
+	std::string log("--log");
+	std::string logfile("--logfile");
 	
-	if (strcmp(argv[2], "--log") || strcmp(argv[2], "--logfile")) {
+	if (strncmp(argv[2], "--", 2)) {
 		password = argv[2];
 		count += 1;
-		i++;
 	}
+		std::cout << "Password: [" << password << "]" << std::endl;
 	
-	while (argv[i++]) 
+	while (argv[i]) 
 	{
-		if (!strcmp(argv[i], "--log") && logging == false) {
+		if (!log.compare(argv[i]) && logging == false) {
 			logging = true;
 			count += 1;
 			std::cout << "Logging " << GREEN << "enabled" << RESET << std::endl << std::flush;
-		} else if (!strcmp(argv[i], "--logfile") && logToFile == false && logging == false) {
+		} else if (!logfile.compare(argv[i]) && logToFile == false && logging == false) {
 			logging = true;
 			logToFile = true;
 			count += 1;
 			std::cout << "Logging to file " << GREEN << "enabled" << RESET << std::endl << std::flush;
 		}
+		i++;
 	}
 
 	if (count != argc)

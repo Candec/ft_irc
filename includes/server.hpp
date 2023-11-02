@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/02 10:43:49 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/02 13:27:44 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,8 @@ class Server
 
 		User *getUser(const int user_fd) const;
 		User *getUser(const std::string &nick) const;
+
+		std::string getPassword(); 
 
 		void delChannel(const Channel *channel);
 };

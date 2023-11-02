@@ -5,7 +5,7 @@
 Your executable will be run as follows:
 
 ```bash
-./ircserv <port> <password>
+./ircserv <port> [password] [--log / --logfile]
 ```
 
 ### Requirements
@@ -13,7 +13,7 @@ Your executable will be run as follows:
 - No forking ✔️
 - Only 1 poll() ✔️
 - irssi must be able to connect to your server without encountering any error.
-  - test also with netcat -- ❌ netcat cannot pass throught the autentication process. A way of creating the server without password should be considered
+  - test also with netcat ✔️
 - Communication has to be done via TCP ✔️
 - Compare with official IRC servers ❌
   - Authenticate
