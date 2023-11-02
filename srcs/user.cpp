@@ -262,9 +262,6 @@ void User::sendReply(Replies type, const std::vector<std::string> &params, const
 	if (!src.empty())
 		reply += ":" + src + " ";
 
-	// if (!cmd.empty())
-	// 	return;
-
 	reply += codeToString(type) + " ";
 	switch (type)
 	{
@@ -305,10 +302,9 @@ void User::sendReply(Replies type, const std::vector<std::string> &params, const
 		reply += rpl_endofnames(this, params[0]);
 		break;
 	default:
-		error("Missing reply for numeric " + toString(type), CONTINUE);
+		return error("Missing reply for numeric " + toString(type), CONTINUE);
 	}
 	(void)cmd;
-	// return reply;
 	server->sendMsg(this, reply);
 }
 
@@ -391,8 +387,7 @@ void User::sendError(Errors type, const std::vector<std::string> &params, const 
 		reply += err_inviteonlychan(this, params[0]);
 		break;
 	default:
-		error("Missing error for numeric " + toString(type), CONTINUE);
-		return;
+		return error("Missing error for numeric " + toString(type), CONTINUE);
 	}
 	// (void)tags;
 	// (void)src;
