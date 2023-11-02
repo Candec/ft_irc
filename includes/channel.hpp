@@ -61,7 +61,12 @@ class Channel
 	private:
 		string	_name;
 		string	_modes;
-		string	_topic;
+		// string	_topic;
+		struct _s_topic {
+			string		topic;
+			const User	*setBy;
+			time_t		setAt;
+		}		_topic;
 		string	_key; // Password
 		char	_type;
 		char	_status;
@@ -85,7 +90,7 @@ class Channel
 		// Setters
 		void setName(const string &name);
 		void setMode(const string &mode);
-		void setTopic(const string &topic);
+		void setTopic(const string &topic, const User *setBy);
 		void setKey(const string &key, const User *src);
 		void setType(ChannelFlags::Type type);
 		void setStatus(ChannelFlags::Status status);
@@ -98,6 +103,8 @@ class Channel
 		const string	getName() const;
 		const string	getMode() const;
 		const string	getTopic() const;
+		const string	getTopicSetBy() const;
+		const string	getTopicSetAt() const;
 		const string	getKey() const;
 		char			getType() const;
 		char			getStatus() const;

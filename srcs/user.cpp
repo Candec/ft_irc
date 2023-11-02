@@ -300,6 +300,9 @@ void User::sendReply(Replies type, const std::string &tags, const std::string &s
 	case RPL_TOPIC:
 		reply += rpl_topic(this, params[0]);
 		break;
+	case RPL_TOPICWHOTIME:
+		reply += rpl_topicwhotime(this, params[0]);
+		break;
 	case RPL_INVITING:
 		reply += rpl_inviting(this, params[0], params[1]);
 		break;

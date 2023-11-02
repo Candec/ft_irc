@@ -379,21 +379,19 @@ Server::topicCmd(User *user, const vector<string> &params)
 	Channel *channel = getChannel(channelName);
 
 	if (params.size() == 1) {
-		if (!channel->getTopic().empty())
+		if (!channel->getTopic().empty()) {
 			user->sendReply(RPL_TOPIC, "TOPIC", params);
-		else
+			user->sendReply(RPL_TOPICWHOTIME, "TOPIC", channelName);
+		} else
 			user->sendReply(RPL_NOTOPIC, "TOPIC", params);
 	}
 	else {
-		if (
-			channel->isTopicProtected() \
-			&& !channel->isOperator(user)
-		)
+		if (channel->isTopicProtected() && !channel->isOperator(user))
 			return user->sendError(ERR_CHANOPRIVSNEEDED, "TOPIC", params);
 
 		const string topic = params[1];
 
-		channel->setTopic(topic);
+		channel->setTopic(topic, user);
 
 		string reply = "TOPIC " + channelName;
 		if (!topic.empty())

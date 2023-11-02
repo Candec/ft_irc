@@ -27,6 +27,12 @@ void error(const std::string &str, const bool quit)
 // 	str << n;
 // 	return (str.str());
 // }
+const std::string toString(const time_t n)
+{
+	std::ostringstream str;
+	str << n;
+	return (str.str());
+}
 const std::string toString(const int n)
 {
 	std::ostringstream str;

@@ -32,6 +32,7 @@ void error(const std::string &str, const bool exit);
 
 // template<typename T>
 // const std::string toString(const T n);
+const std::string	toString(const time_t n);
 const std::string	toString(const int n);
 const std::string	toString(const size_t n);
 const std::string	codeToString(const int code);

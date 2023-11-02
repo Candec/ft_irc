@@ -20,15 +20,20 @@ Channel::Channel(const string &name) : _name(name), _modes("n"), _type(name[0])
 	setStatus(ChannelFlags::PUBLIC);
 
 	// set(YELLOW_BG + str);
-	if (!_topic.empty())
-		set(_topic);
+	if (!_topic.topic.empty())
+		set(_topic.topic);
 }
 Channel::~Channel() {} //? Missing any handling of players' current channel?
 
 // Setters
 void Channel::setName(const string &name) { _name = name; }
 void Channel::setMode(const string &modes) { _modes = modes; }
-void Channel::setTopic(const string &topic) { _topic = topic; }
+void Channel::setTopic(const string &topic, const User *setBy)
+{
+	_topic.topic = topic;
+	_topic.setBy = setBy;
+	_topic.setAt = time(NULL);
+}
 void Channel::setKey(const string &key, const User *src)
 {
 	if (key.find(' ') != string::npos)
@@ -44,7 +49,9 @@ void Channel::setClientLimit(const uint limit) { _client_limit = limit; }
 // Getters
 const string	Channel::getName() const { return _name; }
 const string	Channel::getMode() const { return _modes; }
-const string	Channel::getTopic() const { return _topic; }
+const string	Channel::getTopic() const { return _topic.topic; }
+const string	Channel::getTopicSetBy() const { return _topic.setBy->getNick(); }
+const string	Channel::getTopicSetAt() const { return toString(_topic.setAt); }
 const string	Channel::getKey() const { return _key; }
 char			Channel::getType() const { return _type; }
 char			Channel::getStatus() const { return _status; }
@@ -161,7 +168,7 @@ void Channel::addUser(User *user)
 
 	_users[user->getFd()] = user;
 
-	if (!_topic.empty())
+	if (!_topic.topic.empty())
 		user->sendReply(RPL_TOPIC, "TOPIC", _name);
 	else
 		user->sendReply(RPL_NOTOPIC, "TOPIC", _name);

@@ -27,6 +27,7 @@ const std::string rpl_list(const User *dest);
 const std::string rpl_channelmodeis(const User *dest, const vector<string> &params);
 const std::string rpl_notopic(const User *dest, const std::string &channelName);
 const std::string rpl_topic(const User *dest, const std::string &channelName);
+const std::string rpl_topicwhotime(const User *dest, const string &channelName);
 const std::string rpl_inviting(const User *dest, const std::string &invitedNick, const std::string &channelName);
 const std::string rpl_namreply(const User *dest, const string &channelName);
 const std::string rpl_endofnames(const User *dest, const std::string &channelName);

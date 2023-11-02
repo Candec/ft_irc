@@ -39,6 +39,10 @@ const std::string rpl_notopic(const User *dest, const std::string &channelName) 
 const std::string rpl_topic(const User *dest, const string &channelName) {
 	return dest->getNick() + " " + channelName + " :" + server->getChannel(channelName)->getTopic();
 }
+const std::string rpl_topicwhotime(const User *dest, const string &channelName) {
+	Channel *channel = server->getChannel(channelName);
+	return dest->getNick() + " " + channelName + " " + channel->getTopicSetBy() + " " + channel->getTopicSetAt();
+}
 const std::string rpl_inviting(const User *dest, const std::string &invitedNick, const std::string &channelName) {
 	return dest->getNick() + " " + invitedNick + " " + channelName;
 }
