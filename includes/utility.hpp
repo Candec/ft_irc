@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:19 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/02 12:07:30 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/02 15:41:45 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ bool				isValidChannelName(const std::string& name);
 
 const std::vector<std::string>	splitString(std::string str, const std::string &delimiter);
 const std::string				joinStrings(const std::vector<std::string> &strings);
+const std::string				joinStringsButFirst(const std::vector<std::string> &strings);
+
 
 const std::string	removeColor(std::string str);
 

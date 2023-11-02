@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/02 14:45:06 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/02 15:41:53 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -384,7 +384,7 @@ Server::topicCmd(User *user, const std::vector<std::string> &params)
 		if (channel->isTopicProtected() && !channel->isOperator(user))
 			return user->sendError(ERR_CHANOPRIVSNEEDED, channelName);
 
-		const std::string topic = params[1];
+		const std::string topic = joinStringsButFirst(params);
 
 		channel->setTopic(topic, user);
 
