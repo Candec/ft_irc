@@ -317,7 +317,7 @@ Channel *Server::createChannel(const string &channelName, const User *creator)
 {
 	if (isValidChannelName(channelName))
 		return createChannel(channelName);
-	creator->sendError(ERR_BADCHANMASK, "JOIN", channelName);
+	creator->sendError(ERR_BADCHANMASK, channelName);
 	return NULL;
 }
 

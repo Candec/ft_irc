@@ -192,8 +192,11 @@ class User
 		void			sendReply(Replies type, const std::string &tags, const std::string &src, const std::string &cmd, const std::vector<std::string> &params);
 
 		// void sendError(Errors type, const User *dest, const std::string &tags, const std::string &src, const std::string &cmd, const std::vector<std::string> &params);
-		void			sendError(Errors type, const std::string &cmd, const std::string &param) const ;
-		void			sendError(Errors type, const std::string &cmd, const std::vector<std::string> &params) const ;
+		void			sendError(Errors type) const;
+		void			sendError(Errors type, const std::string &param) const;
+		void			sendError(Errors type, const std::string &param, const std::string &cmd) const;
+		void			sendError(Errors type, const std::vector<std::string> &params) const;
+		void			sendError(Errors type, const std::vector<std::string> &params, const std::string &cmd) const;
 };
 
 #endif

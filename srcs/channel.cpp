@@ -37,7 +37,7 @@ void Channel::setTopic(const string &topic, const User *setBy)
 void Channel::setKey(const string &key, const User *src)
 {
 	if (key.find(' ') != string::npos)
-		return src->sendError(ERR_INVALIDKEY, "MODE", _name);
+		return src->sendError(ERR_INVALIDKEY, _name);
 	_key = key;
 }
 void Channel::setType(ChannelFlags::Type type) { _type = (char)type; }

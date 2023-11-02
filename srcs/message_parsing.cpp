@@ -137,14 +137,14 @@ void
 Server::passCmd(User *user, const vector<string> &params)
 {
 	if (params.size() < 1) {
-		return user->sendError(ERR_NEEDMOREPARAMS, "PASS", "");
+		return user->sendError(ERR_NEEDMOREPARAMS, "", "PASS");
 	} else if (!expectedArgs(params, 1)) // There's a numeric reply for too little but not too many
 		return;
 
 	const string password = params[0];
 	if (password != _password)
 	{
-		user->sendError(ERR_PASSWDMISMATCH, "PASS", "");
+		user->sendError(ERR_PASSWDMISMATCH);
 		user->setStatus(UserFlags::OFFLINE);
 		return;
 	}
@@ -166,7 +166,7 @@ Server::nickCmd(User *user, const vector<string> &params)
 		return sendErrFatal(user, "NICK: No password given");
 
 	if (params.empty())
-		return user->sendError(ERR_NONICKNAMEGIVEN, "NICK", params);
+		return user->sendError(ERR_NONICKNAMEGIVEN);
 
 	// Sanitize nickname
 	const string nickName = params[0];
@@ -175,12 +175,11 @@ Server::nickCmd(User *user, const vector<string> &params)
 		|| nickName[0] == ':' \
 		|| nickName.find(' ') != string::npos
 	)
-		return user->sendError(ERR_ERRONEUSNICKNAME, "NICK", params);
+		return user->sendError(ERR_ERRONEUSNICKNAME, nickName);
 
 	// Find duplicate
-	for (map<int, User *>::const_iterator it = _users.begin(); it != _users.end(); ++it)
-		if (it->second->getNick() == nickName)
-			return user->sendError(ERR_NICKNAMEINUSE, "NICK", params);
+	if (getUser(nickName) != NULL)
+		return user->sendError(ERR_NICKNAMEINUSE, nickName);
 
 	const string oldNickName = user->getNick();
 	user->setNick(nickName);
@@ -200,10 +199,10 @@ Server::userCmd(User *user, const vector<string> &params)
 	const size_t n_args = params.size();
 
 	if (user->isRegistered())
-		return user->sendError(ERR_ALREADYREGISTERED, "USER", params);
+		return user->sendError(ERR_ALREADYREGISTERED);
 
 	if (n_args < 4)
-		return user->sendError(ERR_NEEDMOREPARAMS, "USER", params);
+		return user->sendError(ERR_NEEDMOREPARAMS, "", "USER");
 
 	user->setUser(params[0]);
 	user->setHostname(params[1]);
@@ -360,10 +359,12 @@ void
 Server::topicCmd(User *user, const vector<string> &params)
 {
 	if (params.size() == 0)
-		error("No params passed to topicCmd", CONTINUE);
+		return user->sendError(ERR_NEEDMOREPARAMS, "", "TOPIC");
 
 	const string channelName = params[0];
 	Channel *channel = getChannel(channelName);
+	if (!channel)
+		return user->sendError(ERR_NOSUCHCHANNEL, channelName);
 
 	if (params.size() == 1) {
 		if (!channel->getTopic().empty()) {
@@ -374,7 +375,7 @@ Server::topicCmd(User *user, const vector<string> &params)
 	}
 	else {
 		if (channel->isTopicProtected() && !channel->isOperator(user))
-			return user->sendError(ERR_CHANOPRIVSNEEDED, "TOPIC", params);
+			return user->sendError(ERR_CHANOPRIVSNEEDED, channelName);
 
 		const string topic = params[1];
 
@@ -412,7 +413,7 @@ Server::privmsgCmd(User *user, const vector<string> &params)
 			if (channel->isBanned(user))
 				return;
 			if (channel->noExternalMessages() && !channel->isMember(user))
-				return user->sendError(ERR_CANNOTSENDTOCHAN, "PRIVMSG", channel->getName());
+				return user->sendError(ERR_CANNOTSENDTOCHAN, targetName);
 
 			channel->broadcast(msg, user, user->getNick());
 		}
@@ -433,7 +434,7 @@ Server::privmsgCmd(User *user, const vector<string> &params)
 			}
 		}
 		else {
-			user->sendError(ERR_NOSUCHNICK, "PRIVMSG", targetName);
+			user->sendError(ERR_NOSUCHNICK, targetName);
 		}
 	}
 }
@@ -484,11 +485,11 @@ Server::modeCmd(User *user, const vector<string> &params)
 		// User modes
 		User *target = getUser(targetName);
 		if (!target)
-			return user->sendError(ERR_NOSUCHNICK, "MODE", targetName);
+			return user->sendError(ERR_NOSUCHNICK, targetName);
 		if (target->getNick() != targetName)
-			return user->sendError(ERR_USERSDONTMATCH, "MODE", "");
+			return user->sendError(ERR_USERSDONTMATCH);
 		if (params.size() == 1)
-			return user->sendReply(RPL_UMODEIS, "MODE", "");
+			return user->sendReply(RPL_UMODEIS, "MODE", targetName);
 
 		char lastFlag;
 		std::string::const_iterator it;
@@ -509,11 +510,12 @@ Server::modeCmd(User *user, const vector<string> &params)
 		// Channel mode
 		Channel *target = getChannel(targetName);
 		if (!target)
-			return user->sendError(ERR_NOSUCHCHANNEL, "MODE", targetName);
+			return user->sendError(ERR_NOSUCHCHANNEL, targetName);
+
 		if (params.size() == 1)
 			return user->sendReply(RPL_CHANNELMODEIS, "MODE", params);
 		if (!target->isOperator(user))
-			return user->sendError(ERR_CHANOPRIVSNEEDED, "MODE", params);
+			return user->sendError(ERR_CHANOPRIVSNEEDED, targetName);
 
 		char lastFlag;
 		std::string::const_iterator it;
@@ -553,7 +555,7 @@ Server::inviteCmd(User *user, const vector<string> &params)
 {
 	// Parameters number check
 	if (params.size() < 2)
-		user->sendError(ERR_NEEDMOREPARAMS, "INVITE", "");
+		user->sendError(ERR_NEEDMOREPARAMS, "", "INVITE");
 	else if (params.size() > 2)
 		return sendMsg(user, "Too many arguments");
 
@@ -564,14 +566,14 @@ Server::inviteCmd(User *user, const vector<string> &params)
 	// Getting the channel
 	invChannel = getChannel(channelName);
 	if (!invChannel)
-		return user->sendError(ERR_NOSUCHCHANNEL, "INVITE", channelName);
+		return user->sendError(ERR_NOSUCHCHANNEL, channelName);
 
 	if (!invChannel->isMember(user))
-		return user->sendError(ERR_NOTONCHANNEL, "INVITE", channelName);
+		return user->sendError(ERR_NOTONCHANNEL, channelName);
 	if (!invChannel->isOperator(user))
-		return user->sendError(ERR_CHANOPRIVSNEEDED, "INVITE", channelName);
+		return user->sendError(ERR_CHANOPRIVSNEEDED, channelName);
 	if (invChannel->isMember(target))
-		return user->sendError(ERR_USERONCHANNEL, "INVITE", params);
+		return user->sendError(ERR_USERONCHANNEL, params);
 
 	invChannel->addInvitedUser(target);
 	user->sendReply(RPL_INVITING, "INVITE", params);
@@ -603,7 +605,7 @@ Server::partCmd(User *user, vector<string> params)
 	{
 		Channel *channel = getChannel(*it);
 		if (!channel) {
-			user->sendError(ERR_NOSUCHCHANNEL, "PART", *it);
+			user->sendError(ERR_NOSUCHCHANNEL, *it);
 			continue;
 		}
 		sendMsg(user, message);

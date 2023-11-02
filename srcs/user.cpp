@@ -153,11 +153,11 @@ void User::joinChannel(const string &channelName, const string &key)
 		channel->addMode(ChannelFlags::OPERATOR, vector<string>(1, _nick), this);
 	}
 	if (channel->isFull())
-		return this->sendError(ERR_CHANNELISFULL, "JOIN", channelName);
+		return sendError(ERR_CHANNELISFULL, channelName);
 	if (channel->getKey() != key)
-		return this->sendError(ERR_BADCHANNELKEY, "JOIN", channelName);
+		return sendError(ERR_BADCHANNELKEY, channelName);
 	if (channel->isInviteOnly() && !channel->isInvitedUser(this))
-		return this->sendError(ERR_INVITEONLYCHAN, "JOIN", channelName);
+		return sendError(ERR_INVITEONLYCHAN, channelName);
 
 	channel->addUser(this);
 	_joinedChannels.insert(pair<string, Channel *>(channelName, channel));
@@ -221,7 +221,7 @@ bool User::isModeImplemented(UserFlags::Mode modeLetter) const
 void User::addMode(UserFlags::Mode modeLetter)
 {
 	if (!isModeImplemented(modeLetter))
-		return this->sendError(ERR_UMODEUNKNOWNFLAG, "MODE", "");
+		return sendError(ERR_UMODEUNKNOWNFLAG);
 
 	const char mode = modeLetter;
 
@@ -233,7 +233,7 @@ void User::addMode(UserFlags::Mode modeLetter)
 void User::removeMode(UserFlags::Mode modeLetter)
 {
 	if (!isModeImplemented(modeLetter))
-		return this->sendError(ERR_UMODEUNKNOWNFLAG, "MODE", "");
+		return sendError(ERR_UMODEUNKNOWNFLAG);
 
 	const char mode = modeLetter;
 
@@ -318,11 +318,11 @@ void User::sendReply(Replies type, const std::string &tags, const std::string &s
 }
 
 
-void User::sendError(Errors type, const std::string &cmd, const std::string &param) const
-{
-	sendError(type, cmd, std::vector<string>(1, param));
-}
-void User::sendError(Errors type, const std::string &cmd, const std::vector<std::string> &params) const
+void User::sendError(Errors type) const { sendError(type, "", ""); }
+void User::sendError(Errors type, const std::string &param) const { sendError(type, param, ""); }
+void User::sendError(Errors type, const std::string &param, const std::string &cmd) const { sendError(type, std::vector<string>(1, param), cmd); }
+void User::sendError(Errors type, const std::vector<std::string> &params) const { sendError(type, params, ""); }
+void User::sendError(Errors type, const std::vector<std::string> &params, const std::string &cmd) const
 {
 	std::string reply;
 
