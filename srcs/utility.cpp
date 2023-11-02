@@ -112,7 +112,7 @@ const std::vector<std::string> splitString(std::string str, const std::string &d
 		size_t pos = 0;
 		while ((pos = str.find(delimiter)) != std::string::npos) {
 			// ret[n_channels++] = str.substr(0, pos);
-			cout << "pushing_back: " << str.substr(0, pos) << endl << flush;
+			std::cout << "pushing_back: " << str.substr(0, pos) << std::endl << std::flush;
 			ret.push_back(str.substr(0, pos));
 			str.erase(0, pos + delimiter.length());
 		}
@@ -131,7 +131,7 @@ void log(const std::string &info, const bool outputToTerminal)
 		if (logToFile) {
 			std::ofstream logFile;
 			const std::string fileName = startTime + "log.txt";
-			logFile.open(fileName.c_str(), ios_base::app);
+			logFile.open(fileName.c_str(), std::ios_base::app);
 			logFile << timestamp() <<  removeColor(info) << std::endl << std::flush;
 			logFile.close();
 		}

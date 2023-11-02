@@ -31,17 +31,17 @@ int main(int argc, char *argv[])
 		for (size_t i = 3; argv[i]; ++i) {
 			if (!strcmp(argv[i], "--log")) {
 				logging = true;
-				cout << "Logging " << GREEN << "enabled" << RESET << std::endl << std::flush;
+				std::cout << "Logging " << GREEN << "enabled" << RESET << std::endl << std::flush;
 			} else if (!strcmp(argv[i], "--logfile")) {
 				logging = true;
 				logToFile = true;
-				cout << "Logging to file " << GREEN << "enabled" << RESET << std::endl << std::flush;
+				std::cout << "Logging to file " << GREEN << "enabled" << RESET << std::endl << std::flush;
 			} else {
 				error("./ircserv <port> <password> [--log, --logfile]", EXIT);
 			}
 		}
 	} else {
-		cout << "Logging " << RED << "disabled" << RESET << ". To enable use --log or --logfile" << std::endl << std::flush;
+		std::cout << "Logging " << RED << "disabled" << RESET << ". To enable use --log or --logfile" << std::endl << std::flush;
 	}
 
 	signal(SIGINT, handler);

@@ -85,99 +85,99 @@ class User
 {
 	private:
 		// string	_name;
-		string	_password;
-		string	_email;
-		string	_phone;
-		string	_address;
-		string	_city;
-		string	_postalCode;
-		string	_country;
-		string	_id;
+		std::string	_password;
+		std::string	_email;
+		std::string	_phone;
+		std::string	_address;
+		std::string	_city;
+		std::string	_postalCode;
+		std::string	_country;
+		std::string	_id;
 		// string	_role;
 		// string	_status;
-		string	_createdAt;
-		string	_updatedAt;
+		std::string	_createdAt;
+		std::string	_updatedAt;
 
-		int		_fd;
-		int		_status;
-		time_t	_previousPing;
-		string	_hostaddr;
-		string	_hostname;
-		string	_servername;
-		string	_nick;
-		string	_user;
-		string	_name;
-		string	_role;
-		string	_color;
-		string	_previousNick;
-		string	_awayMsg;
-		string	_modes;
+		int			_fd;
+		int			_status;
+		time_t		_previousPing;
+		std::string	_hostaddr;
+		std::string	_hostname;
+		std::string	_servername;
+		std::string	_nick;
+		std::string	_user;
+		std::string	_name;
+		std::string	_role;
+		std::string	_color;
+		std::string	_previousNick;
+		std::string	_awayMsg;
+		std::string	_modes;
 		// string	_atChannel;
-		Channel	*_channel;
-		map<string, Channel *> _joinedChannels;
+		Channel		*_channel;
+		std::map<std::string, Channel *> _joinedChannels;
 
-		uint16_t _hostport; // Not set
+		uint16_t	_hostport; // Not set
 
-		bool _capable;
+		bool		_capable;
 
-		vector<string> _waitToSend;
+		std::vector<std::string> _waitToSend;
 
 	public:
 		User(const int fd, struct sockaddr_in addr);
 		~User();
 
-		string buffer;
-		void sendPrivateMessage(User *To, const string &Message);
-		void write(const string Message);
+		std::string buffer;
+		void sendPrivateMessage(User *To, const std::string &Message);
+		void write(const std::string Message);
 		void push();
 		bool isRegistered() const;
 
 		// Setters
-		void setPassword(const string &passwd);
+		void setPassword(const std::string &passwd);
 		void setStatus(const int status);
 		void setPreviousPing(const time_t ping);
-		void setHostaddr(const string &hostaddr);
-		void setHostname(const string &hostname);
-		void setServername(const string &servername);
-		void setNick(const string &nick);
-		void setUser(const string &user);
-		void setName(const string &name);
-		void setRole(const string &role);
-		void setColor(const string &color);
-		void setPreviousNick(const string &previousNick);
-		void setAway(const string &msg);
-		void setModes(const string &modes);
-		void setAtChannel(const string &atChannel);
+		void setHostaddr(const std::string &hostaddr);
+		void setHostname(const std::string &hostname);
+		void setServername(const std::string &servername);
+		void setNick(const std::string &nick);
+		void setUser(const std::string &user);
+		void setName(const std::string &name);
+		void setRole(const std::string &role);
+		void setColor(const std::string &color);
+		void setPreviousNick(const std::string &previousNick);
+		void setAway(const std::string &msg);
+		void setModes(const std::string &modes);
+		void setAtChannel(const std::string &atChannel);
 		// void setChannel(Channel *channel);
 		void setCapable(bool capable);
 
 		// Getters
-		int				getFd() const;
-		int				getStatus() const;
-		time_t			getPreviousPing() const;
-		const string	getHostaddr() const;
-		const string	getHostname() const;
-		const string	getServername() const;
-		const string	getHost() const;
-		const string	getNick() const;
-		const string	getUser() const;
-		const string	getName() const;
-		const string	getRole() const;
-		const string	getColor() const;
-		const string	getPreviousNick() const;
-		const string	getAway() const;
-		const string	getModes() const;
-		const string	getAtChannel() const;
-		Channel			*getChannel() const;
-		uint16_t		getPort() const;
-		bool			isCapable() const;
+		int					getFd() const;
+		int					getStatus() const;
+		time_t				getPreviousPing() const;
+		const std::string	getHostaddr() const;
+		const std::string	getHostname() const;
+		const std::string	getServername() const;
+		const std::string	getHost() const;
+		const std::string	getNick() const;
+		const std::string	getUser() const;
+		const std::string	getName() const;
+		const std::string	getRole() const;
+		const std::string	getColor() const;
+		const std::string	getPreviousNick() const;
+		const std::string	getAway() const;
+		const std::string	getModes() const;
+		const std::string	getAtChannel() const;
+		Channel				*getChannel() const;
+		uint16_t			getPort() const;
+		bool				isCapable() const;
 
-		const vector<Channel *> getJoinedChannels() const;
+		const std::vector<Channel *> getJoinedChannels() const;
 
-		bool			isChannelMember(const string &channelName) const;
-		void			joinChannel(const string &channelName);
-		void			joinChannel(const string &channelName, const string &key);
-		// void			leaveChannel(const string &channelName);
+		bool			isChannelMember(const std::string &channelName) const;
+		void			joinChannel(const std::string &channelName);
+		void			joinChannel(const std::string &channelName, const std::string &key);
+		// void			leaveChannel(const std::string &channelName);
 		void			leaveChannel(Channel *channel);
 		void			leaveAllChannels();
 

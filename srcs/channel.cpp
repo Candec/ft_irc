@@ -13,9 +13,9 @@
 #include "../includes/main.hpp"
 
 Channel::Channel() : _modes("n") {}
-Channel::Channel(const string &name) : _name(name), _modes("n"), _type(name[0])
+Channel::Channel(const std::string &name) : _name(name), _modes("n"), _type(name[0])
 {
-	// const string str = WLC_CH_MSG + name + RESET;
+	// const std::string str = WLC_CH_MSG + name + RESET;
 
 	setStatus(ChannelFlags::PUBLIC);
 
@@ -26,17 +26,17 @@ Channel::Channel(const string &name) : _name(name), _modes("n"), _type(name[0])
 Channel::~Channel() {} //? Missing any handling of players' current channel?
 
 // Setters
-void Channel::setName(const string &name) { _name = name; }
-void Channel::setMode(const string &modes) { _modes = modes; }
-void Channel::setTopic(const string &topic, const User *setBy)
+void Channel::setName(const std::string &name) { _name = name; }
+void Channel::setMode(const std::string &modes) { _modes = modes; }
+void Channel::setTopic(const std::string &topic, const User *setBy)
 {
 	_topic.topic = topic;
 	_topic.setBy = setBy;
 	_topic.setAt = time(NULL);
 }
-void Channel::setKey(const string &key, const User *src)
+void Channel::setKey(const std::string &key, const User *src)
 {
-	if (key.find(' ') != string::npos)
+	if (key.find(' ') != std::string::npos)
 		return src->sendError(ERR_INVALIDKEY, _name);
 	_key = key;
 }
@@ -44,25 +44,25 @@ void Channel::setType(ChannelFlags::Type type) { _type = (char)type; }
 void Channel::setStatus(ChannelFlags::Status status) { _status = status; }
 
 void Channel::setClientLimit(const uint limit) { _client_limit = limit; }
-// void Channel::setUserModes(const User *user, const string modes) { _user_modes.at(user->getFd()) = modes; }
+// void Channel::setUserModes(const User *user, const std::string modes) { _user_modes.at(user->getFd()) = modes; }
 
 // Getters
-const string	Channel::getName() const { return _name; }
-const string	Channel::getMode() const { return _modes; }
-const string	Channel::getTopic() const { return _topic.topic; }
-const string	Channel::getTopicSetBy() const { return _topic.setBy->getNick(); }
-const string	Channel::getTopicSetAt() const { return toString(_topic.setAt); }
-const string	Channel::getKey() const { return _key; }
+const std::string	Channel::getName() const { return _name; }
+const std::string	Channel::getMode() const { return _modes; }
+const std::string	Channel::getTopic() const { return _topic.topic; }
+const std::string	Channel::getTopicSetBy() const { return _topic.setBy->getNick(); }
+const std::string	Channel::getTopicSetAt() const { return toString(_topic.setAt); }
+const std::string	Channel::getKey() const { return _key; }
 char			Channel::getType() const { return _type; }
 char			Channel::getStatus() const { return _status; }
 
 uint			Channel::getClientLimit() const { return _client_limit; }
-// const string	Channel::getUserModes(const User *user) const { return _user_modes.at(user->getFd()); }
-vector<User *>	Channel::getUsers() const
+// const std::string	Channel::getUserModes(const User *user) const { return _user_modes.at(user->getFd()); }
+std::vector<User *>	Channel::getUsers() const
 {
-	vector<User *> users = vector<User *>();
+	std::vector<User *> users = std::vector<User *>();
 
-	for (map<int, User *>::const_iterator i = _users.begin(); i != _users.end(); ++i)
+	for (std::map<int, User *>::const_iterator i = _users.begin(); i != _users.end(); ++i)
 		users.push_back(i->second);
 	return users;
 }
@@ -92,7 +92,7 @@ void Channel::addMode(ChannelFlags::Mode letter, std::vector<std::string> argume
 		if (!user)
 			return;
 
-		_operators.insert(pair<int, User *>(user->getFd(), user));
+		_operators.insert(std::pair<int, User *>(user->getFd(), user));
 
 		if (arguments.size())
 			arguments.erase(arguments.begin());
@@ -114,7 +114,7 @@ void Channel::addMode(ChannelFlags::Mode letter, std::vector<std::string> argume
 	log(YELLOW + _name + BLUE + ": " \
 		+ GREEN + "Adding" + BLUE + " mode " + mode);
 
-	if (_modes.find(mode) == string::npos)
+	if (_modes.find(mode) == std::string::npos)
 		_modes += mode;
 	else
 		log("Channel already had that mode");
@@ -152,7 +152,7 @@ void Channel::removeMode(ChannelFlags::Mode letter, std::vector<std::string> &ar
 		+ RED + "Removing" + BLUE + " mode " + mode);
 
 	size_t pos = _modes.find(mode);
-	if (pos != string::npos)
+	if (pos != std::string::npos)
 		_modes.erase(pos);
 	else
 		log("Channel didn't have that mode");
@@ -178,7 +178,7 @@ void Channel::removeUser(User *user)
 	if (!user)
 		return;
 
-	log(string("    ") + YELLOW + _name + RESET + ": " \
+	log(std::string("    ") + YELLOW + _name + RESET + ": " \
 		+ RED + "Removing " \
 		+ MAGENTA + user->getNick() + RESET + " (" \
 		+ MAGENTA + toString(user->getFd()) + RESET + ")");
@@ -187,9 +187,9 @@ void Channel::removeUser(User *user)
 		_operators.erase(_operators.find(user->getFd()));
 	_users.erase(_users.find(user->getFd()));
 }
-void Channel::removeUser(const string &nick)
+void Channel::removeUser(const std::string &nick)
 {
-	for (map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
+	for (std::map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
 		if (i->second->getNick() == nick)
 			return removeUser(i->second);
 }
@@ -197,7 +197,7 @@ void Channel::removeUser(const string &nick)
 void Channel::ban(User *user)
 {
 	if (!isBanned(user))
-		_banned.insert(pair<int, User *>(user->getFd(), user));
+		_banned.insert(std::pair<int, User *>(user->getFd(), user));
 }
 void Channel::unban(const User *user)
 {
@@ -209,9 +209,9 @@ bool Channel::isMember(const User *user) const { return (_users.find(user->getFd
 bool Channel::isOperator(const User *user) const { return (_operators.find(user->getFd()) != _operators.end()); }
 bool Channel::isFull() const { return (_users.size() == _client_limit); }
 bool Channel::isBanned(const User *user) const { return (_banned.find(user->getFd()) != _banned.end()); }
-bool Channel::isInviteOnly() const { return (_modes.find('i') != string::npos); }
-bool Channel::noExternalMessages() const { return (_modes.find('n') != string::npos); }
-bool Channel::isTopicProtected() const { return (_modes.find('t') != string::npos); }
+bool Channel::isInviteOnly() const { return (_modes.find('i') != std::string::npos); }
+bool Channel::noExternalMessages() const { return (_modes.find('n') != std::string::npos); }
+bool Channel::isTopicProtected() const { return (_modes.find('t') != std::string::npos); }
 
 
 void Channel::addInvitedUser(User *user)
@@ -222,60 +222,60 @@ void Channel::addInvitedUser(User *user)
 bool Channel::isInvitedUser(const User *user) const { return (find(_invitations.begin(), _invitations.end(), user) != _invitations.end()); }
 void Channel::revokeInvitation(const User *user)
 {
-	vector<User *>::iterator i = find(_invitations.begin(), _invitations.end(), user);
+	std::vector<User *>::iterator i = find(_invitations.begin(), _invitations.end(), user);
 	if (i != _invitations.end())
 		_invitations.erase(i);
 }
 
-void Channel::broadcast(const string &msg) const
+void Channel::broadcast(const std::string &msg) const
 {
 	broadcast(msg, NULL);
 }
-void Channel::broadcast(const string &msg, const User *exclude, const string &src) const
+void Channel::broadcast(const std::string &msg, const User *exclude, const std::string &src) const
 {
 	broadcast(":" + src + " " + msg, exclude);
 }
-void Channel::broadcast(const string &msg, const User *exclude) const
+void Channel::broadcast(const std::string &msg, const User *exclude) const
 {
-	for (map<int, User *>::const_iterator it = _users.begin(); it != _users.end(); ++it)
+	for (std::map<int, User *>::const_iterator it = _users.begin(); it != _users.end(); ++it)
 		if (it->second != exclude)
 			server->sendMsg(it->second, msg);
 }
 
 void Channel::update()
 {
-	for (map<int, User *>::const_iterator it = _users.begin(); it != _users.end(); it++)
+	for (std::map<int, User *>::const_iterator it = _users.begin(); it != _users.end(); it++)
 	{
 		User *user = it->second;
 		if (isMember(user))
 		{
-			for (map<int, string>::iterator i = _history.begin(); i != _history.end(); i++)
+			for (std::map<int, std::string>::iterator i = _history.begin(); i != _history.end(); i++)
 				server->sendMsg(user, i->second);
 		}
 	}
 }
 
-void Channel::set(const string &line)
+void Channel::set(const std::string &line)
 {
 	unsigned int last = _history.size();
 
-	_history.insert(pair<unsigned int, string>(last, line));
+	_history.insert(std::pair<unsigned int, std::string>(last, line));
 	update();
 }
 
-void Channel::setLog(const string &line)
+void Channel::setLog(const std::string &line)
 {
 	unsigned int last = _history.size();
 
-	_history.insert(pair<unsigned int, string>(last, "[ log ]: " + line));
+	_history.insert(std::pair<unsigned int, std::string>(last, "[ log ]: " + line));
 	update();
 }
 
-void Channel::setMsg(const string &line, const string &nick)
+void Channel::setMsg(const std::string &line, const std::string &nick)
 {
 	unsigned int last = _history.size();
 
-	_history.insert(pair<unsigned int, string>(last, "[ " + nick + " ]: " + line));
+	_history.insert(std::pair<unsigned int, std::string>(last, "[ " + nick + " ]: " + line));
 	update();
 }
 

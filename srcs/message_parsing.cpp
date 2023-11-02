@@ -23,9 +23,9 @@ Server::parseMessage(User *user, const char * const buffer)
 
 	strncpy(msg.buffer, buffer, BUFFER + 1);
 
-	vector< vector<string> > lines = splitBuffer(buffer);
+	std::vector< std::vector<std::string> > lines = splitBuffer(buffer);
 
-	vector< vector<string> >::iterator line;
+	std::vector< std::vector<std::string> >::iterator line;
 	for (line = lines.begin(); line != lines.end(); line++)
 		lookForCmd(user, cmdToEnum((*line)[0]), *line, msg);
 		// lookForCmd(user, *line, msg);
@@ -33,12 +33,12 @@ Server::parseMessage(User *user, const char * const buffer)
 	return msg;
 }
 
-vector< vector<string> >
+std::vector< std::vector<std::string> >
 Server::splitBuffer(const char * const buffer)
 {
-	vector< vector<string> >	lines;
-	istringstream				lines_iss(buffer);
-	string						line;
+	std::vector< std::vector<std::string> >	lines;
+	std::istringstream				lines_iss(buffer);
+	std::string						line;
 
 	while (getline(lines_iss, line) && !line.empty()) {
 		//? Maybe ignore empty lines but keep parsing
@@ -46,9 +46,9 @@ Server::splitBuffer(const char * const buffer)
 		// if (line.empty())
 		// 	continue;
 
-		vector<string>	words;
-		istringstream	words_iss(line);
-		string			word;
+		std::vector<std::string>	words;
+		std::istringstream	words_iss(line);
+		std::string			word;
 
 		while (words_iss >> word)
 			words.push_back(word);
@@ -62,7 +62,7 @@ Server::splitBuffer(const char * const buffer)
 }
 
 static bool
-expectedArgs(const vector<string> &args, const size_t n)
+expectedArgs(const std::vector<std::string> &args, const size_t n)
 {
 	if (args.size() == n)
 		return true;
@@ -76,12 +76,12 @@ expectedArgs(const vector<string> &args, const size_t n)
 }
 
 bool
-Server::isCmd(const string &param) const { return (cmdToEnum(param) != Commands::UNKNOWN); }
+Server::isCmd(const std::string &param) const { return (cmdToEnum(param) != Commands::UNKNOWN); }
 bool
-Server::isChannel(const string &channel) const { return (_channels.find(channel) != _channels.end()); }
+Server::isChannel(const std::string &channel) const { return (_channels.find(channel) != _channels.end()); }
 
 void
-Server::lookForCmd(User *user, const int cmd, vector<string> params, struct s_msg &msg)
+Server::lookForCmd(User *user, const int cmd, std::vector<std::string> params, struct s_msg &msg)
 {
 	if (params.empty())
 		return;
@@ -134,14 +134,14 @@ Server::lookForCmd(User *user, const int cmd, vector<string> params, struct s_ms
 * Parameters: <password>
 */
 void
-Server::passCmd(User *user, const vector<string> &params)
+Server::passCmd(User *user, const std::vector<std::string> &params)
 {
 	if (params.size() < 1) {
 		return user->sendError(ERR_NEEDMOREPARAMS, "", "PASS");
 	} else if (!expectedArgs(params, 1)) // There's a numeric reply for too little but not too many
 		return;
 
-	const string password = params[0];
+	const std::string password = params[0];
 	if (password != _password)
 	{
 		user->sendError(ERR_PASSWDMISMATCH);
@@ -149,8 +149,8 @@ Server::passCmd(User *user, const vector<string> &params)
 		return;
 	}
 
-	cout << "++++++++++++++++++++" << endl;
-	cout << GREEN << "Password given by " << user->getNick() << " was valid" << RESET << endl;
+	std::cout << "++++++++++++++++++++" << std::endl;
+	std::cout << GREEN << "Password given by " << user->getNick() << " was valid" << RESET << std::endl;
 	user->setPassword(password);
 	user->setStatus(UserFlags::ACCEPT);
 }
@@ -160,7 +160,7 @@ Server::passCmd(User *user, const vector<string> &params)
 * Parameters: <nickname>
 */
 void
-Server::nickCmd(User *user, const vector<string> &params)
+Server::nickCmd(User *user, const std::vector<std::string> &params)
 {
 	if (user->getStatus() == UserFlags::UNVERIFY)
 		return sendErrFatal(user, "NICK: No password given");
@@ -169,11 +169,11 @@ Server::nickCmd(User *user, const vector<string> &params)
 		return user->sendError(ERR_NONICKNAMEGIVEN);
 
 	// Sanitize nickname
-	const string nickName = params[0];
+	const std::string nickName = params[0];
 	if (
 		nickName[0] == '#' \
 		|| nickName[0] == ':' \
-		|| nickName.find(' ') != string::npos
+		|| nickName.find(' ') != std::string::npos
 	)
 		return user->sendError(ERR_ERRONEUSNICKNAME, nickName);
 
@@ -181,7 +181,7 @@ Server::nickCmd(User *user, const vector<string> &params)
 	if (getUser(nickName) != NULL)
 		return user->sendError(ERR_NICKNAMEINUSE, nickName);
 
-	const string oldNickName = user->getNick();
+	const std::string oldNickName = user->getNick();
 	user->setNick(nickName);
 	broadcast(":" + oldNickName + " NICK " + nickName);
 }
@@ -191,7 +191,7 @@ Server::nickCmd(User *user, const vector<string> &params)
 * Parameters: <username> 0 * <realname>
 */
 void
-Server::userCmd(User *user, const vector<string> &params)
+Server::userCmd(User *user, const std::vector<std::string> &params)
 {
 	if (user->getStatus() == UserFlags::UNVERIFY)
 		return sendErrFatal(user, "USER: No password given");
@@ -208,7 +208,7 @@ Server::userCmd(User *user, const vector<string> &params)
 	user->setHostname(params[1]);
 	user->setServername(params[2]);
 
-	string realName = params[3];
+	std::string realName = params[3];
 	for (size_t i = 4; i < n_args; ++i)
 		realName += " " + params[i];
 	if (realName[0] == ':')
@@ -230,23 +230,23 @@ Server::userCmd(User *user, const vector<string> &params)
 * Alt Params: 0
 */
 void
-Server::joinCmd(User *user, const vector<string> &params)
+Server::joinCmd(User *user, const std::vector<std::string> &params)
 {
 	// This is equivalent to sending a PART command to each channel
 	if (params.size() == 1 && params[0] == "0")
 		user->leaveAllChannels();
 
 	// Split vectors by , delimiter -> pair< vector<Channels> vector<Keys> >
-	const string channelNames = params[0];
-	const vector<string> names = splitString(channelNames, ",");
+	const std::string channelNames = params[0];
+	const std::vector<std::string> names = splitString(channelNames, ",");
 
-	string channelKeys;
+	std::string channelKeys;
 	if (params.size() > 1)
 		channelKeys = params[1];
-	const vector<string> keys = splitString(channelKeys, ",");
+	const std::vector<std::string> keys = splitString(channelKeys, ",");
 
-	vector<string>::const_iterator names_it = names.begin();
-	vector<string>::const_iterator key_it = keys.begin();
+	std::vector<std::string>::const_iterator names_it = names.begin();
+	std::vector<std::string>::const_iterator key_it = keys.begin();
 	for (; names_it != names.end(); ++names_it) {
 		if (channelKeys.empty())
 			user->joinChannel(*names_it);
@@ -260,12 +260,12 @@ Server::joinCmd(User *user, const vector<string> &params)
 }
 
 void
-Server::colorCmd(User *user, const vector<string> &words)
+Server::colorCmd(User *user, const std::vector<std::string> &words)
 {
 	if (!expectedArgs(words, 2))
 		return ;
 
-	map<string, string>colors;
+	std::map<std::string, std::string>colors;
 
 	colors["r"] = RED_BOLD;
 	colors["k"] = BLACK_BOLD;
@@ -307,18 +307,18 @@ Server::colorCmd(User *user, const vector<string> &words)
 * Parameters: [<reason>]
 */
 void
-Server::quitCmd(User *user, const string &reason)
+Server::quitCmd(User *user, const std::string &reason)
 {
-	// cout << BLUE << "User " << user->getNick() << RED << " disconnected" << RESET << endl;
-	const vector<Channel *> channels = user->getJoinedChannels();
-	for (vector<Channel *>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+	// std::cout << BLUE << "User " << user->getNick() << RED << " disconnected" << RESET << std::endl;
+	const std::vector<Channel *> channels = user->getJoinedChannels();
+	for (std::vector<Channel *>::const_iterator it = channels.begin(); it != channels.end(); ++it)
 		(*it)->broadcast(user->getNick() + ": Quit: " + reason);
 
 	sendErrFatal(user, "");
 }
 
 // void
-// Server::capCmd(User *user, const vector<string> &words)
+// Server::capCmd(User *user, const std::vector<std::string> &words)
 // {
 // 	if (
 // 		!words[1].compare("LS")
@@ -333,7 +333,7 @@ Server::quitCmd(User *user, const string &reason)
 * Parameters: <subcommand> [:<capabilities>]
 */
 void
-Server::capCmd(User *user, const vector<string> &params)
+Server::capCmd(User *user, const std::vector<std::string> &params)
 {
 	if (params.size() >= 2) {
 		if (
@@ -356,12 +356,12 @@ Server::capCmd(User *user, const vector<string> &params)
 * Parameters: <channel> [<topic>]
 */
 void
-Server::topicCmd(User *user, const vector<string> &params)
+Server::topicCmd(User *user, const std::vector<std::string> &params)
 {
 	if (params.size() == 0)
 		return user->sendError(ERR_NEEDMOREPARAMS, "", "TOPIC");
 
-	const string channelName = params[0];
+	const std::string channelName = params[0];
 	Channel *channel = getChannel(channelName);
 	if (!channel)
 		return user->sendError(ERR_NOSUCHCHANNEL, channelName);
@@ -377,11 +377,11 @@ Server::topicCmd(User *user, const vector<string> &params)
 		if (channel->isTopicProtected() && !channel->isOperator(user))
 			return user->sendError(ERR_CHANOPRIVSNEEDED, channelName);
 
-		const string topic = params[1];
+		const std::string topic = params[1];
 
 		channel->setTopic(topic, user);
 
-		string reply = "TOPIC " + channelName;
+		std::string reply = "TOPIC " + channelName;
 		if (!topic.empty())
 			reply += " " + topic;
 
@@ -394,16 +394,16 @@ Server::topicCmd(User *user, const vector<string> &params)
 * Parameters: <target>{,<target>} <text to be sent>
 */
 void
-Server::privmsgCmd(User *user, const vector<string> &params)
+Server::privmsgCmd(User *user, const std::vector<std::string> &params)
 {
-	const vector<string> targets = splitString(params[0], ",");
+	const std::vector<std::string> targets = splitString(params[0], ",");
 
-	const string msg = "PRIVMSG " + joinStrings(params);
-	cout << msg << endl;
+	const std::string msg = "PRIVMSG " + joinStrings(params);
+	std::cout << msg << std::endl;
 
-	vector<string>::const_iterator it;
+	std::vector<std::string>::const_iterator it;
 	for (it = targets.begin(); it != targets.end(); ++it) {
-		const string targetName = *it;
+		const std::string targetName = *it;
 
 		if (targetName[0] == '$') {
 			broadcast(msg);
@@ -421,12 +421,12 @@ Server::privmsgCmd(User *user, const vector<string> &params)
 		else if (getUser(targetName) != NULL) {
 			User *user = getUser(targetName);
 
-			vector<string>::const_iterator it;
+			std::vector<std::string>::const_iterator it;
 			for (it = targets.begin(); it != targets.end(); ++it) {
 				User *target = getUser(targetName);
 
 				if (!target->getAway().empty()) {
-					vector<string> tmp;
+					std::vector<std::string> tmp;
 					tmp.push_back(target->getNick());
 					tmp.push_back(msg);
 					user->sendReply(RPL_AWAY, tmp);
@@ -445,7 +445,7 @@ Server::privmsgCmd(User *user, const vector<string> &params)
 * Parameters: [<text>]
 */
 void
-Server::awayCmd(User *user, const vector<string> &params)
+Server::awayCmd(User *user, const std::vector<std::string> &params)
 {
 	(void)user;
 	(void)params;
@@ -457,7 +457,7 @@ Server::awayCmd(User *user, const vector<string> &params)
 * Parameters: <token>
 */
 void
-Server::pingCmd(User *user, const vector<string> &token)
+Server::pingCmd(User *user, const std::vector<std::string> &token)
 {
 	sendMsg(user, "PONG " + _serverName + " " + joinStrings(token));
 }
@@ -467,7 +467,7 @@ Server::pingCmd(User *user, const vector<string> &token)
 * Parameters: <target> [<modestring> [<mode arguments>...]]
 */
 void
-Server::modeCmd(User *user, const vector<string> &params)
+Server::modeCmd(User *user, const std::vector<std::string> &params)
 {
 	const std::string targetName = params[0];
 	std::string modeString;
@@ -543,7 +543,7 @@ Server::modeCmd(User *user, const vector<string> &params)
 * Parameters: [<channel>] <nicks> [<reason>]
 */
 // void
-// Server::kickCmd(User *user, const vector<string> &params)
+// Server::kickCmd(User *user, const std::vector<std::string> &params)
 // {
 
 // }
@@ -553,7 +553,7 @@ Server::modeCmd(User *user, const vector<string> &params)
 * Parameters: <nick> <channel>
 */
 void
-Server::inviteCmd(User *user, const vector<string> &params)
+Server::inviteCmd(User *user, const std::vector<std::string> &params)
 {
 	// Parameters number check
 	if (params.size() < 2)
@@ -563,7 +563,7 @@ Server::inviteCmd(User *user, const vector<string> &params)
 
 	Channel *invChannel;
 	User *target = getUser(params[0]);
-	const string channelName = params[1];
+	const std::string channelName = params[1];
 
 	// Getting the channel
 	invChannel = getChannel(channelName);
@@ -587,10 +587,10 @@ Server::inviteCmd(User *user, const vector<string> &params)
 * Parameters: [<channels>] [<message>]
 */
 void
-Server::partCmd(User *user, vector<string> params)
+Server::partCmd(User *user, std::vector<std::string> params)
 {
-	vector<string> channelNames;
-	string message = "";
+	std::vector<std::string> channelNames;
+	std::string message = "";
 
 	channelNames = splitString(params[0], ",");
 
@@ -603,7 +603,7 @@ Server::partCmd(User *user, vector<string> params)
 			message.erase(message.begin());
 	}
 
-	for (vector<string>::const_iterator it = channelNames.begin(); it != channelNames.end(); ++it)
+	for (std::vector<std::string>::const_iterator it = channelNames.begin(); it != channelNames.end(); ++it)
 	{
 		Channel *channel = getChannel(*it);
 		if (!channel) {

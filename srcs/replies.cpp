@@ -24,30 +24,30 @@ const std::string rpl_umodeis(const std::string &nick) {
 	User *user = server->getUser(nick);
 	return user->getNick() + " " + user->getModes();
 }
-const std::string rpl_away(const User *dest, const string &targetNick, const string &msg) {
+const std::string rpl_away(const User *dest, const std::string &targetNick, const std::string &msg) {
 	return dest->getNick() + " " + targetNick + " :" + msg;
 }
 const std::string rpl_list(const User *dest) {
 	const Channel *ch = dest->getChannel();
 	return dest->getNick() + " " + ch->getName() + " " + toString(ch->getUsers().size()) + " :" + ch->getTopic();
 }
-const std::string rpl_channelmodeis(const User *dest, const vector<string> &params) {
+const std::string rpl_channelmodeis(const User *dest, const std::vector<std::string> &params) {
 	return dest->getNick() + " " + joinStrings(params);
 }
 const std::string rpl_notopic(const User *dest, const std::string &channelName) {
 	return dest->getNick() + " " + channelName + " :No topic is set";
 }
-const std::string rpl_topic(const User *dest, const string &channelName) {
+const std::string rpl_topic(const User *dest, const std::string &channelName) {
 	return dest->getNick() + " " + channelName + " :" + server->getChannel(channelName)->getTopic();
 }
-const std::string rpl_topicwhotime(const User *dest, const string &channelName) {
+const std::string rpl_topicwhotime(const User *dest, const std::string &channelName) {
 	Channel *channel = server->getChannel(channelName);
 	return dest->getNick() + " " + channelName + " " + channel->getTopicSetBy() + " " + channel->getTopicSetAt();
 }
 const std::string rpl_inviting(const User *dest, const std::string &invitedNick, const std::string &channelName) {
 	return dest->getNick() + " " + invitedNick + " " + channelName;
 }
-const std::string rpl_namreply(const User *dest, const string &channelName) {
+const std::string rpl_namreply(const User *dest, const std::string &channelName) {
 	const Channel *ch = server->getChannel(channelName);
 	const std::vector<User *> users = ch->getUsers();
 

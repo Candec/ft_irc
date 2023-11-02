@@ -37,21 +37,21 @@ User::~User() { close(_fd); }
 
 //Setters
 
-void User::setPassword(const string &passwd) { _password = passwd; }
+void User::setPassword(const std::string &passwd) { _password = passwd; }
 void User::setStatus(const int status) { _status = status; }
 void User::setPreviousPing(const time_t ping) { _previousPing = ping; }
-void User::setHostaddr(const string &hostaddr) { _hostaddr = hostaddr; }
-void User::setHostname(const string &hostname) { _hostname = hostname; }
-void User::setServername(const string &servername) { _servername = servername; }
-void User::setNick(const string &nick) { _nick = nick; }
-void User::setUser(const string &user) { _user = user; }
-void User::setName(const string &name) { _name = name; }
-void User::setRole(const string &role) { _role = role; }
-void User::setColor(const string &color) { _color = color; }
-void User::setPreviousNick(const string &previousNick) { _previousNick = previousNick; }
-void User::setAway(const string &msg) { _awayMsg = msg; }
-void User::setModes(const string &modes) { _modes = modes; }
-// void User::setAtChannel(const string &atChannel)
+void User::setHostaddr(const std::string &hostaddr) { _hostaddr = hostaddr; }
+void User::setHostname(const std::string &hostname) { _hostname = hostname; }
+void User::setServername(const std::string &servername) { _servername = servername; }
+void User::setNick(const std::string &nick) { _nick = nick; }
+void User::setUser(const std::string &user) { _user = user; }
+void User::setName(const std::string &name) { _name = name; }
+void User::setRole(const std::string &role) { _role = role; }
+void User::setColor(const std::string &color) { _color = color; }
+void User::setPreviousNick(const std::string &previousNick) { _previousNick = previousNick; }
+void User::setAway(const std::string &msg) { _awayMsg = msg; }
+void User::setModes(const std::string &modes) { _modes = modes; }
+// void User::setAtChannel(const std::string &atChannel)
 // {
 // 	if (atChannel == _atChannel)
 // 		return ;
@@ -65,51 +65,51 @@ void User::setCapable(bool capable) { _capable = capable; }
 
 // Getters
 
-int				User::getFd() const { return (_fd); }
-int				User::getStatus() const { return (_status); }
-time_t			User::getPreviousPing() const { return (_previousPing); }
-const string	User::getHostaddr() const { return (_hostaddr); }
-const string	User::getHostname() const { return (_hostname); }
-const string	User::getServername() const { return (_servername); }
-const string	User::getHost() const { return (_hostname.size() ? _hostname : _hostaddr); } // Not in use
-const string	User::getNick() const
+int					User::getFd() const { return (_fd); }
+int					User::getStatus() const { return (_status); }
+time_t				User::getPreviousPing() const { return (_previousPing); }
+const std::string	User::getHostaddr() const { return (_hostaddr); }
+const std::string	User::getHostname() const { return (_hostname); }
+const std::string	User::getServername() const { return (_servername); }
+const std::string	User::getHost() const { return (_hostname.size() ? _hostname : _hostaddr); } // Not in use
+const std::string	User::getNick() const
 {
 	if (!_color.empty())
 		return (_color + _nick + RESET);
 	return (_nick);
 }
-const string	User::getUser() const { return (_user); }
-const string	User::getName() const { return (_name); }
-const string	User::getRole() const { return (_role); }
-const string	User::getColor() const { return (_color); }
-const string	User::getPreviousNick() const { return (_previousNick); }
-const string	User::getAway() const { return (_awayMsg); }
-const string	User::getModes() const { return (_modes); }
-// const string	User::getAtChannel() const { return (_atChannel); }
-Channel *		User::getChannel() const { return (_channel); }
-uint16_t		User::getPort() const { return ntohs(_hostport); }
-bool			User::isCapable() const { return (_capable); }
+const std::string	User::getUser() const { return (_user); }
+const std::string	User::getName() const { return (_name); }
+const std::string	User::getRole() const { return (_role); }
+const std::string	User::getColor() const { return (_color); }
+const std::string	User::getPreviousNick() const { return (_previousNick); }
+const std::string	User::getAway() const { return (_awayMsg); }
+const std::string	User::getModes() const { return (_modes); }
+// const std::string	User::getAtChannel() const { return (_atChannel); }
+Channel *			User::getChannel() const { return (_channel); }
+uint16_t			User::getPort() const { return ntohs(_hostport); }
+bool				User::isCapable() const { return (_capable); }
 
-const vector<Channel *> User::getJoinedChannels() const
+const std::vector<Channel *> User::getJoinedChannels() const
 {
-	vector<Channel *> channels;
+	std::vector<Channel *> channels;
 	if (_joinedChannels.size() > 0)
-		for (map<string, Channel *>::const_iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
+		for (std::map<std::string, Channel *>::const_iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
 			channels.push_back(it->second);
 	return channels;
 }
 
 // Functions
-void User::sendPrivateMessage(User *To, const string &Message) { To->write(":" + Message); }
-void User::write(const string Message) { _waitToSend.push_back(Message); }
+void User::sendPrivateMessage(User *To, const std::string &Message) { To->write(":" + Message); }
+void User::write(const std::string Message) { _waitToSend.push_back(Message); }
 
 void User::push()
 {
 	if (!_waitToSend.size())
 		return ;
 
-	string buffer;
-	for (vector<string>::iterator i = _waitToSend.begin(); i != _waitToSend.end(); ++i)
+	std::string buffer;
+	for (std::vector<std::string>::iterator i = _waitToSend.begin(); i != _waitToSend.end(); ++i)
 		buffer += *i + MESSAGE_END;
 	_waitToSend.clear();
 
@@ -127,30 +127,30 @@ bool User::isRegistered() const
 		|| !_servername.empty());
 }
 
-bool User::isChannelMember(const string &channelName) const
+bool User::isChannelMember(const std::string &channelName) const
 {
 	return (_joinedChannels.find(channelName) != _joinedChannels.end());
 }
 
-void User::joinChannel(const string &channelName)
+void User::joinChannel(const std::string &channelName)
 {
 	joinChannel(channelName, "");
 }
-void User::joinChannel(const string &channelName, const string &key)
+void User::joinChannel(const std::string &channelName, const std::string &key)
 {
 	if (isChannelMember(channelName))
 		return;
-	// cout << "User " << MAGENTA + _nick + WHITE + " is joining the channel \"" + YELLOW + channelName + WHITE + "\"" << endl << flush;
+	// std::cout << "User " << MAGENTA + _nick + WHITE + " is joining the channel \"" + YELLOW + channelName + WHITE + "\"" << std::endl << std::flush;
 	log(MAGENTA + _nick + BLUE + ": " + GREEN + "Joining " + YELLOW + channelName);
 
 	Channel *channel = server->getChannel(channelName);
 	if (!channel) {
-		cout << RED << "    Channel doesn't exist" << WHITE << endl << flush;
+		std::cout << RED << "    Channel doesn't exist" << WHITE << std::endl << std::flush;
 		channel = server->createChannel(channelName);
 		if (!channel)
 			return;
 
-		channel->addMode(ChannelFlags::OPERATOR, vector<string>(1, _nick), this);
+		channel->addMode(ChannelFlags::OPERATOR, std::vector<std::string>(1, _nick), this);
 	}
 	if (channel->isFull())
 		return sendError(ERR_CHANNELISFULL, channelName);
@@ -160,16 +160,16 @@ void User::joinChannel(const string &channelName, const string &key)
 		return sendError(ERR_INVITEONLYCHAN, channelName);
 
 	channel->addUser(this);
-	_joinedChannels.insert(pair<string, Channel *>(channelName, channel));
+	_joinedChannels.insert(std::pair<std::string, Channel *>(channelName, channel));
 
 	if (!_capable)
 		channel->setLog(MAGENTA + _nick + " joined the channel" + RESET);
 	else
 		channel->setLog(_nick + " joined the channel");
 
-	cout << GREEN << " OK" << WHITE << endl << flush;
+	std::cout << GREEN << " OK" << WHITE << std::endl << std::flush;
 
-	string reply;
+	std::string reply;
 	// Send JOIN ACK
 	reply = ":" + _nick + " JOIN " + channelName;
 	server->sendMsg(this, reply);
@@ -180,7 +180,7 @@ void User::joinChannel(const string &channelName, const string &key)
 	this->sendReply(RPL_NAMREPLY, channelName);
 	this->sendReply(RPL_ENDOFNAMES, channelName);
 
-	channel->broadcast(string("JOIN " + channelName), this, getNick());
+	channel->broadcast(std::string("JOIN " + channelName), this, getNick());
 }
 void User::leaveChannel(Channel *channel)
 {
@@ -189,7 +189,7 @@ void User::leaveChannel(Channel *channel)
 	if (!channel->isMember(this))
 		return log("User was not member of " + channel->getName());
 
-	channel->broadcast(string("PART " + channel->getName()), NULL, _nick);
+	channel->broadcast(std::string("PART " + channel->getName()), NULL, _nick);
 
 	channel->removeUser(this);
 	_joinedChannels.erase(channel->getName());
@@ -201,7 +201,7 @@ void User::leaveChannel(Channel *channel)
 }
 void User::leaveAllChannels()
 {
-	for (map<string, Channel *>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
+	for (std::map<std::string, Channel *>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
 		leaveChannel(it->second);
 }
 
@@ -227,7 +227,7 @@ void User::addMode(UserFlags::Mode modeLetter)
 
 	log(MAGENTA + _name + BLUE + ": " + GREEN + "Adding" + BLUE + " mode " + mode);
 
-	if (_modes.find(mode) == string::npos)
+	if (_modes.find(mode) == std::string::npos)
 		_modes += mode;
 }
 void User::removeMode(UserFlags::Mode modeLetter)
@@ -240,18 +240,18 @@ void User::removeMode(UserFlags::Mode modeLetter)
 	log(MAGENTA + _name + BLUE + ": " + RED + "Removing" + BLUE + " mode " + mode);
 
 	size_t pos = _modes.find(mode);
-	if (pos != string::npos)
+	if (pos != std::string::npos)
 		_modes.erase(pos);
 }
-bool User::isInvisible() const { return (_modes.find('i') != string::npos); }
+bool User::isInvisible() const { return (_modes.find('i') != std::string::npos); }
 
 
 void User::sendReply(Replies type) const { sendReply(type, "", ""); }
 void User::sendReply(Replies type, const std::string &param) const { sendReply(type, param, ""); }
 void User::sendReply(Replies type, const std::vector<std::string> &params) const { sendReply(type, params, ""); }
-void User::sendReply(Replies type, const std::string &param, const std::string &cmd) const { sendReply(type, std::vector<string>(1, param), cmd); }
+void User::sendReply(Replies type, const std::string &param, const std::string &cmd) const { sendReply(type, std::vector<std::string>(1, param), cmd); }
 void User::sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd) const { sendReply(type, params, cmd, "", ""); }
-void User::sendReply(Replies type, const std::string &param, const std::string &cmd, const std::string &tags, const std::string &src) const { sendReply(type, std::vector<string>(1, param), cmd, tags, src); }
+void User::sendReply(Replies type, const std::string &param, const std::string &cmd, const std::string &tags, const std::string &src) const { sendReply(type, std::vector<std::string>(1, param), cmd, tags, src); }
 void User::sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd, const std::string &tags, const std::string &src) const
 {
 	std::string reply;
@@ -311,7 +311,7 @@ void User::sendReply(Replies type, const std::vector<std::string> &params, const
 
 void User::sendError(Errors type) const { sendError(type, "", ""); }
 void User::sendError(Errors type, const std::string &param) const { sendError(type, param, ""); }
-void User::sendError(Errors type, const std::string &param, const std::string &cmd) const { sendError(type, std::vector<string>(1, param), cmd); }
+void User::sendError(Errors type, const std::string &param, const std::string &cmd) const { sendError(type, std::vector<std::string>(1, param), cmd); }
 void User::sendError(Errors type, const std::vector<std::string> &params) const { sendError(type, params, ""); }
 void User::sendError(Errors type, const std::vector<std::string> &params, const std::string &cmd) const
 {

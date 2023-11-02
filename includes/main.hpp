@@ -32,7 +32,7 @@ htonl, ntohs, ntohl, inet_addr, inet_ntoa, send,
 recv, signal, sigaction, lseek, fstat, fcntl, poll
 */
 
-using namespace std;
+// using namespace std;
 
 # include <string>
 # include <map>
