@@ -16,7 +16,9 @@ Your executable will be run as follows:
   - test also with netcat -- ❌ netcat cannot pass throught the autentication process. A way of creating the server without password should be considered
 - Communication has to be done via TCP ✔️
 - Compare with official IRC servers ❌
-  - Authenticate -- ❌ Connecting to the server with a bad password rejects the first try, but the second the user is accepted, a third time sends an error, a forth accepts the user
+  - Authenticate
+    -❌ Connecting to the server with a bad password rejects the first try, but the second the user is accepted, a third time sends an error, a forth accepts the user
+	- When creating a server without password, /NICK and /NAME complain the user has not provided a password
   - Set Nickname (NICK command )✔️
     - If nickname already in use, reply with *ERR_NICKNAMEINUSE*
     - If nickname not valid, reply with *ERR_ERRONEUSNICKNAME*
