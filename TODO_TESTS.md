@@ -14,6 +14,8 @@ Your executable will be run as follows:
 - Only 1 poll() ✔️
 - irssi must be able to connect to your server without encountering any error.
   - test also with netcat ✔️
+  - Server might accept client without a proper password if it send many connection requests
+  - Server migh not accept client, even when all the information is correct. The welcome message is even sent, but after, the user is not able to interact with the server. The fd is created, and irssi even tries to reconnect, as it has the "reconnect after timeout" setting active by default
 - Communication has to be done via TCP ✔️
 - Compare with official IRC servers ❌
   - Authenticate
