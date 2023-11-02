@@ -169,9 +169,9 @@ void Channel::addUser(User *user)
 	_users[user->getFd()] = user;
 
 	if (!_topic.topic.empty())
-		user->sendReply(RPL_TOPIC, "TOPIC", _name);
+		user->sendReply(RPL_TOPIC, _name);
 	else
-		user->sendReply(RPL_NOTOPIC, "TOPIC", _name);
+		user->sendReply(RPL_NOTOPIC, _name);
 }
 void Channel::removeUser(User *user)
 {

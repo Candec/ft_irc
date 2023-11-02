@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/01 17:20:02 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/01 21:09:00 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,7 +221,7 @@ Server::userCmd(User *user, const vector<string> &params)
 
 	user->setStatus(UserFlags::ONLINE);
 
-	user->sendReply(RPL_WELCOME, "USER", "");
+	user->sendReply(RPL_WELCOME);
 }
 
 /*
@@ -368,10 +368,10 @@ Server::topicCmd(User *user, const vector<string> &params)
 
 	if (params.size() == 1) {
 		if (!channel->getTopic().empty()) {
-			user->sendReply(RPL_TOPIC, "TOPIC", params);
-			user->sendReply(RPL_TOPICWHOTIME, "TOPIC", channelName);
+			user->sendReply(RPL_TOPIC, channelName);
+			user->sendReply(RPL_TOPICWHOTIME, channelName);
 		} else
-			user->sendReply(RPL_NOTOPIC, "TOPIC", params);
+			user->sendReply(RPL_NOTOPIC, channelName);
 	}
 	else {
 		if (channel->isTopicProtected() && !channel->isOperator(user))
@@ -400,6 +400,7 @@ Server::privmsgCmd(User *user, const vector<string> &params)
 
 	const string msg = "PRIVMSG " + joinStrings(params);
 	cout << msg << endl;
+
 	vector<string>::const_iterator it;
 	for (it = targets.begin(); it != targets.end(); ++it) {
 		const string targetName = *it;
@@ -428,7 +429,7 @@ Server::privmsgCmd(User *user, const vector<string> &params)
 					vector<string> tmp;
 					tmp.push_back(target->getNick());
 					tmp.push_back(msg);
-					user->sendReply(RPL_AWAY, "PRIVMSG", tmp);
+					user->sendReply(RPL_AWAY, tmp);
 				}
 				sendMsg(target, msg, user->getNick());
 			}
@@ -486,10 +487,11 @@ Server::modeCmd(User *user, const vector<string> &params)
 		User *target = getUser(targetName);
 		if (!target)
 			return user->sendError(ERR_NOSUCHNICK, targetName);
+
 		if (target->getNick() != targetName)
 			return user->sendError(ERR_USERSDONTMATCH);
 		if (params.size() == 1)
-			return user->sendReply(RPL_UMODEIS, "MODE", targetName);
+			return user->sendReply(RPL_UMODEIS, targetName);
 
 		char lastFlag;
 		std::string::const_iterator it;
@@ -513,7 +515,7 @@ Server::modeCmd(User *user, const vector<string> &params)
 			return user->sendError(ERR_NOSUCHCHANNEL, targetName);
 
 		if (params.size() == 1)
-			return user->sendReply(RPL_CHANNELMODEIS, "MODE", params);
+			return user->sendReply(RPL_CHANNELMODEIS, params);
 		if (!target->isOperator(user))
 			return user->sendError(ERR_CHANOPRIVSNEEDED, targetName);
 
@@ -576,7 +578,7 @@ Server::inviteCmd(User *user, const vector<string> &params)
 		return user->sendError(ERR_USERONCHANNEL, params);
 
 	invChannel->addInvitedUser(target);
-	user->sendReply(RPL_INVITING, "INVITE", params);
+	user->sendReply(RPL_INVITING, params);
 }
 
 

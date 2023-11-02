@@ -60,8 +60,8 @@ enum Errors {
 	ERR_CHANOPRIVSNEEDED = 482,
 	ERR_UMODEUNKNOWNFLAG = 501,
 	ERR_USERSDONTMATCH = 502,
-	ERR_INVALIDKEY = 525
-	// ERR_INVALIDMODEPARAM = 696
+	ERR_INVALIDKEY = 525,
+	ERR_INVALIDMODEPARAM = 696
 };
 
 namespace UserFlags {
@@ -186,10 +186,13 @@ class User
 		void			removeMode(UserFlags::Mode modeLetter);
 		bool			isInvisible() const;
 
-		void			sendReply(Replies type, const std::string &cmd, const std::string &param);
-		void			sendReply(Replies type, const std::string &cmd, const std::vector<std::string> &params);
-		void			sendReply(Replies type, const std::string &tags, const std::string &src, const std::string &cmd, const std::string &param);
-		void			sendReply(Replies type, const std::string &tags, const std::string &src, const std::string &cmd, const std::vector<std::string> &params);
+		void			sendReply(Replies type) const;
+		void			sendReply(Replies type, const std::string &param) const;
+		void			sendReply(Replies type, const std::vector<std::string> &params) const;
+		void			sendReply(Replies type, const std::string &param, const std::string &cmd) const;
+		void			sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd) const;
+		void			sendReply(Replies type, const std::string &param, const std::string &cmd, const std::string &tags, const std::string &src) const;
+		void			sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd, const std::string &tags, const std::string &src) const;
 
 		// void sendError(Errors type, const User *dest, const std::string &tags, const std::string &src, const std::string &cmd, const std::vector<std::string> &params);
 		void			sendError(Errors type) const;

@@ -175,10 +175,10 @@ void User::joinChannel(const string &channelName, const string &key)
 	server->sendMsg(this, reply);
 	// Channel topic
 	if (!channel->getTopic().empty())
-		this->sendReply(RPL_TOPIC, "JOIN", "");
+		this->sendReply(RPL_TOPIC, channelName);
 	// List of channel members
-	this->sendReply(RPL_NAMREPLY, "JOIN", channelName);
-	this->sendReply(RPL_ENDOFNAMES, "JOIN", "");
+	this->sendReply(RPL_NAMREPLY, channelName);
+	this->sendReply(RPL_ENDOFNAMES, channelName);
 
 	channel->broadcast(string("JOIN " + channelName), this, getNick());
 }
@@ -245,19 +245,14 @@ void User::removeMode(UserFlags::Mode modeLetter)
 }
 bool User::isInvisible() const { return (_modes.find('i') != string::npos); }
 
-void User::sendReply(Replies type, const std::string &cmd, const std::string &param)
-{
-	sendReply(type, cmd, std::vector<string>(1, param));
-}
-void User::sendReply(Replies type, const std::string &cmd, const std::vector<std::string> &params)
-{
-	sendReply(type, "", "", cmd, params);
-}
-void User::sendReply(Replies type, const std::string &tags, const std::string &src, const std::string &cmd, const std::string &param)
-{
-	sendReply(type, tags, src, cmd, std::vector<string>(1, param));
-}
-void User::sendReply(Replies type, const std::string &tags, const std::string &src, const std::string &cmd, const std::vector<std::string> &params)
+
+void User::sendReply(Replies type) const { sendReply(type, "", ""); }
+void User::sendReply(Replies type, const std::string &param) const { sendReply(type, param, ""); }
+void User::sendReply(Replies type, const std::vector<std::string> &params) const { sendReply(type, params, ""); }
+void User::sendReply(Replies type, const std::string &param, const std::string &cmd) const { sendReply(type, std::vector<string>(1, param), cmd); }
+void User::sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd) const { sendReply(type, params, cmd, "", ""); }
+void User::sendReply(Replies type, const std::string &param, const std::string &cmd, const std::string &tags, const std::string &src) const { sendReply(type, std::vector<string>(1, param), cmd, tags, src); }
+void User::sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd, const std::string &tags, const std::string &src) const
 {
 	std::string reply;
 
