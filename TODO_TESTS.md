@@ -44,7 +44,8 @@ Your executable will be run as follows:
         - *RPL_INVITING* to caller
         - INVITE message (with caller as \<source>) to \<user>
         - Other \<channel> members SHOULD NOT be notified.
-    - TOPIC `Parameters: <channel> [<topic>]` ❌ -- Only the first word is being set as topic, even when the whole sentence is between quotes ("")
+    - TOPIC `Parameters: <channel> [<topic>]` ❌ 
+	  - Only the first word is being set as topic, even when the whole sentence is between quotes ("") ✔️
       - If no \<topic> is given, reply with *RPL_TOPIC* or *RPL_NOTOPIC*
       - If \<topic> is an empty string, the \<channel>'s topic is cleared
       - ~~If caller isn't on \<channel>, server MAY reject with *ERR_NOTONCHANNEL*~~
