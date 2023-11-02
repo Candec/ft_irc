@@ -37,8 +37,8 @@ std::vector< std::vector<std::string> >
 Server::splitBuffer(const char * const buffer)
 {
 	std::vector< std::vector<std::string> >	lines;
-	std::istringstream				lines_iss(buffer);
-	std::string						line;
+	std::istringstream						lines_iss(buffer);
+	std::string								line;
 
 	while (getline(lines_iss, line) && !line.empty()) {
 		//? Maybe ignore empty lines but keep parsing
@@ -47,8 +47,8 @@ Server::splitBuffer(const char * const buffer)
 		// 	continue;
 
 		std::vector<std::string>	words;
-		std::istringstream	words_iss(line);
-		std::string			word;
+		std::istringstream			words_iss(line);
+		std::string					word;
 
 		while (words_iss >> word)
 			words.push_back(word);
@@ -170,8 +170,7 @@ Server::nickCmd(User *user, const std::vector<std::string> &params)
 
 	// Sanitize nickname
 	const std::string nickName = params[0];
-	if (
-		nickName[0] == '#' \
+	if (nickName[0] == '#' \
 		|| nickName[0] == ':' \
 		|| nickName.find(' ') != std::string::npos
 	)
@@ -336,8 +335,7 @@ void
 Server::capCmd(User *user, const std::vector<std::string> &params)
 {
 	if (params.size() >= 2) {
-		if (
-			params[0] == "LS" \
+		if (params[0] == "LS" \
 			&& params[1] == "302"
 		) {
 			user->setCapable(true);

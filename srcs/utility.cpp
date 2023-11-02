@@ -95,8 +95,9 @@ bool isValidChannelName(const std::string& name)
 		return false;
 	}
 	if (name.find(' ') != std::string::npos \
-	|| name.find(7) != std::string::npos \
-	|| name.find(',') != std::string::npos) {
+		|| name.find(7) != std::string::npos \
+		|| name.find(',') != std::string::npos
+	) {
 		error("Invalid character in name", CONTINUE);
 		return false;
 	}

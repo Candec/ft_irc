@@ -42,9 +42,9 @@ class Server
 		// History history;
 
 		std::map<std::string, Channel *> _channels;
-		std::map<int, User *> _operators;
-		std::map<int, User *> _users;
-		std::vector<pollfd> _pollfds;
+		std::map<int, User *>	_operators;
+		std::map<int, User *>	_users;
+		std::vector<pollfd>		_pollfds;
 
 		const time_t _upTime;
 		time_t _previousPing;
@@ -57,9 +57,9 @@ class Server
 
 
 		// # Configs
-		std::string _serverName;
-		std::string _password;
-		uint16_t _port;
+		std::string	_serverName;
+		std::string	_password;
+		uint16_t	_port;
 
 		unsigned int _ping;
 		unsigned int _timeout;

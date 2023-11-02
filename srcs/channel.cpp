@@ -53,10 +53,10 @@ const std::string	Channel::getTopic() const { return _topic.topic; }
 const std::string	Channel::getTopicSetBy() const { return _topic.setBy->getNick(); }
 const std::string	Channel::getTopicSetAt() const { return toString(_topic.setAt); }
 const std::string	Channel::getKey() const { return _key; }
-char			Channel::getType() const { return _type; }
-char			Channel::getStatus() const { return _status; }
+char				Channel::getType() const { return _type; }
+char				Channel::getStatus() const { return _status; }
 
-uint			Channel::getClientLimit() const { return _client_limit; }
+uint				Channel::getClientLimit() const { return _client_limit; }
 // const std::string	Channel::getUserModes(const User *user) const { return _user_modes.at(user->getFd()); }
 std::vector<User *>	Channel::getUsers() const
 {
