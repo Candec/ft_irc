@@ -174,7 +174,7 @@ class User
 
 		const vector<Channel *> getJoinedChannels() const;
 
-		bool			isChannelMember(const string &channelName);
+		bool			isChannelMember(const string &channelName) const;
 		void			joinChannel(const string &channelName);
 		void			joinChannel(const string &channelName, const string &key);
 		// void			leaveChannel(const string &channelName);

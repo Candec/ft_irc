@@ -126,8 +126,8 @@ class Channel
 		void ban(User *user);
 		void unban(const User *user);
 
-		bool isMember(User *user) const;
-		bool isOperator(User *user) const;
+		bool isMember(const User *user) const;
+		bool isOperator(const User *user) const;
 		bool isFull() const;
 		bool isBanned(const User *user) const;
 		bool isInviteOnly() const;
@@ -135,8 +135,8 @@ class Channel
 		bool isTopicProtected() const;
 
 		void addInvitedUser(User *user);
-		bool isInvitedUser(User *user) const;
-		void revokeInvitation(User *user);
+		bool isInvitedUser(const User *user) const;
+		void revokeInvitation(const User *user);
 
 		void broadcast(const string &msg) const;
 		void broadcast(const string &msg, const User *exclude, const string &src) const;

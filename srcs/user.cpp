@@ -127,7 +127,7 @@ bool User::isRegistered() const
 		|| !_servername.empty());
 }
 
-bool User::isChannelMember(const string &channelName)
+bool User::isChannelMember(const string &channelName) const
 {
 	return (_joinedChannels.find(channelName) != _joinedChannels.end());
 }

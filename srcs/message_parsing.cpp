@@ -76,7 +76,7 @@ expectedArgs(const vector<string> &args, const size_t n)
 }
 
 bool
-Server::isCmd(const string &param)
+Server::isCmd(const string &param) const
 {
 	if (cmdToEnum(param) != Commands::UNKNOWN)
 		return true;
@@ -84,7 +84,7 @@ Server::isCmd(const string &param)
 }
 
 bool
-Server::isChannel(const string &channel)
+Server::isChannel(const string &channel) const
 {
 	if (_channels.find(channel) == _channels.end()) {
 		return false;

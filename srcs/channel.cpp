@@ -205,8 +205,8 @@ void Channel::unban(const User *user)
 		_banned.erase(user->getFd());
 }
 
-bool Channel::isMember(User *user) const { return _users.find(user->getFd()) != _users.end(); }
-bool Channel::isOperator(User *user) const { return (_operators.find(user->getFd()) != _operators.end()); }
+bool Channel::isMember(const User *user) const { return _users.find(user->getFd()) != _users.end(); }
+bool Channel::isOperator(const User *user) const { return (_operators.find(user->getFd()) != _operators.end()); }
 bool Channel::isFull() const { return (_users.size() == _client_limit); }
 bool Channel::isBanned(const User *user) const { return (_banned.find(user->getFd()) != _banned.end()); }
 bool Channel::isInviteOnly() const { return (_modes.find('i') != string::npos); }
@@ -219,8 +219,8 @@ void Channel::addInvitedUser(User *user)
 	if (!isInvitedUser(user))
 		_invitations.push_back(user);
 }
-bool Channel::isInvitedUser(User *user) const { return (find(_invitations.begin(), _invitations.end(), user) != _invitations.end()); }
-void Channel::revokeInvitation(User *user)
+bool Channel::isInvitedUser(const User *user) const { return (find(_invitations.begin(), _invitations.end(), user) != _invitations.end()); }
+void Channel::revokeInvitation(const User *user)
 {
 	vector<User *>::iterator i = find(_invitations.begin(), _invitations.end(), user);
 	if (i != _invitations.end())
