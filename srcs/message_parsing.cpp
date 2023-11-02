@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/01 21:09:00 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/02 10:47:40 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,12 +136,19 @@ Server::lookForCmd(User *user, const int cmd, std::vector<std::string> params, s
 void
 Server::passCmd(User *user, const std::vector<std::string> &params)
 {
+	const std::string password = params[0];
+	
+	if (_password.empty())
+	{
+		user->setPassword(NULL);
+		user->setStatus(UserFlags::ACCEPT);
+	}
+
 	if (params.size() < 1) {
 		return user->sendError(ERR_NEEDMOREPARAMS, "", "PASS");
 	} else if (!expectedArgs(params, 1)) // There's a numeric reply for too little but not too many
 		return;
 
-	const std::string password = params[0];
 	if (password != _password)
 	{
 		user->sendError(ERR_PASSWDMISMATCH);

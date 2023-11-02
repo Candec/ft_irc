@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/31 12:45:16 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/02 10:43:49 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ class Server
 
 	public:
 		Server();
+		Server(const char * const port);
 		Server(const char * const port, const std::string password);
 		~Server();
 

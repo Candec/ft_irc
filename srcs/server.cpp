@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/01 19:31:25 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/02 12:51:43 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,18 @@ Server::Server(const char * const port, const std::string password) : _upTime(ti
 {
 	setPort(port);
 	setPassword(password);
+	setup();
+
+	// history.clear();
+	// history.set("Welcome to the FT_IRC server");
+
+	parseConfig();
+}
+
+Server::Server(const char * const port) : _upTime(time(0))
+{
+	setPort(port);
+	setPassword(NULL);
 	setup();
 
 	// history.clear();
@@ -200,14 +212,15 @@ void Server::run()
 */
 void Server::setPort(const char * const arg)
 {
-	std::ostringstream err;
-	std::cerr << "Port must be a number in range [" << 1024 << ", " << UINT16_MAX << "]";
+	std::stringstream err;
+	err << "Port must be a number in range [" << 1024 << ", " << UINT16_MAX << "]";
 
 	// Check if arg is number
 	for (size_t i = 0; i < strlen(arg); ++i)
 		if (!isdigit(arg[i]))
 			error(err.str(), EXIT);
 
+	std::ostringstream err2;
 	// Check if port is within acceptable range
 	int tmp_port = atoi(arg);
 	if (1024 > tmp_port || tmp_port > UINT16_MAX)

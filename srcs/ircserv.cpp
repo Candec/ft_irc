@@ -6,47 +6,70 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:16 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/30 22:13:38 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/02 12:11:21 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/main.hpp"
 
-bool logging;
-bool logToFile;
-std::string startTime;
 Server *server;
+bool logging = false;
+bool logToFile = false;
+std::string password;
+std::string startTime = timestamp();
 
 void handler(int) { delete server; }
 
+void enableLogsAndPassword(int argc, char *argv[])
+{
+	int count = 2;
+	int i = 2;
+	
+	if (strcmp(argv[2], "--log") || strcmp(argv[2], "--logfile")) {
+		password = argv[2];
+		count += 1;
+		i++;
+	}
+	
+	while (argv[i++]) 
+	{
+		if (!strcmp(argv[i], "--log") && logging == false) {
+			logging = true;
+			count += 1;
+			std::cout << "Logging " << GREEN << "enabled" << RESET << std::endl << std::flush;
+		} else if (!strcmp(argv[i], "--logfile") && logToFile == false && logging == false) {
+			logging = true;
+			logToFile = true;
+			count += 1;
+			std::cout << "Logging to file " << GREEN << "enabled" << RESET << std::endl << std::flush;
+		}
+	}
+
+	if (count != argc)
+		error("./ircserv <port> [password] [--log / --logfile]", EXIT);
+}
+
 int main(int argc, char *argv[])
 {
-	startTime = timestamp();
-	logging = false;
-	logToFile = false;
-
-	if (argc < 3)
-		error("./ircserv <port> <password> [--log, --logfile]", EXIT);
-	else if (argc > 3) {
-		for (size_t i = 3; argv[i]; ++i) {
-			if (!strcmp(argv[i], "--log")) {
-				logging = true;
-				std::cout << "Logging " << GREEN << "enabled" << RESET << std::endl << std::flush;
-			} else if (!strcmp(argv[i], "--logfile")) {
-				logging = true;
-				logToFile = true;
-				std::cout << "Logging to file " << GREEN << "enabled" << RESET << std::endl << std::flush;
-			} else {
-				error("./ircserv <port> <password> [--log, --logfile]", EXIT);
-			}
-		}
-	} else {
-		std::cout << "Logging " << RED << "disabled" << RESET << ". To enable use --log or --logfile" << std::endl << std::flush;
-	}
 
 	signal(SIGINT, handler);
 
-	server = new Server(argv[1], argv[2]);
+	if (argc <= 1)
+		error("./ircserv <port> [password] [--log / --logfile]", EXIT);
+	else if (argc == 2) {
+		server = new Server(argv[1], password);
+	} else if (argc == 3) {
+		enableLogsAndPassword(argc, argv);
+		server = new Server(argv[1], password);
+	} else if (argc == 4) {
+		enableLogsAndPassword(argc, argv);
+		server = new Server(argv[1], password);
+	} else
+		error("./ircserv <port> [password] [--log / --logfile]", EXIT);
+
+	if (!logging)
+		std::cout << "Logging " << RED << "disabled" << RESET << ". To enable use --log or --logfile" << std::endl << std::flush;
+
 	server->run();
 
 	return (EXIT_SUCCESS);
