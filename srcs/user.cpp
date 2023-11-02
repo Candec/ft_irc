@@ -243,10 +243,7 @@ void User::removeMode(UserFlags::Mode modeLetter)
 	if (pos != string::npos)
 		_modes.erase(pos);
 }
-bool User::isInvisible() const
-{
-	return (_modes.find('i') != string::npos);
-}
+bool User::isInvisible() const { return (_modes.find('i') != string::npos); }
 
 void User::sendReply(Replies type, const std::string &cmd, const std::string &param)
 {

@@ -205,13 +205,13 @@ void Channel::unban(const User *user)
 		_banned.erase(user->getFd());
 }
 
-bool Channel::isMember(const User *user) const { return _users.find(user->getFd()) != _users.end(); }
+bool Channel::isMember(const User *user) const { return (_users.find(user->getFd()) != _users.end()); }
 bool Channel::isOperator(const User *user) const { return (_operators.find(user->getFd()) != _operators.end()); }
 bool Channel::isFull() const { return (_users.size() == _client_limit); }
 bool Channel::isBanned(const User *user) const { return (_banned.find(user->getFd()) != _banned.end()); }
 bool Channel::isInviteOnly() const { return (_modes.find('i') != string::npos); }
 bool Channel::noExternalMessages() const { return (_modes.find('n') != string::npos); }
-bool Channel::isTopicProtected() const { return(_modes.find('t') != string::npos); }
+bool Channel::isTopicProtected() const { return (_modes.find('t') != string::npos); }
 
 
 void Channel::addInvitedUser(User *user)

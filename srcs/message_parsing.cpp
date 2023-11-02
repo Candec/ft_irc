@@ -65,33 +65,20 @@ static bool
 expectedArgs(const vector<string> &args, const size_t n)
 {
 	if (args.size() == n)
-		return(true);
+		return true;
 
 	error(args[0], CONTINUE);
 	if (args.size() > n)
 		error("too many arguments", CONTINUE);
 	else
 		error("not enough arguments", CONTINUE);
-	return(false);
-}
-
-bool
-Server::isCmd(const string &param) const
-{
-	if (cmdToEnum(param) != Commands::UNKNOWN)
-		return true;
 	return false;
 }
 
 bool
-Server::isChannel(const string &channel) const
-{
-	if (_channels.find(channel) == _channels.end()) {
-		return false;
-	} else {
-		return true;
-	}
-}
+Server::isCmd(const string &param) const { return (cmdToEnum(param) != Commands::UNKNOWN); }
+bool
+Server::isChannel(const string &channel) const { return (_channels.find(channel) != _channels.end()); }
 
 void
 Server::lookForCmd(User *user, const int cmd, vector<string> params, struct s_msg &msg)
@@ -614,13 +601,11 @@ Server::partCmd(User *user, vector<string> params)
 
 	for (vector<string>::const_iterator it = channelNames.begin(); it != channelNames.end(); ++it)
 	{
-		if (!isChannel(*it))
-		{
+		Channel *channel = getChannel(*it);
+		if (!channel) {
 			user->sendError(ERR_NOSUCHCHANNEL, "PART", *it);
 			continue;
 		}
-
-		Channel *channel = getChannel(*it);
 		sendMsg(user, message);
 		if (user->isChannelMember(channel->getName()))
 			user->leaveChannel(channel);
