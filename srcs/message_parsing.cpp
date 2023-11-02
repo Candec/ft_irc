@@ -561,32 +561,35 @@ Server::modeCmd(User *user, const vector<string> &params)
 
 /*
 * Command: INVITE
-* Parameters: <nick> [<channel>]
+* Parameters: <nick> <channel>
 */
 void
 Server::inviteCmd(User *user, const vector<string> &params)
 {
-	Channel *invChannel;
-
 	// Parameters number check
-	if (params.size() < 1)
+	if (params.size() < 2)
 		user->sendError(ERR_NEEDMOREPARAMS, "INVITE", "");
 	else if (params.size() > 2)
 		return sendMsg(user, "Too many arguments");
 
+	Channel *invChannel;
+	User *target = getUser(params[0]);
+	const string channelName = params[1];
+
 	// Getting the channel
-	if (params.size() == 1)
-		invChannel = user->getChannel();
-	else if (isValidChannelName(params[1]))
-		invChannel = server->getChannel(params[1]);
-	else
-		return sendMsg(user, CH_NAMING_ERR);
+	invChannel = getChannel(channelName);
+	if (!invChannel)
+		return user->sendError(ERR_NOSUCHCHANNEL, "INVITE", channelName);
 
-	// Check if user is operator of the channel
+	if (!invChannel->isMember(user))
+		return user->sendError(ERR_NOTONCHANNEL, "INVITE", channelName);
 	if (!invChannel->isOperator(user))
-		return user->sendError(ERR_CHANOPRIVSNEEDED, "INVITE", params[1]);
+		return user->sendError(ERR_CHANOPRIVSNEEDED, "INVITE", channelName);
+	if (invChannel->isMember(target))
+		return user->sendError(ERR_USERONCHANNEL, "INVITE", params);
 
-	invChannel->addInvitedUser(user);
+	invChannel->addInvitedUser(target);
+	user->sendReply(RPL_INVITING, "INVITE", params);
 }
 
 

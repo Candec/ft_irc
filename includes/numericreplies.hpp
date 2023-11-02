@@ -27,6 +27,7 @@ const std::string rpl_list(const User *dest);
 const std::string rpl_channelmodeis(const User *dest, const vector<string> &params);
 const std::string rpl_notopic(const User *dest, const std::string &channelName);
 const std::string rpl_topic(const User *dest, const std::string &channelName);
+const std::string rpl_inviting(const User *dest, const std::string &invitedNick, const std::string &channelName);
 const std::string rpl_namreply(const User *dest, const string &channelName);
 const std::string rpl_endofnames(const User *dest, const std::string &channelName);
 
@@ -41,6 +42,8 @@ const std::string err_toomanychannels(const User *dest, const string &attemptedC
 const std::string err_nonicknamegiven(const User *dest);
 const std::string err_erroneusnickname(const User *dest, const std::string &nick);
 const std::string err_nicknameinuser(const User *dest, const std::string &nick);
+const std::string err_notonchannel(const User *dest, const std::string &channelName);
+const std::string err_useronchannel(const User *dest, const std::string &targetNick, const std::string &channelName);
 const std::string err_needmoreparams(const User *dest, const std::string &command);
 const std::string err_alreadyregistered(const User *dest);
 const std::string err_passwdmismatch(const User *dest);

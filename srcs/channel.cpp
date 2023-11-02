@@ -207,7 +207,11 @@ bool Channel::noExternalMessages() const { return (_modes.find('n') != string::n
 bool Channel::isTopicProtected() const { return(_modes.find('t') != string::npos); }
 
 
-void Channel::addInvitedUser(User *user) { _invitations.push_back(user); }
+void Channel::addInvitedUser(User *user)
+{
+	if (!isInvitedUser(user))
+		_invitations.push_back(user);
+}
 bool Channel::isInvitedUser(User *user) const { return (find(_invitations.begin(), _invitations.end(), user) != _invitations.end()); }
 void Channel::revokeInvitation(User *user)
 {

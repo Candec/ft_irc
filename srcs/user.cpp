@@ -300,6 +300,9 @@ void User::sendReply(Replies type, const std::string &tags, const std::string &s
 	case RPL_TOPIC:
 		reply += rpl_topic(this, params[0]);
 		break;
+	case RPL_INVITING:
+		reply += rpl_inviting(this, params[0], params[1]);
+		break;
 	case RPL_NAMREPLY:
 		reply += rpl_namreply(this, params[0]);
 		break;
@@ -352,6 +355,12 @@ void User::sendError(Errors type, const std::string &cmd, const std::vector<std:
 		break;
 	case ERR_NICKNAMEINUSE:
 		reply += err_nicknameinuser(this, params[0]);
+		break;
+	case ERR_NOTONCHANNEL:
+		reply += err_notonchannel(this, params[0]);
+		break;
+	case ERR_USERONCHANNEL:
+		reply += err_useronchannel(this, params[0], params[1]);
 		break;
 	case ERR_NEEDMOREPARAMS:
 		reply += err_needmoreparams(this, cmd);

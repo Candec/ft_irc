@@ -39,6 +39,9 @@ const std::string rpl_notopic(const User *dest, const std::string &channelName) 
 const std::string rpl_topic(const User *dest, const string &channelName) {
 	return dest->getNick() + " " + channelName + " :" + server->getChannel(channelName)->getTopic();
 }
+const std::string rpl_inviting(const User *dest, const std::string &invitedNick, const std::string &channelName) {
+	return dest->getNick() + " " + invitedNick + " " + channelName;
+}
 const std::string rpl_namreply(const User *dest, const string &channelName) {
 	const Channel *ch = server->getChannel(channelName);
 	const std::vector<User *> users = ch->getUsers();
@@ -98,6 +101,12 @@ const std::string err_erroneusnickname(const User *dest, const std::string &nick
 const std::string err_nicknameinuser(const User *dest, const std::string &nick) {
 	return dest->getNick() + " " + nick + " :Nickname is already in use";
 }
+const std::string err_notonchannel(const User *dest, const std::string &channelName) {
+	return dest->getNick() + " " + channelName + " :You're not on that channel";
+}
+const std::string err_useronchannel(const User *dest, const std::string &targetNick, const std::string &channelName) {
+	return dest->getNick() + " " + targetNick + " " + channelName + " :is already on channel";
+}
 const std::string err_needmoreparams(const User *dest, const std::string &command) {
 	return dest->getNick() + " " + command + " :Not enough parameters";
 }
@@ -131,5 +140,3 @@ const std::string err_invalidkey(const User *dest, const std::string &targetChan
 const std::string err_inviteonlychan(const User *dest, const std::string &targetChannel) {
 	return dest->getNick() + " " + targetChannel + " :Cannot join channel (+i)";
 }
-
-
