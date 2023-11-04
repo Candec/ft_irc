@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/02 15:01:39 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/04 08:50:57 by tpereira         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -401,7 +401,7 @@ void Server::updatePoll()
 			receiveMsg(i);
 	}
 
-	for (std::map<const int, User *>::iterator it = _users.begin(); it != _users.end(); ++it)
+	for (std::map<int, User *>::iterator it = _users.begin(); it != _users.end(); ++it)
 	{
 		if (it->second->getStatus() == UserFlags::OFFLINE
 		|| it->second->getStatus() == UserFlags::UNVERIFY)
