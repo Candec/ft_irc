@@ -22,15 +22,23 @@
 const std::string rpl_welcome(const User *dest);
 const std::string rpl_issupport(const User *dest);
 const std::string rpl_umodeis(const std::string &nick);
-const std::string rpl_away(const User *dest, const std::string &targetNick, const std::string &msg);
+const std::string rpl_away(const User *dest, const std::string &targetNick);
+const std::string rpl_whoisuser(const User *dest, const std::string &targetNick);
+const std::string rpl_whoisoperator(const User *dest, const std::string &targetNick);
+const std::string rpl_endofwho(const User *dest, const std::string &mask);
+const std::string rpl_whoisidle(const User *dest, const std::string &targetNick);
+const std::string rpl_endofwhois(const User *dest, const std::string &targetNick);
+const std::string rpl_whoischannels(const User *dest, const std::string &targetNick);
 const std::string rpl_list(const User *dest);
 const std::string rpl_channelmodeis(const User *dest, const std::vector<std::string> &params);
 const std::string rpl_notopic(const User *dest, const std::string &channelName);
 const std::string rpl_topic(const User *dest, const std::string &channelName);
 const std::string rpl_topicwhotime(const User *dest, const std::string &channelName);
 const std::string rpl_inviting(const User *dest, const std::string &invitedNick, const std::string &channelName);
+const std::string rpl_whoreply(const User *dest, const std::vector<std::string> &params);
 const std::string rpl_namreply(const User *dest, const std::string &channelName);
 const std::string rpl_endofnames(const User *dest, const std::string &channelName);
+const std::string rpl_whoismodes(const User *dest, const std::string &targetNick);
 
 const std::string err_nosuchnick(const User *dest, const std::string &nick);
 const std::string err_nosuchserver(const User *dest, const std::string &serverName);

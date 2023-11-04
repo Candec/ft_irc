@@ -79,6 +79,8 @@ bool
 Server::isCmd(const std::string &param) const { return (cmdToEnum(param) != Commands::UNKNOWN); }
 bool
 Server::isChannel(const std::string &channel) const { return (_channels.find(channel) != _channels.end()); }
+bool
+Server::isOperator(const User *user) const { return (_operators.find(user->getFd()) != _operators.end()); }
 
 void
 Server::lookForCmd(User *user, const int cmd, std::vector<std::string> params, struct s_msg &msg)
@@ -119,6 +121,10 @@ Server::lookForCmd(User *user, const int cmd, std::vector<std::string> params, s
 		return inviteCmd(user, params);
 	case Commands::PART:
 		return partCmd(user, params);
+	case Commands::WHO:
+		return whoCmd(user, params);
+	case Commands::WHOIS:
+		return whoisCmd(user, params);
 	default:
 		return;
 	}
@@ -137,7 +143,7 @@ void
 Server::passCmd(User *user, const std::vector<std::string> &params)
 {
 	const std::string password = params[0];
-	
+
 	if (_password.empty())
 	{
 		// user->setPassword(NULL);
@@ -415,7 +421,7 @@ Server::privmsgCmd(User *user, const std::vector<std::string> &params)
 		if (targetName[0] == '$') {
 			broadcast(msg);
 		}
-		else if (getChannel(targetName) != NULL) {
+		else if (getChannel(targetName) != NULL) { // Target's a channel
 			Channel *channel = getChannel(targetName);
 
 			if (channel->isBanned(user))
@@ -425,19 +431,16 @@ Server::privmsgCmd(User *user, const std::vector<std::string> &params)
 
 			channel->broadcast(msg, user, user->getNick());
 		}
-		else if (getUser(targetName) != NULL) {
+		else if (getUser(targetName) != NULL) { // Target's a user
 			User *user = getUser(targetName);
 
 			std::vector<std::string>::const_iterator it;
 			for (it = targets.begin(); it != targets.end(); ++it) {
 				User *target = getUser(targetName);
 
-				if (!target->getAway().empty()) {
-					std::vector<std::string> tmp;
-					tmp.push_back(target->getNick());
-					tmp.push_back(msg);
-					user->sendReply(RPL_AWAY, tmp);
-				}
+				if (target->isAway())
+					user->sendReply(RPL_AWAY, targetName);
+
 				sendMsg(target, msg, user->getNick());
 			}
 		}
@@ -621,4 +624,75 @@ Server::partCmd(User *user, std::vector<std::string> params)
 		if (user->isChannelMember(channel->getName()))
 			user->leaveChannel(channel);
 	}
+}
+
+/*
+* Command: WHO
+* Parameters: <mask>
+*/
+void
+Server::whoCmd(const User *user, const std::vector<std::string> &params)
+{
+	if (params.empty())
+		return error("Empty params @whoCmd", CONTINUE);
+
+	const std::string mask = params[0];
+	Channel	*target_channel = getChannel(mask);
+	User	*target_user = getUser(mask);
+
+	if (target_channel) { // Mask is channel
+		const std::vector<User *> users = target_channel->getUsers();
+		for (std::vector<User *>::const_iterator it = users.begin(); it != users.end(); ++it) {
+			User *tmp_user = *it;
+
+			std::vector<std::string> tmp;
+			tmp.push_back(tmp_user->getNick());
+			tmp.push_back(mask);
+
+			user->sendReply(RPL_WHOREPLY, tmp);
+		}
+	} else if (target_user) { // Mask is user
+		user->sendReply(RPL_WHOREPLY, mask);
+	}
+	user->sendReply(RPL_ENDOFWHO, mask);
+}
+
+/*
+* Command: WHOIS
+* Parameters: [<target>] <nick>
+*/
+void
+Server::whoisCmd(const User *user, const std::vector<std::string> &params)
+{
+	std::string targetNick;
+
+	if (params.size() == 0)
+		return user->sendError(ERR_NONICKNAMEGIVEN);
+	else if (params.size() == 1)
+		targetNick = params[0];
+	else if (params.size() == 2)
+		targetNick = params[1];
+
+	// ERR_NOSUCHSERVER
+
+	User *target = getUser(targetNick);
+	if (!target)
+		return user->sendError(ERR_NOSUCHNICK, targetNick);
+
+	if (target->isInvisible() && !shareChannels(user, target))
+		return user->sendReply(RPL_ENDOFWHOIS, targetNick);
+
+	if (user->isAway())
+		user->sendReply(RPL_AWAY, targetNick);
+
+	if (isOperator(user)) {
+		user->sendReply(RPL_WHOISUSER, targetNick);
+		user->sendReply(RPL_WHOISIDLE, targetNick);
+		user->sendReply(RPL_WHOISCHANNELS, targetNick);
+		user->sendReply(RPL_WHOISMODES, targetNick);
+	}
+	if (isOperator(target)) {
+		user->sendReply(RPL_WHOISOPERATOR, targetNick);
+	}
+	user->sendReply(RPL_ENDOFWHOIS, targetNick);
 }

@@ -12,7 +12,7 @@
 
 #include "../includes/user.hpp"
 
-User::User(const int fd, struct sockaddr_in addr) : _fd(fd), _previousPing(time(0)), _role("user")
+User::User(const int fd, struct sockaddr_in addr) : _joinTime(time(NULL)), _fd(fd), _previousPing(time(0)), _role("user")
 {
 	std::cout << "creating user" << std::endl;
 	//Shouldn't be required in linux. It is to block simultanious accesses to the fd
@@ -47,7 +47,8 @@ User::~User() { close(_fd); }
 //Setters
 
 void User::setPassword(const std::string &passwd) { _password = passwd; }
-void User::setStatus(const int status) { _status = status; }
+void User::updateIdleTime() { _idleSince = time(NULL); }
+void User::setStatus(UserFlags::Status status) { _status = status; }
 void User::setPreviousPing(const time_t ping) { _previousPing = ping; }
 void User::setHostaddr(const std::string &hostaddr) { _hostaddr = hostaddr; }
 void User::setHostname(const std::string &hostname) { _hostname = hostname; }
@@ -74,6 +75,8 @@ void User::setCapable(bool capable) { _capable = capable; }
 
 // Getters
 
+time_t				User::getJoinTime() const { return _joinTime; }
+time_t				User::getIdleSince() const { return _idleSince; }
 int					User::getFd() const { return (_fd); }
 int					User::getStatus() const { return (_status); }
 time_t				User::getPreviousPing() const { return (_previousPing); }
@@ -92,7 +95,7 @@ const std::string	User::getName() const { return (_name); }
 const std::string	User::getRole() const { return (_role); }
 const std::string	User::getColor() const { return (_color); }
 const std::string	User::getPreviousNick() const { return (_previousNick); }
-const std::string	User::getAway() const { return (_awayMsg); }
+const std::string	User::getAwayMsg() const { return (_awayMsg); }
 const std::string	User::getModes() const { return (_modes); }
 // const std::string	User::getAtChannel() const { return (_atChannel); }
 Channel *			User::getChannel() const { return (_channel); }
@@ -253,7 +256,7 @@ void User::removeMode(UserFlags::Mode modeLetter)
 		_modes.erase(pos);
 }
 bool User::isInvisible() const { return (_modes.find('i') != std::string::npos); }
-
+bool User::isAway() const { return !_awayMsg.empty(); }
 
 void User::sendReply(Replies type) const { sendReply(type, "", ""); }
 void User::sendReply(Replies type, const std::string &param) const { sendReply(type, param, ""); }
@@ -284,7 +287,25 @@ void User::sendReply(Replies type, const std::vector<std::string> &params, const
 		reply += rpl_umodeis(params[0]);
 		break;
 	case RPL_AWAY:
-		reply += rpl_away(this, params[0], params[1]);
+		reply += rpl_away(this, params[0]);
+		break;
+	case RPL_WHOISUSER:
+		reply += rpl_whoisuser(this, params[0]);
+		break;
+	case RPL_WHOISOPERATOR:
+		reply += rpl_whoisoperator(this, params[0]);
+		break;
+	case RPL_ENDOFWHO:
+		reply += rpl_endofwho(this, params[0]);
+		break;
+	case RPL_WHOISIDLE:
+		reply += rpl_whoisidle(this, params[0]);
+		break;
+	case RPL_ENDOFWHOIS:
+		reply += rpl_endofwhois(this, params[0]);
+		break;
+	case RPL_WHOISCHANNELS:
+		reply += rpl_whoischannels(this, params[0]);
 		break;
 	case RPL_LIST:
 		reply += rpl_list(this);
@@ -304,11 +325,17 @@ void User::sendReply(Replies type, const std::vector<std::string> &params, const
 	case RPL_INVITING:
 		reply += rpl_inviting(this, params[0], params[1]);
 		break;
+	case RPL_WHOREPLY:
+		reply += rpl_whoreply(this, params);
+		break;
 	case RPL_NAMREPLY:
 		reply += rpl_namreply(this, params[0]);
 		break;
 	case RPL_ENDOFNAMES:
 		reply += rpl_endofnames(this, params[0]);
+		break;
+	case RPL_WHOISMODES:
+		reply += rpl_whoismodes(this, params[0]);
 		break;
 	default:
 		return error("Missing reply for numeric " + toString(type), CONTINUE);

@@ -35,14 +35,14 @@ enum {
 	MODE,
 	KICK,
 	INVITE,
-	PART
+	PART,
+	WHO,
+	WHOIS
 };
 
 }
 
 const std::string	cmdToString(int cmd);
 int					cmdToEnum(const std::string &cmd);
-
-// using Commands::e_Cmds;
 
 #endif

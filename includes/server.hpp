@@ -104,7 +104,8 @@ class Server
 		void kickCmd(User *user, const std::vector<std::string> &params);
 		void inviteCmd(User *user, const std::vector<std::string> &params);
 		void partCmd(User *user, std::vector<std::string> params);
-
+		void whoCmd(const User *user, const std::vector<std::string> &params);
+		void whoisCmd(const User *user, const std::vector<std::string> &params);
 
 
 
@@ -145,9 +146,13 @@ class Server
 		User *getUser(const int user_fd) const;
 		User *getUser(const std::string &nick) const;
 
-		std::string getPassword(); 
+		std::string getPassword();
 
 		void delChannel(const Channel *channel);
+
+		bool shareChannels(const User *user1, const User *user2) const;
+
+		bool isOperator(const User *user) const;
 };
 
 #endif

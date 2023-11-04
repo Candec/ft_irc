@@ -595,4 +595,15 @@ User * Server::getUser(const std::string &nick) const
 	return NULL;
 }
 
-std::string Server::getPassword() { return(_password);} 
+std::string Server::getPassword() { return(_password);}
+
+bool Server::shareChannels(const User *user1, const User *user2) const
+{
+	std::vector<Channel *>user1Channels = user1->getJoinedChannels();
+	std::vector<Channel *>user2Channels = user2->getJoinedChannels();
+	for (std::vector<Channel *>::const_iterator it = user1Channels.begin(); it != user1Channels.end(); ++it)
+		for (std::vector<Channel *>::const_iterator it2 = user2Channels.begin(); it2 != user2Channels.end(); ++it2)
+			if (*it == *it2)
+				return true;
+	return false;
+}

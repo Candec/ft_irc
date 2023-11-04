@@ -24,8 +24,52 @@ const std::string rpl_umodeis(const std::string &nick) {
 	User *user = server->getUser(nick);
 	return user->getNick() + " " + user->getModes();
 }
-const std::string rpl_away(const User *dest, const std::string &targetNick, const std::string &msg) {
-	return dest->getNick() + " " + targetNick + " :" + msg;
+const std::string rpl_away(const User *dest, const std::string &targetNick) {
+	const User *target = server->getUser(targetNick);
+	if (!target)
+		error("No user found @rpl_away", EXIT);
+
+	return dest->getNick() + " " + targetNick + " :" + target->getAwayMsg();
+}
+const std::string rpl_whoisuser(const User *dest, const std::string &targetNick) {
+	const User *target = server->getUser(targetNick);
+	if (!target)
+		error("No user found @rpl_whoisuser", EXIT);
+
+	return dest->getNick() + " " + targetNick + " " + target->getUser() + " " + target->getHostname() +" * :" + target->getName();
+}
+const std::string rpl_whoisoperator(const User *dest, const std::string &targetNick) {
+	return dest->getNick() + " " + targetNick + " :is an IRC operator";
+}
+const std::string rpl_endofwho(const User *dest, const std::string &mask) {
+	return dest->getNick() + " " + mask + " :End of WHO list";
+}
+const std::string rpl_whoisidle(const User *dest, const std::string &targetNick) {
+	const User *target = server->getUser(targetNick);
+	if (!target)
+		error("No user found @rpl_whoisidle", EXIT);
+
+	return dest->getNick() + " " + targetNick + " " + toString(time(NULL) - target->getIdleSince()) + " " + toString(time(NULL) - target->getJoinTime()) + " :seconds idle, signon time";
+}
+const std::string rpl_endofwhois(const User *dest, const std::string &targetNick) {
+	return dest->getNick() + " " + targetNick + " :End of /WHOIS list";
+}
+const std::string rpl_whoischannels(const User *dest, const std::string &targetNick) {
+	const User *target = server->getUser(targetNick);
+	if (!target)
+		error("No user found @rpl_whoischannels", EXIT);
+
+	std::string ret = dest->getNick() + " " + targetNick + " :";
+
+	const std::vector<Channel *> joined = target->getJoinedChannels();
+	for (std::vector<Channel *>::const_iterator it = joined.begin(); it != joined.end(); ++it) {
+		if ((*it)->isOperator(target))
+			ret += '@';
+		ret += (*it)->getName();
+		if (it + 1 != joined.end())
+			ret += ' ';
+	}
+	return ret;
 }
 const std::string rpl_list(const User *dest) {
 	const Channel *ch = dest->getChannel();
@@ -46,6 +90,19 @@ const std::string rpl_topicwhotime(const User *dest, const std::string &channelN
 }
 const std::string rpl_inviting(const User *dest, const std::string &invitedNick, const std::string &channelName) {
 	return dest->getNick() + " " + invitedNick + " " + channelName;
+}
+const std::string rpl_whoreply(const User *dest, const std::vector<std::string> &params) {
+	const std::string channelName = params.size() > 1 ? params[1] : "*";
+
+	const User *target = server->getUser(params[0]);
+	if (!target)
+		error("No user found @rpl_whoreply", EXIT);
+
+	std::string flags = target->isAway() ? "G" : "H";
+	if (server->isOperator(target))
+		flags += '*';
+
+	return dest->getNick() + " " + channelName + " " + target->getUser() + " " + target->getHostname() + " " + target->getServername() + " " + target->getNick() + " " + flags + " :0 " + target->getName();
 }
 const std::string rpl_namreply(const User *dest, const std::string &channelName) {
 	const Channel *ch = server->getChannel(channelName);
@@ -69,6 +126,13 @@ const std::string rpl_namreply(const User *dest, const std::string &channelName)
 }
 const std::string rpl_endofnames(const User *dest, const std::string &channelName) {
 	return dest->getNick() + " " + channelName + " End of /NAMES list";
+}
+const std::string rpl_whoismodes(const User *dest, const std::string &targetNick) {
+	const User *target = server->getUser(targetNick);
+	if (!target)
+		error("No user found @rpl_whoismodes", EXIT);
+
+	return dest->getNick() + " " + targetNick + " :is using modes " + target->getModes();
 }
 
 

@@ -24,14 +24,22 @@ enum Replies {
 	RPL_ISUPPORT = 005,
 	RPL_UMODEIS = 221,
 	RPL_AWAY = 301,
+	RPL_WHOISUSER = 311,
+	RPL_WHOISOPERATOR = 313,
+	RPL_ENDOFWHO = 315,
+	RPL_WHOISIDLE = 317,
+	RPL_ENDOFWHOIS = 318,
+	RPL_WHOISCHANNELS = 319,
 	RPL_LIST = 322,
 	RPL_CHANNELMODEIS = 324,
 	RPL_NOTOPIC = 331,
 	RPL_TOPIC = 332,
 	RPL_TOPICWHOTIME = 333,
 	RPL_INVITING = 341,
+	RPL_WHOREPLY = 352,
 	RPL_NAMREPLY = 353,
-	RPL_ENDOFNAMES = 366
+	RPL_ENDOFNAMES = 366,
+	RPL_WHOISMODES = 379
 };
 
 enum Errors {
@@ -98,6 +106,10 @@ class User
 		std::string	_createdAt;
 		std::string	_updatedAt;
 
+		const time_t	_joinTime;
+
+		time_t		_idleSince;
+
 		int			_fd;
 		int			_status;
 		time_t		_previousPing;
@@ -134,7 +146,8 @@ class User
 
 		// Setters
 		void setPassword(const std::string &passwd);
-		void setStatus(const int status);
+		void updateIdleTime();
+		void setStatus(UserFlags::Status status);
 		void setPreviousPing(const time_t ping);
 		void setHostaddr(const std::string &hostaddr);
 		void setHostname(const std::string &hostname);
@@ -152,6 +165,8 @@ class User
 		void setCapable(bool capable);
 
 		// Getters
+		time_t				getJoinTime() const;
+		time_t				getIdleSince() const;
 		int					getFd() const;
 		int					getStatus() const;
 		time_t				getPreviousPing() const;
@@ -165,7 +180,7 @@ class User
 		const std::string	getRole() const;
 		const std::string	getColor() const;
 		const std::string	getPreviousNick() const;
-		const std::string	getAway() const;
+		const std::string	getAwayMsg() const;
 		const std::string	getModes() const;
 		const std::string	getAtChannel() const;
 		Channel				*getChannel() const;
@@ -185,6 +200,7 @@ class User
 		void			addMode(UserFlags::Mode modeLetter);
 		void			removeMode(UserFlags::Mode modeLetter);
 		bool			isInvisible() const;
+		bool			isAway() const;
 
 		void			sendReply(Replies type) const;
 		void			sendReply(Replies type, const std::string &param) const;

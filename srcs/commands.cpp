@@ -35,6 +35,10 @@ const std::string cmdToString(int cmd)
 		return "INVITE";
 	case Commands::PART:
 		return "PART";
+	case Commands::WHO:
+		return "WHO";
+	case Commands::WHOIS:
+		return "WHOIS";
 	default:
 		error("Unrecognized command: " + toString(cmd), CONTINUE);
 		return "UNKNOWN";
@@ -73,6 +77,10 @@ int cmdToEnum(const std::string &cmd)
 		return Commands::INVITE;
 	} else if (cmd == "PART") {
 		return Commands::PART;
+	} else if (cmd == "WHO") {
+		return Commands::WHO;
+	} else if (cmd == "WHOIS") {
+		return Commands::WHOIS;
 	} else
 		return Commands::UNKNOWN;
 }
