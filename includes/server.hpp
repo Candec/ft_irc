@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/02 13:27:44 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/05 02:40:32 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,11 +122,11 @@ class Server
 		void setPort(const char * const arg);
 		void setPassword(const std::string &password);
 
-		void sendMsg(const User *user, const std::string &msg) const;
 		void sendMsg(const User *user, const int n) const;
+		void sendMsg(const User *user, const std::string &msg, const std::string &src) const;
 		void sendMsg(const int user_fd, const std::string &msg) const;
 		void sendMsg(const int user_fd, const int n) const;
-		void sendMsg(const User *user, const std::string &msg, const std::string &src) const;
+		void sendMsg(const User *user, const std::string &msg) const;
 
 		void broadcast(const std::string &message) const;
 

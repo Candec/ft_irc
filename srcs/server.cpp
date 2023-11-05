@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/05 02:34:02 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 02:39:01 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -524,7 +524,7 @@ void Server::receiveMsg(std::vector<pollfd>::const_iterator it)
 	user->buffer += buf;
 
 	const std::string	delimiter(MESSAGE_END);
-	size_t			position;
+	size_t				position;
 	while ((position = user->buffer.find(delimiter)) != std::string::npos)
 	{
 		std::string message = user->buffer.substr(0, position);
@@ -595,7 +595,7 @@ User * Server::getUser(const std::string &nick) const
 	return NULL;
 }
 
-std::string Server::getPassword() { return(_password);}
+std::string Server::getPassword() { return(_password); }
 
 bool Server::shareChannels(const User *user1, const User *user2) const
 {
