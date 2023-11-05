@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 04:18:57 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 05:02:12 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ Server::userCmd(User *user, const std::vector<std::string> &params)
 	if (n_args < 4)
 		return user->sendError(ERR_NEEDMOREPARAMS, "", "USER");
 
-	user->setUser(params[0]);
+	user->setUser("~" + params[0]);
 	user->setHostname(params[1]);
 	user->setServername(params[2]);
 
