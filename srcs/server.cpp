@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/05 05:03:54 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 06:24:37 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ void Server::setup()
 
 	//Blocks the use of the Address and the Port at close time to avoid package mix
 	int optname = 1;
-	if (setsockopt(_listen_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &optname, sizeof(optname)))
+	if (setsockopt(_listen_fd, SOL_SOCKET, SO_REUSEADDR, &optname, sizeof(optname)))
 		error("setsockopt", EXIT);
 
 	//Shouldn't be required in linux. It is to block simultanious accesses to the fd

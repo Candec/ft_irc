@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:06 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/05 05:04:01 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 06:24:54 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,13 @@ const std::string toString(const size_t n)
 	std::ostringstream str;
 	str << n;
 	return (str.str());
+}
+
+// Checks for ASCII space withing given string
+bool
+hasSpace(const string &str)
+{
+	return (str.find(' ') != string::npos);
 }
 
 const std::string codeToString(const int code)

@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 05:04:02 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 08:08:20 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,6 @@ User::User(const int fd, struct sockaddr_in addr) : _joinTime(time(NULL)), _fd(f
 
 User::~User() { close(_fd); }
 
-
-
 //Setters
 
 void User::setPassword(const std::string &passwd) { _password = passwd; }
@@ -70,8 +68,6 @@ void User::setModes(const std::string &modes) { _modes = modes; }
 // }
 // void User::setChannel(Channel *channel) { _channel = channel; }
 void User::setCapable(bool capable) { _capable = capable; }
-
-
 
 // Getters
 
@@ -307,7 +303,7 @@ void User::sendReply(Replies type, const std::vector<std::string> &params, const
 		reply += rpl_list(this);
 		break;
 	case RPL_CHANNELMODEIS:
-		reply += rpl_channelmodeis(this, params);
+		reply += rpl_channelmodeis(this, params[0]);
 		break;
 	case RPL_NOTOPIC:
 		reply += rpl_notopic(this, params[0]);
