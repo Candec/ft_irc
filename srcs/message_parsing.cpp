@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 02:49:43 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 03:02:04 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -569,12 +569,11 @@ Server::inviteCmd(User *user, const std::vector<std::string> &params)
 	else if (params.size() > 2)
 		return sendMsg(user, "Too many arguments");
 
-	Channel *invChannel;
 	User *target = getUser(params[0]);
 	const std::string channelName = params[1];
 
 	// Getting the channel
-	invChannel = getChannel(channelName);
+	Channel *invChannel = getChannel(channelName);
 	if (!invChannel)
 		return user->sendError(ERR_NOSUCHCHANNEL, channelName);
 

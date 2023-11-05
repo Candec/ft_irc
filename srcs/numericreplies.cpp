@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   replies.cpp                                        :+:      :+:    :+:   */
+/*   numericreplies.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 15:56:34 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/01 19:35:49 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/05 03:04:59 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,10 @@ const std::string rpl_issupport(const User *dest) {
 	return dest->getNick() + " CHANNELLEN=" + toString(CHANNEL_NAME_MAX_LEN) + " :are supported by this server";
 }
 const std::string rpl_umodeis(const std::string &nick) {
-	User *user = server->getUser(nick);
+	const User *user = server->getUser(nick);
+	if (!user)
+		error("No user found @rpl_umodeis", EXIT);
+
 	return user->getNick() + " " + user->getModes();
 }
 const std::string rpl_away(const User *dest, const std::string &targetNick) {
@@ -66,14 +69,18 @@ const std::string rpl_whoischannels(const User *dest, const std::string &targetN
 		if ((*it)->isOperator(target))
 			ret += '@';
 		ret += (*it)->getName();
+
 		if (it + 1 != joined.end())
 			ret += ' ';
 	}
 	return ret;
 }
 const std::string rpl_list(const User *dest) {
-	const Channel *ch = dest->getChannel();
-	return dest->getNick() + " " + ch->getName() + " " + toString(ch->getUsers().size()) + " :" + ch->getTopic();
+	const Channel *channel = dest->getChannel();
+	if (!channel)
+		error("No channel found @rpl_list", EXIT);
+
+	return dest->getNick() + " " + channel->getName() + " " + toString(channel->getUsers().size()) + " :" + channel->getTopic();
 }
 const std::string rpl_channelmodeis(const User *dest, const std::vector<std::string> &params) {
 	return dest->getNick() + " " + joinStrings(params);
@@ -85,7 +92,10 @@ const std::string rpl_topic(const User *dest, const std::string &channelName) {
 	return dest->getNick() + " " + channelName + " :" + server->getChannel(channelName)->getTopic();
 }
 const std::string rpl_topicwhotime(const User *dest, const std::string &channelName) {
-	Channel *channel = server->getChannel(channelName);
+	const Channel *channel = server->getChannel(channelName);
+	if (!channel)
+		error("No channel found @rpl_topicwhotime", EXIT);
+
 	return dest->getNick() + " " + channelName + " " + channel->getTopicSetBy() + " " + channel->getTopicSetAt();
 }
 const std::string rpl_inviting(const User *dest, const std::string &invitedNick, const std::string &channelName) {
@@ -105,17 +115,20 @@ const std::string rpl_whoreply(const User *dest, const std::vector<std::string> 
 	return dest->getNick() + " " + channelName + " " + target->getUser() + " " + target->getHostname() + " " + target->getServername() + " " + target->getNick() + " " + flags + " :0 " + target->getName();
 }
 const std::string rpl_namreply(const User *dest, const std::string &channelName) {
-	const Channel *ch = server->getChannel(channelName);
-	const std::vector<User *> users = ch->getUsers();
+	const Channel *channel = server->getChannel(channelName);
+	if (!channel)
+		error("No channel found @rpl_namreply", EXIT);
 
-	std::string reply = dest->getNick() + " " + ch->getStatus() + " " + channelName + " :";
+	const std::vector<User *> users = channel->getUsers();
+
+	std::string reply = dest->getNick() + " " + channel->getStatus() + " " + channelName + " :";
 
 	for (std::vector<User *>::const_iterator it = users.begin(); it != users.end(); ++it) {
-		User *user = *it;
+		const User *user = *it;
 		if (user->isInvisible())
 			continue;
 
-		if (ch->isOperator(user))
+		if (channel->isOperator(user))
 			reply += '@';
 		reply += user->getNick();
 
