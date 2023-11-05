@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/05 02:40:32 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 03:08:06 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,6 @@ class Server
 		Channel *getChannel(const std::string &channelName) const;
 		std::vector<Channel *> getChannels() const;
 
-		User *getUser(const int user_fd) const;
 		User *getUser(const std::string &nick) const;
 
 		std::string getPassword();

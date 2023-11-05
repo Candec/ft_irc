@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/05 02:42:38 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 03:05:31 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -570,13 +570,6 @@ void Server::printMsg2(User *user, const char *msg)
 
 	log(oss.str());
 	// cout << YELLOW << "*end of message*" << RESET << std::endl << std::endl << std::flush;
-}
-
-User * Server::getUser(const int user_fd) const
-{
-	if (_users.find(user_fd) == _users.end())
-		return NULL;
-	return _users.at(user_fd);
 }
 
 User * Server::getUser(const std::string &nick) const
