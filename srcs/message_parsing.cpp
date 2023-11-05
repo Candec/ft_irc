@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 02:46:58 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 02:49:43 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -539,6 +539,9 @@ Server::modeCmd(User *user, const std::vector<std::string> &params)
 			else if (lastFlag == '-')
 				target->removeMode((ChannelFlags::ModeLetter)*it, modeArguments, user);
 		}
+		// if (modeString.size() == 1 && !target->isModeImplemented((ChannelFlags::ModeLetter)modeString[0])) // Maybe restrict broadcast when "MODE <channel> b" is received
+		// 	return;
+
 		target->broadcast("MODE " + joinStrings(params));
 	}
 }
