@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/05 03:39:48 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 19:06:22 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ class Server
 		void awayCmd(User *user, const std::vector<std::string> &params);
 		void pingCmd(User *user, const std::vector<std::string> &token);
 		void modeCmd(User *user, const std::vector<std::string> &params);
-		void kickCmd(User *user, const std::vector<std::string> &params);
+		void kickCmd(User *user, std::vector<std::string> &params);
 		void inviteCmd(User *user, const std::vector<std::string> &params);
 		void partCmd(User *user, std::vector<std::string> params);
 		void whoCmd(const User *user, const std::vector<std::string> &params);

@@ -26,7 +26,7 @@ Your executable will be run as follows:
       - no leading # character or other character advertized in CHANTYPES ✔️
       - no leading colon (:) ✔️
       - no ASCII space ✔️
-      - no ASCII simboles other than allowed
+      - no ASCII simboles other than allowed ✔️
     - If nickname not received, reply with *ERR_NONICKNAMEGIVEN* ✔️
     - Send NICK message to client as acknowledgement ✔️
   - Set Username ✔️

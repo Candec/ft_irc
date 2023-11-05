@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 18:09:42 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/05 19:13:30 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,8 @@ Server::lookForCmd(User *user, const int cmd, std::vector<std::string> params, s
 		return userCmd(user, params);
 	case Commands::COLOR:
 		return colorCmd(user, params);
+	case Commands::KICK:
+		return kickCmd(user, params);
 	case Commands::JOIN:
 		return joinCmd(user, params);
 	case Commands::QUIT:
@@ -559,11 +561,51 @@ Server::modeCmd(User *user, const std::vector<std::string> &params)
 * Command: KICK
 * Parameters: [<channel>] <nicks> [<reason>]
 */
-// void
-// Server::kickCmd(User *user, const std::vector<std::string> &params)
-// {
+void
+Server::kickCmd(User *user, std::vector<std::string> &params)
+{
+	Channel *channel;
+	std::vector<std::string> nicks;
+	int nicksIndex = 0;
+	vector<std::string> reasonParams;
+	std::string reason;
 
-// }
+	channel = user->getChannel();
+
+	if (isChannel(params[0]))
+	{
+		channel = getChannel(params[0]);
+		nicksIndex = 1;
+	}
+
+	nicks = splitString(params[nicksIndex], ",");
+
+	if (params.size() > 3)
+	{
+		for (std::vector<std::string>::iterator it = params.begin() + nicksIndex + 1; it != params.end(); ++it)
+			reasonParams.push_back(*it);
+		reason = joinStrings(reasonParams);
+	}
+
+	for (std::vector<std::string>::iterator it = nicks.begin(); it != nicks.end(); ++it)
+	{
+		if (!channel) {
+			user->sendError(ERR_NOSUCHCHANNEL, *it);
+			continue;
+		}
+
+		if (!channel->isMember(getUser(*it))) {
+			user->sendError(ERR_NOTONCHANNEL, *it);
+			continue;
+		}
+
+		if (getUser(*it)->isChannelMember(channel->getName()))
+			getUser(*it)->leaveChannel(channel);
+		sendMsg(getUser(*it), reason);
+	}
+
+
+}
 
 /*
 * Command: INVITE
