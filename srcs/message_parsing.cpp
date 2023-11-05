@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 05:03:35 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 16:41:16 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,6 +190,9 @@ Server::nickCmd(User *user, const std::vector<std::string> &params)
 		|| nickName.find(' ') != std::string::npos
 	)
 		return user->sendError(ERR_ERRONEUSNICKNAME, nickName);
+
+	if (params.size() > 1)
+		return user->sendError(ERR_ERRONEUSNICKNAME, joinStrings(params));
 
 	// Find duplicate
 	if (getUser(nickName) != NULL)
