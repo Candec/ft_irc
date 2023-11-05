@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 02:44:55 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 02:46:58 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -498,7 +498,7 @@ Server::modeCmd(User *user, const std::vector<std::string> &params)
 		if (params.size() == 1)
 			return user->sendReply(RPL_UMODEIS, targetName);
 
-		char lastFlag;
+		char lastFlag = 0;
 		std::string::const_iterator it;
 		for (it = modeString.begin(); it != modeString.end(); ++it) {
 			if (*it == '+') {
@@ -524,7 +524,7 @@ Server::modeCmd(User *user, const std::vector<std::string> &params)
 		if (!target->isOperator(user))
 			return user->sendError(ERR_CHANOPRIVSNEEDED, targetName);
 
-		char lastFlag;
+		char lastFlag = 0;
 		std::string::const_iterator it;
 		for (it = modeString.begin(); it != modeString.end(); ++it) {
 			if (*it == '+') {
