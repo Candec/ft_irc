@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 16:41:16 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/05 17:54:51 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,16 +180,21 @@ Server::nickCmd(User *user, const std::vector<std::string> &params)
 	if (user->getStatus() == UserFlags::UNVERIFY)
 		return sendErrFatal(user, "NICK: No password given");
 
+	std::string validC = "abcdefghijklmnopqrstuvwxyz1234567890-_";
+
 	if (params.empty())
 		return user->sendError(ERR_NONICKNAMEGIVEN);
 
 	// Sanitize nickname
 	const std::string nickName = params[0];
-	if (nickName[0] == '#' \
-		|| nickName[0] == ':' \
-		|| nickName.find(' ') != std::string::npos
-	)
-		return user->sendError(ERR_ERRONEUSNICKNAME, nickName);
+	for (std::string::const_iterator it = nickName.begin(); it != nickName.end(); it++)
+	{
+		if (validC.find(*it) == std::string::npos)
+		{
+			std::cout << "inv char: " << *it << std::endl << std::flush;
+			return user->sendError(ERR_ERRONEUSNICKNAME, nickName);
+		}
+	}
 
 	if (params.size() > 1)
 		return user->sendError(ERR_ERRONEUSNICKNAME, joinStrings(params));
