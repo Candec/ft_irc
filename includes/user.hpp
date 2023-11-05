@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/11/05 02:36:34 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 03:39:59 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 
 # include "numericreplies.hpp"
 # include "main.hpp"
+using std::map;
+using std::string;
+using std::vector;
 
 class Server;
 class Channel;
@@ -141,6 +144,7 @@ class User
 		void write(const std::string Message);
 		void push();
 		bool isRegistered() const;
+		bool isOperator();
 
 		// Setters
 		void setPassword(const std::string &passwd);

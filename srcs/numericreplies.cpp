@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 15:56:34 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 03:17:30 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 08:17:14 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,60 @@ const std::string rpl_list(const User *dest) {
 
 	return dest->getNick() + " " + channel->getName() + " " + toString(channel->getUsers().size()) + " :" + channel->getTopic();
 }
-const std::string rpl_channelmodeis(const User *dest, const std::vector<std::string> &params) {
-	return dest->getNick() + " " + joinStrings(params);
+// const std::string rpl_channelmodeis(const User *dest, const std::vector<std::string> &params) {
+const std::string rpl_channelmodeis(const User *dest, const std::string &channelName) {
+	// for each mode letter
+	// 	match getter func
+	// 		add to vector
+
+	Channel *channel = server->getChannel(channelName);
+	if (!channel)
+		error("No channel found @rpl_channelmodeis", EXIT);
+
+	std::vector<std::string> tmp;
+
+	const std::string modeString = channel->getModes();
+	// std::cout << YELLOW << "modeString: " << modeString << std::endl << std::flush;
+	std::string::const_iterator it;
+	for (it = modeString.begin(); it != modeString.end(); ++it) {
+		const ChannelFlags::ModeLetter modeLetter = (ChannelFlags::ModeLetter)*it;
+		switch (modeLetter)
+		{
+		case ChannelFlags::INVITE_ONLY:
+		if (channel->isOperator(dest))
+			break;
+		{
+			std::vector<User *> invited = channel->getInvitations();
+			std::vector<User *>::const_iterator it2;
+			for (it2 = invited.begin(); it2 != invited.end(); ++it2) {
+				tmp.push_back((*it2)->getNick());
+			}
+			break;
+		}
+		case ChannelFlags::PROTECTED_TOPIC:
+			break;
+		case ChannelFlags::KEY_CHANNEL:
+			if (channel->isOperator(dest))
+				tmp.push_back(channel->getKey());
+			break;
+		case ChannelFlags::OPERATOR:
+		{
+			std::vector<User *> operators = channel->getOperators();
+			std::vector<User *>::const_iterator it2;
+			for (it2 = operators.begin(); it2 != operators.end(); ++it2) {
+				tmp.push_back((*it2)->getNick());
+			}
+			break;
+		}
+		case ChannelFlags::CLIENT_LIMIT:
+			tmp.push_back(toString(channel->getClientLimit()));
+			break;
+		default:
+			break;
+		}
+	}
+
+	return dest->getNick() + " " + channelName + " " + modeString + " " + joinStrings(tmp);
 }
 const std::string rpl_notopic(const User *dest, const std::string &channelName) {
 	return dest->getNick() + " " + channelName + " :No topic is set";

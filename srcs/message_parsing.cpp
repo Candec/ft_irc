@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 16:41:16 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/05 17:21:55 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,7 @@ Server::lookForCmd(User *user, const int cmd, std::vector<std::string> params, s
 	default:
 		return;
 	}
+
 }
 
 
@@ -415,7 +416,7 @@ Server::privmsgCmd(User *user, const std::vector<std::string> &params)
 	const std::vector<std::string> targets = splitString(params[0], ",");
 
 	const std::string msg = "PRIVMSG " + joinStrings(params);
-	std::cout << msg << std::endl << std::flush;
+	// std::cout << msg << std::endl << std::flush;
 
 	std::vector<std::string>::const_iterator it;
 	for (it = targets.begin(); it != targets.end(); ++it) {
@@ -523,7 +524,7 @@ Server::modeCmd(User *user, const std::vector<std::string> &params)
 			return user->sendError(ERR_NOSUCHCHANNEL, targetName);
 
 		if (params.size() == 1)
-			return user->sendReply(RPL_CHANNELMODEIS, params);
+			return user->sendReply(RPL_CHANNELMODEIS, targetName);
 		if (!target->isOperator(user))
 			return user->sendError(ERR_CHANOPRIVSNEEDED, targetName);
 
@@ -696,3 +697,9 @@ Server::whoisCmd(const User *user, const std::vector<std::string> &params)
 	}
 	user->sendReply(RPL_ENDOFWHOIS, targetNick);
 }
+
+// void
+// Server::modeCmd(User *user, vector<string> &words)
+// {
+
+// }

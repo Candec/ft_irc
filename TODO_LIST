@@ -38,3 +38,5 @@ Check if msg.command is needed
 Remove unneeded this-> ?
 updateIdleTime() when user sends commands
 Change buffer size to 512 (split messages if they're too long i.e.: RPL_WHOISCHANNELS)
+Need to chack if rpl_channelmodeis is complete
+Channel has mode 'n' by default (???) - Try joining channel and entering "/mode <channel>"
