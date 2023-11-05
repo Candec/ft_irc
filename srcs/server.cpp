@@ -182,7 +182,7 @@ void Server::run()
 	std::cout << BLUE << "Listening on port " << YELLOW << this->_port << WHITE << std::endl;
 
 	while (true) {
-		if (poll(&_pollfds[0], _pollfds.size(), (_ping * 1000) / 100) == SENDING_ERROR)
+		if (poll(&_pollfds[0], _pollfds.size(), -1) == SENDING_ERROR)
 			error("Failed poll", EXIT);
 
 		if (time(0) - _previousPing >= _ping)
