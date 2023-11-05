@@ -36,3 +36,5 @@ Deprecate user->getChannel()
 Change sendReply args order to slim down on cmds being passed around for nothing
 Check if msg.command is needed
 Remove unneeded this-> ?
+updateIdleTime() when user sends commands
+Change buffer size to 512 (split messages if they're too long i.e.: RPL_WHOISCHANNELS)
