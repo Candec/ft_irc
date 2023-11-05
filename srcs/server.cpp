@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/05 02:28:11 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 02:34:02 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -485,7 +485,7 @@ This MUST only be used to report fatal errors. Regular errors should use the app
 void Server::sendErrFatal(User *user, const std::string &reason)
 {
 	if (!reason.empty())
-		sendMsg(user, "ERROR :" + reason);
+		sendMsg(user, "ERROR " + reason);
 	else
 		sendMsg(user, "ERROR");
 	// delUser(user);

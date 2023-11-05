@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 02:29:14 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 02:35:03 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,12 +174,12 @@ void User::joinChannel(const std::string &channelName, const std::string &key)
 	channel->addUser(this);
 	_joinedChannels.insert(std::pair<std::string, Channel *>(channelName, channel));
 
-	if (!_capable)
-		channel->setLog(MAGENTA + _nick + " joined the channel" + RESET);
-	else
-		channel->setLog(_nick + " joined the channel");
+	// if (!_capable)
+	// 	channel->setLog(MAGENTA + _nick + " joined the channel" + RESET);
+	// else
+	// 	channel->setLog(_nick + " joined the channel");
 
-	std::cout << GREEN << " OK" << WHITE << std::endl << std::flush;
+	// std::cout << GREEN << " OK" << WHITE << std::endl << std::flush;
 
 	std::string reply;
 	// Send JOIN ACK
