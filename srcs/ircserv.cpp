@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:16 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 02:23:54 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 05:05:18 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void enableLogsAndPassword(int argc, char *argv[])
 		password = argv[2];
 		count += 1;
 	}
-		std::cout << "Password: [" << password << "]" << std::endl;
+		std::cout << "Password: [" << password << "]" << std::endl << std::flush;
 
 	while (argv[i])
 	{

@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:06 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/05 03:46:25 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 06:24:54 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void error(const std::string &str, const bool quit)
 {
 	log("Error: " + str, false);
-	std::cout << RED_BG << "Error: " << RESET << RED << str << RESET << std::endl;
+	std::cout << RED_BG << "Error: " << RESET << RED << str << RESET << std::endl << std::flush;
 	if (quit)
 		exit(EXIT_FAILURE);
 }

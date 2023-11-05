@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 03:41:41 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 06:24:30 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ Server::isOperator(const User *user) const { return (_operators.find(user->getFd
 void
 Server::lookForCmd(User *user, const int cmd, std::vector<std::string> params, struct s_msg &msg)
 {
-	if (params.empty())
+	if (params.empty() || user->getStatus() == UserFlags::OFFLINE)
 		return;
 
 	params.erase(params.begin());
@@ -164,8 +164,8 @@ Server::passCmd(User *user, const std::vector<std::string> &params)
 		return;
 	}
 
-	std::cout << "++++++++++++++++++++" << std::endl;
-	std::cout << GREEN << "Password given by " << user->getNick() << " was valid" << RESET << std::endl;
+	std::cout << "++++++++++++++++++++" << std::endl << std::flush;
+	std::cout << GREEN << "Password given by " << user->getNick() << " was valid" << RESET << std::endl << std::flush;
 	user->setPassword(password);
 	user->setStatus(UserFlags::ACCEPT);
 }
@@ -177,7 +177,7 @@ Server::passCmd(User *user, const std::vector<std::string> &params)
 void
 Server::nickCmd(User *user, const std::vector<std::string> &params)
 {
-	std::cout << "status: " << user->getStatus() << std::endl;
+	std::cout << "status: " << user->getStatus() << std::endl << std::flush;
 	if (user->getStatus() == UserFlags::UNVERIFY)
 		return sendErrFatal(user, "NICK: No password given");
 
@@ -219,7 +219,7 @@ Server::userCmd(User *user, const std::vector<std::string> &params)
 	if (n_args < 4)
 		return user->sendError(ERR_NEEDMOREPARAMS, "", "USER");
 
-	user->setUser(params[0]);
+	user->setUser("~" + params[0]);
 	user->setHostname(params[1]);
 	user->setServername(params[2]);
 
@@ -324,7 +324,7 @@ Server::colorCmd(User *user, const std::vector<std::string> &words)
 void
 Server::quitCmd(User *user, const std::string &reason)
 {
-	// std::cout << BLUE << "User " << user->getNick() << RED << " disconnected" << RESET << std::endl;
+	// std::cout << BLUE << "User " << user->getNick() << RED << " disconnected" << RESET << std::endl << std::flush;
 	const std::vector<Channel *> channels = user->getJoinedChannels();
 	for (std::vector<Channel *>::const_iterator it = channels.begin(); it != channels.end(); ++it)
 		(*it)->broadcast(user->getNick() + ": Quit: " + reason);
@@ -413,7 +413,7 @@ Server::privmsgCmd(User *user, const std::vector<std::string> &params)
 	const std::vector<std::string> targets = splitString(params[0], ",");
 
 	const std::string msg = "PRIVMSG " + joinStrings(params);
-	std::cout << msg << std::endl;
+	std::cout << msg << std::endl << std::flush;
 
 	std::vector<std::string>::const_iterator it;
 	for (it = targets.begin(); it != targets.end(); ++it) {
