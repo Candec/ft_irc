@@ -432,17 +432,12 @@ Server::privmsgCmd(User *user, const std::vector<std::string> &params)
 			channel->broadcast(msg, user, user->getNick());
 		}
 		else if (getUser(targetName) != NULL) { // Target's a user
-			User *user = getUser(targetName);
+			User *target = getUser(targetName);
 
-			std::vector<std::string>::const_iterator it;
-			for (it = targets.begin(); it != targets.end(); ++it) {
-				User *target = getUser(targetName);
+			if (target->isAway())
+				user->sendReply(RPL_AWAY, targetName);
 
-				if (target->isAway())
-					user->sendReply(RPL_AWAY, targetName);
-
-				sendMsg(target, msg, user->getNick());
-			}
+			sendMsg(target, msg, user->getNick());
 		}
 		else {
 			user->sendError(ERR_NOSUCHNICK, targetName);

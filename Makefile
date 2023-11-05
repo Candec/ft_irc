@@ -6,7 +6,7 @@ INC			= ./includes
 
 CXXFLAGS += -Wpedantic -Werror=pedantic -pedantic-errors
 CXXFLAGS += -Wcast-qual -Wdisabled-optimization -Wformat=2 -Wuninitialized
-# CXXFLAGS += -Winit-self -Wmissing-include-dirs -Wredundant-decls -Wshadow
+CXXFLAGS += -Winit-self -Wmissing-include-dirs -Wredundant-decls -Wshadow
 CXXFLAGS += -Wstrict-overflow=5 -Wundef -fdiagnostics-show-option
 CXXFLAGS += -fstack-protector-all
 # CXXFLAGS += -Wctor-dtor-privacy -Wold-style-cast -Woverloaded-virtual

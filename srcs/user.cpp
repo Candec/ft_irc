@@ -120,15 +120,15 @@ void User::push()
 	if (!_waitToSend.size())
 		return ;
 
-	std::string buffer;
+	std::string buf;
 	for (std::vector<std::string>::iterator i = _waitToSend.begin(); i != _waitToSend.end(); ++i)
-		buffer += *i + MESSAGE_END;
+		buf += *i + MESSAGE_END;
 	_waitToSend.clear();
 
-	if (buffer.length())
+	if (buf.length())
 		return ;
 
-	if (send(_fd, buffer.c_str(), buffer.length(), 0) == SENDING_ERROR)
+	if (send(_fd, buf.c_str(), buf.length(), 0) == SENDING_ERROR)
 		error("send", CONTINUE);
 }
 
