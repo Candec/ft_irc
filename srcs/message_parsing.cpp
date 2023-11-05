@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 02:21:24 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 02:37:00 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,7 +263,7 @@ Server::joinCmd(User *user, const std::vector<std::string> &params)
 	std::vector<std::string>::const_iterator key_it = keys.begin();
 	for (; names_it != names.end(); ++names_it) {
 		if (channelKeys.empty())
-			user->joinChannel(*names_it);
+			user->joinChannel(*names_it, "");
 		else
 		{
 			user->joinChannel(*names_it, *key_it);

@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/11/05 02:23:12 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 02:36:34 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,6 @@ class User
 		const std::vector<Channel *> getJoinedChannels() const;
 
 		bool			isChannelMember(const std::string &channelName) const;
-		void			joinChannel(const std::string &channelName);
 		void			joinChannel(const std::string &channelName, const std::string &key);
 		// void			leaveChannel(const std::string &channelName);
 		void			leaveChannel(Channel *channel);

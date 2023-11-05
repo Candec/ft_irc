@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 02:35:03 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 02:35:32 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,10 +144,6 @@ bool User::isChannelMember(const std::string &channelName) const
 	return (_joinedChannels.find(channelName) != _joinedChannels.end());
 }
 
-void User::joinChannel(const std::string &channelName)
-{
-	joinChannel(channelName, "");
-}
 void User::joinChannel(const std::string &channelName, const std::string &key)
 {
 	if (isChannelMember(channelName))
