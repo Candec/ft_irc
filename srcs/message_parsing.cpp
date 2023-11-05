@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 02:37:00 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 02:44:55 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,7 +328,7 @@ Server::quitCmd(User *user, const std::string &reason)
 	for (std::vector<Channel *>::const_iterator it = channels.begin(); it != channels.end(); ++it)
 		(*it)->broadcast(user->getNick() + ": Quit: " + reason);
 
-	sendErrFatal(user, "");
+	sendErrFatal(user, reason);
 }
 
 // void

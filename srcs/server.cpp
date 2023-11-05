@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/05 02:39:01 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 02:42:38 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -379,15 +379,11 @@ void Server::updatePing()
 
 	time_t	now = time(0);
 
-	for (std::map<int, User *>::iterator i = _users.begin(); i != _users.end(); i++)
-	{
+	for (std::map<int, User *>::iterator i = _users.begin(); i != _users.end(); i++) {
 		User *user = i->second;
-		if (now - user->getPreviousPing() >= _timeout)
-		{
-			sendErrFatal(user, "Timed out");
 
-			delUser(user);
-		}
+		if (now - user->getPreviousPing() >= _timeout)
+			quitCmd(user, "Timed out");
 		else if (user->getStatus() == UserFlags::ONLINE)
 			sendMsg(user, "PING " + user->getNick());
 	}
