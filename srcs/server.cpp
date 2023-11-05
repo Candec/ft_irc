@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/05 03:05:31 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 05:03:54 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,7 +179,7 @@ void Server::setup()
 void Server::run()
 {
 	log(std::string("Server: ") + GREEN + "Listening" + BLUE + " on port " + YELLOW + toString(_port), false);
-	std::cout << BLUE << "Listening on port " << YELLOW << this->_port << WHITE << std::endl;
+	std::cout << BLUE << "Listening on port " << YELLOW << this->_port << WHITE << std::endl << std::flush;
 
 	while (true) {
 		if (poll(&_pollfds[0], _pollfds.size(), -1) == SENDING_ERROR)
@@ -291,7 +291,7 @@ void Server::createUser()
 	_users[user_fd] = user;
 
 	std::cout << BLUE << "User " << GREEN << "connected" << BLUE << " from ";
-	std::cout << user->getHostaddr() << ":" << user->getPort() << WHITE << std::endl;
+	std::cout << user->getHostaddr() << ":" << user->getPort() << WHITE << std::endl << std::flush;
 
 	_pollfds.push_back(pollfd());
 	_pollfds.back().fd = user_fd;
@@ -343,7 +343,7 @@ void Server::delUser(User *user)
 		return;
 
 	std::cout << MAGENTA << user->getNick();
-	std::cout << RED << " disconnected" << WHITE << std::endl;
+	std::cout << RED << " disconnected" << WHITE << std::endl << std::flush;
 	log(std::string("Server: ") + RED + "Removing " + MAGENTA + user->getNick() + RESET + " (" \
 		+ MAGENTA + toString(user->getFd()) + RESET + ")");
 
@@ -428,7 +428,7 @@ void Server::sendMsg(const User *user, const std::string &msg) const
 	oss << "SEND " << RESET << timestamp() << BLUE << "Server: Sending to " \
 		<< MAGENTA << user->getNick() << RESET << " (" \
 		<< MAGENTA << user->getFd() << RESET << "):" << std::endl \
-		<< msg << std::endl;
+		<< msg << std::endl << std::flush;
 	log(oss.str());
 
 	const std::string tmp = msg + " " + MESSAGE_END;
@@ -508,7 +508,7 @@ void Server::receiveMsg(std::vector<pollfd>::const_iterator it)
 	else if (size == 0) {
 		user->setStatus(UserFlags::OFFLINE); // Perhaps user can be removed instantly
 		// cout << BLUE << "User " << MAGENTA << user->getNick();
-		// cout << RED << " disconnected" << WHITE << std::endl;
+		// cout << RED << " disconnected" << WHITE << std::endl << std::flush;
 		// delUser(user);
 		return ;
 	}
@@ -546,9 +546,9 @@ void Server::receiveMsg(std::vector<pollfd>::const_iterator it)
 // 	const int	user_fd = it->fd;
 // 	User		*user = _users.at(user_fd);
 
-// 	std::cout << MAGENTA << user->getNick() << WHITE << " @ FD# " << user_fd << ":" << std::endl;
+// 	std::cout << MAGENTA << user->getNick() << WHITE << " @ FD# " << user_fd << ":" << std::endl << std::flush;
 // 	std::cout << user->buffer;
-// 	std::cout << "*end of message*" << std::endl;
+// 	std::cout << "*end of message*" << std::endl << std::flush;
 
 // 	user->buffer.clear();
 // }

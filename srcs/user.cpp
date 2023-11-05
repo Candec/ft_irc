@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 02:35:32 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 05:04:02 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 User::User(const int fd, struct sockaddr_in addr) : _joinTime(time(NULL)), _fd(fd), _previousPing(time(0)), _role("user")
 {
-	std::cout << "creating user" << std::endl;
+	std::cout << "creating user" << std::endl << std::flush;
 	//Shouldn't be required in linux. It is to block simultanious accesses to the fd
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 
@@ -28,12 +28,12 @@ User::User(const int fd, struct sockaddr_in addr) : _joinTime(time(NULL)), _fd(f
 	if (server->getPassword().empty())
 	{
 		setStatus(UserFlags::ACCEPT);
-		std::cout << "Status set to accept: " << getStatus() << std::endl;
+		std::cout << "Status set to accept: " << getStatus() << std::endl << std::flush;
 	}
 	else
 	{
 		setStatus(UserFlags::UNVERIFY);
-		std::cout << "Status set to unverify: " << getStatus() << std::endl;
+		std::cout << "Status set to unverify: " << getStatus() << std::endl << std::flush;
 	}
 
 	setNick("Annon-" + toString(fd));
