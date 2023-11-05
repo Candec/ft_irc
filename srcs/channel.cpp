@@ -60,7 +60,7 @@ uint				Channel::getClientLimit() const { return _client_limit; }
 // const std::string	Channel::getUserModes(const User *user) const { return _user_modes.at(user->getFd()); }
 std::vector<User *>	Channel::getUsers() const
 {
-	std::vector<User *> users = std::vector<User *>();
+	std::vector<User *> users;
 
 	for (std::map<int, User *>::const_iterator i = _users.begin(); i != _users.end(); ++i)
 		users.push_back(i->second);

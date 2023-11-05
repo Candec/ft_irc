@@ -238,7 +238,7 @@ void Server::setPassword(const std::string &password) { _password = password; }
 */
 std::vector<User *> Server::getUsers() const
 {
-	std::vector<User *> usersV = std::vector<User *>();
+	std::vector<User *> usersV;
 	for (std::map<int, User *>::const_iterator i = _users.begin(); i != _users.end(); ++i)
 		usersV.push_back(i->second);
 
@@ -254,7 +254,7 @@ Channel *Server::getChannel(const std::string &channelName) const
 
 std::vector<Channel *> Server::getChannels() const
 {
-	std::vector<Channel *> channelsV = std::vector<Channel *>();
+	std::vector<Channel *> channelsV;
 	for (std::map<std::string, Channel *>::const_iterator i = _channels.begin(); i != _channels.end(); ++i)
 		channelsV.push_back(i->second);
 
