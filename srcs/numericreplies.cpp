@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 15:56:34 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 03:04:59 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 03:17:30 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ const std::string rpl_namreply(const User *dest, const std::string &channelName)
 
 	for (std::vector<User *>::const_iterator it = users.begin(); it != users.end(); ++it) {
 		const User *user = *it;
-		if (user->isInvisible())
+		if (user->isInvisible() && !server->shareChannels(dest, user))
 			continue;
 
 		if (channel->isOperator(user))
