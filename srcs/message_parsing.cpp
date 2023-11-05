@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 03:02:04 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 04:18:57 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ Server::isOperator(const User *user) const { return (_operators.find(user->getFd
 void
 Server::lookForCmd(User *user, const int cmd, std::vector<std::string> params, struct s_msg &msg)
 {
-	if (params.empty())
+	if (params.empty() || user->getStatus() == UserFlags::OFFLINE)
 		return;
 
 	params.erase(params.begin());

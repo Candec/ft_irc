@@ -18,9 +18,8 @@ Your executable will be run as follows:
   - Server migh not accept client, even when all the information is correct. The welcome message is even sent, but after, the user is not able to interact with the server. The fd is created, and irssi even tries to reconnect, as it has the "reconnect after timeout" setting active by default
 - Communication has to be done via TCP ✔️
 - Compare with official IRC servers ❌
-  - Authenticate
-    -❌ Connecting to the server with a bad password rejects the first try, but the second the user is accepted, a third time sends an error, a forth accepts the user
-	- When creating a server without password, /NICK and /NAME complain the user has not provided a password ✔️
+  - Authenticate ✔️
+    - When creating a server without password, /NICK and /NAME complain the user has not provided a password ✔️
   - Set Nickname (NICK command )✔️
     - If nickname already in use, reply with *ERR_NICKNAMEINUSE*
     - If nickname not valid, reply with *ERR_ERRONEUSNICKNAME*
@@ -46,8 +45,8 @@ Your executable will be run as follows:
         - *RPL_INVITING* to caller
         - INVITE message (with caller as \<source>) to \<user>
         - Other \<channel> members SHOULD NOT be notified.
-    - TOPIC `Parameters: <channel> [<topic>]` ❌ 
-	  - Only the first word is being set as topic, even when the whole sentence is between quotes ("") ✔️
+    - TOPIC `Parameters: <channel> [<topic>]` ❌
+      - Only the first word is being set as topic, even when the whole sentence is between quotes ("") ✔️
       - If no \<topic> is given, reply with *RPL_TOPIC* or *RPL_NOTOPIC*
       - If \<topic> is an empty string, the \<channel>'s topic is cleared
       - ~~If caller isn't on \<channel>, server MAY reject with *ERR_NOTONCHANNEL*~~
@@ -65,9 +64,9 @@ Your executable will be run as follows:
       - o: Give/take channel operator privilege ❌ -- Giving, Removing and then removing op privilage causes "alloc-dealloc-mismatch"
         - Users with this mode may kick users, apply channel modes, and set other users to operator (or lower) status.
       - l: Set/remove the user limit to channel
-	- NAME
-	  - When a user creates a channel, the message points there are 2 normal users and no operator (the creator of the channel should be op by default and there should be no normal users instead of 2)
-	  - When a second user joins, the second user sees all the people in the channel, but previous users do not see the new members added to the list
+    - NAME
+      - When a user creates a channel, the message points there are 2 normal users and no operator (the creator of the channel should be op by default and there should be no normal users instead of 2)
+      - When a second user joins, the second user sees all the people in the channel, but previous users do not see the new members added to the list
 
 ### For MacOS only
 
