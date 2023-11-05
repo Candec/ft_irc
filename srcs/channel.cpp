@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/11/05 03:40:42 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 08:10:46 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,12 @@ void Channel::setKey(const std::string &key, const User *src)
 void Channel::setType(ChannelFlags::Type type) { _type = (char)type; }
 void Channel::setStatus(ChannelFlags::Status status) { _status = status; }
 
-void Channel::setClientLimit(const uint limit) { _client_limit = limit; }
+void Channel::setClientLimit(const size_t limit) { _client_limit = limit; }
 // void Channel::setUserModes(const User *user, const std::string modes) { _user_modes.at(user->getFd()) = modes; }
 
 // Getters
 const std::string	Channel::getName() const { return _name; }
-const std::string	Channel::getMode() const { return _modes; }
+const std::string	Channel::getModes() const { return _modes; }
 const std::string	Channel::getTopic() const { return _topic.topic; }
 const std::string	Channel::getTopicSetBy() const { return _topic.setBy->getNick(); }
 const std::string	Channel::getTopicSetAt() const { return toString(_topic.setAt); }
@@ -56,7 +56,7 @@ const std::string	Channel::getKey() const { return _key; }
 char				Channel::getType() const { return _type; }
 char				Channel::getStatus() const { return _status; }
 
-uint				Channel::getClientLimit() const { return _client_limit; }
+size_t				Channel::getClientLimit() const { return _client_limit; }
 // const std::string	Channel::getUserModes(const User *user) const { return _user_modes.at(user->getFd()); }
 std::vector<User *>	Channel::getUsers() const
 {
@@ -66,6 +66,15 @@ std::vector<User *>	Channel::getUsers() const
 		users.push_back(i->second);
 	return users;
 }
+std::vector<User *>	Channel::getOperators() const
+{
+	std::vector<User *> operators;
+
+	for (std::map<int, User *>::const_iterator i = _operators.begin(); i != _operators.end(); ++i)
+		operators.push_back(i->second);
+	return operators;
+}
+std::vector<User *>	Channel::getInvitations() const { return _invitations; }
 
 bool Channel::isModeImplemented(ChannelFlags::ModeLetter modeLetter) const
 {
@@ -83,28 +92,36 @@ bool Channel::isModeImplemented(ChannelFlags::ModeLetter modeLetter) const
 }
 void Channel::addMode(ChannelFlags::ModeLetter letter, std::vector<std::string> arguments, const User *caller)
 {
+	if (!isModeImplemented(letter))
+		return;
+
 	User *user;
 
 	switch (letter)
 	{
 	case ChannelFlags::OPERATOR:
+		if (!arguments.size())
+			return;
+
 		user = server->getUser(arguments[0]);
 		if (!user)
 			return;
 
 		_operators.insert(std::pair<int, User *>(user->getFd(), user));
 
-		if (arguments.size())
-			arguments.erase(arguments.begin());
+		arguments.erase(arguments.begin());
 		break;
 	case ChannelFlags::CLIENT_LIMIT:
+		if (!arguments.size())
+			return;
 		_client_limit = atoi(arguments[0].c_str());
 		break;
 	case ChannelFlags::KEY_CHANNEL:
-		setKey(arguments[0], caller);
+		if (!arguments.size())
+			return;
 
-		if (arguments.size())
-			arguments.erase(arguments.begin());
+		setKey(arguments[0], caller);
+		arguments.erase(arguments.begin());
 		break;
 	default:
 		break;
@@ -121,7 +138,11 @@ void Channel::addMode(ChannelFlags::ModeLetter letter, std::vector<std::string> 
 }
 void Channel::removeMode(ChannelFlags::ModeLetter letter, std::vector<std::string> &arguments, User *caller)
 {
+	if (!isModeImplemented(letter))
+		return;
+
 	User *user;
+
 	switch (letter)
 	{
 	case ChannelFlags::OPERATOR:

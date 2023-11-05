@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 06:24:43 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 08:08:20 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,7 +303,7 @@ void User::sendReply(Replies type, const std::vector<std::string> &params, const
 		reply += rpl_list(this);
 		break;
 	case RPL_CHANNELMODEIS:
-		reply += rpl_channelmodeis(this, params);
+		reply += rpl_channelmodeis(this, params[0]);
 		break;
 	case RPL_NOTOPIC:
 		reply += rpl_notopic(this, params[0]);

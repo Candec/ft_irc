@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 06:24:30 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 08:08:14 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -413,7 +413,7 @@ Server::privmsgCmd(User *user, const std::vector<std::string> &params)
 	const std::vector<std::string> targets = splitString(params[0], ",");
 
 	const std::string msg = "PRIVMSG " + joinStrings(params);
-	std::cout << msg << std::endl << std::flush;
+	// std::cout << msg << std::endl << std::flush;
 
 	std::vector<std::string>::const_iterator it;
 	for (it = targets.begin(); it != targets.end(); ++it) {
@@ -521,7 +521,7 @@ Server::modeCmd(User *user, const std::vector<std::string> &params)
 			return user->sendError(ERR_NOSUCHCHANNEL, targetName);
 
 		if (params.size() == 1)
-			return user->sendReply(RPL_CHANNELMODEIS, params);
+			return user->sendReply(RPL_CHANNELMODEIS, targetName);
 		if (!target->isOperator(user))
 			return user->sendError(ERR_CHANOPRIVSNEEDED, targetName);
 

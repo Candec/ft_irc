@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/05 03:37:22 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 08:10:00 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ class Channel
 		char		_type;
 		char		_status;
 
-		uint		_client_limit;
+		size_t		_client_limit;
 		std::map<int, User *>	_users;
 		// std::map<User *, bool>	_operators;
 		std::map<int, User *>	_operators;
@@ -94,13 +94,13 @@ class Channel
 		void setType(ChannelFlags::Type type);
 		void setStatus(ChannelFlags::Status status);
 
-		void setClientLimit(const uint limit);
+		void setClientLimit(const size_t limit);
 		// void setUserModes(const User *user, const std::string mode);
 		void setHistory(const std::string &line);
 
 		// Getters
 		const std::string	getName() const;
-		const std::string	getMode() const;
+		const std::string	getModes() const;
 		const std::string	getTopic() const;
 		const std::string	getTopicSetBy() const;
 		const std::string	getTopicSetAt() const;
@@ -108,9 +108,11 @@ class Channel
 		char				getType() const;
 		char				getStatus() const;
 
-		uint				getClientLimit() const;
+		size_t				getClientLimit() const;
 		// const std::string	getUserModes(const User *user) const;
 		std::vector<User *>	getUsers() const;
+		std::vector<User *>	getOperators() const;
+		std::vector<User *>	getInvitations() const;
 
 		bool isModeImplemented(ChannelFlags::ModeLetter mode) const;
 		void addMode(ChannelFlags::ModeLetter letter, std::vector<std::string> arguments, const User *caller);
