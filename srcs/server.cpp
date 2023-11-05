@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/05 06:24:37 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 18:06:45 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,6 +215,7 @@ void Server::setPort(const char * const arg)
 	std::stringstream err;
 	err << "Port must be a number in range [" << 1024 << ", " << UINT16_MAX << "]";
 
+	std::cout << BLUE << "Listening on Port: " << YELLOW << arg << RESET << std::endl << std::flush;
 	// Check if arg is number
 	for (size_t i = 0; i < strlen(arg); ++i)
 		if (!isdigit(arg[i]))

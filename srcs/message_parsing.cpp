@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 17:55:58 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/05 18:09:42 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,7 +181,7 @@ Server::nickCmd(User *user, const std::vector<std::string> &params)
 	if (user->getStatus() == UserFlags::UNVERIFY)
 		return sendErrFatal(user, "NICK: No password given");
 
-	std::string validC = "abcdefghijklmnopqrstuvwxyz1234567890-_";
+	std::string validC = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890-_";
 
 	if (params.empty())
 		return user->sendError(ERR_NONICKNAMEGIVEN);
