@@ -37,4 +37,4 @@
 *.swp
 ircserv
 .vscode/
-.txt
+*log.txt

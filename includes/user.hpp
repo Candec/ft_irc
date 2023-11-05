@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   user.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/23 16:38:44 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/05 03:39:59 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef USER_HPP
 # define USER_HPP
 
+# include "numericreplies.hpp"
 # include "main.hpp"
 using std::map;
 using std::string;
@@ -21,102 +22,201 @@ using std::vector;
 class Server;
 class Channel;
 
-enum UserStatus {
-	VERIFY,
-	ACCEPT,
-	ONLINE,
-	OFFLINE
+enum Replies {
+	RPL_WELCOME = 001,
+	RPL_ISUPPORT = 005,
+	RPL_UMODEIS = 221,
+	RPL_AWAY = 301,
+	RPL_WHOISUSER = 311,
+	RPL_WHOISOPERATOR = 313,
+	RPL_ENDOFWHO = 315,
+	RPL_WHOISIDLE = 317,
+	RPL_ENDOFWHOIS = 318,
+	RPL_WHOISCHANNELS = 319,
+	RPL_LIST = 322,
+	RPL_CHANNELMODEIS = 324,
+	RPL_NOTOPIC = 331,
+	RPL_TOPIC = 332,
+	RPL_TOPICWHOTIME = 333,
+	RPL_INVITING = 341,
+	RPL_WHOREPLY = 352,
+	RPL_NAMREPLY = 353,
+	RPL_ENDOFNAMES = 366,
+	RPL_WHOISMODES = 379
 };
 
-enum UserModes {
-	OPERATOR = 'o'
+enum Errors {
+	ERR_NOSUCHNICK = 401,
+	ERR_NOSUCHSERVER = 402,
+	ERR_NOSUCHCHANNEL = 403,
+	ERR_CANNOTSENDTOCHAN = 404,
+	ERR_TOOMANYCHANNELS = 405,
+	// ERR_NOORIGIN = 409,
+	// ERR_NORECIPIENT = 411,
+	ERR_NOTEXTTOSEND = 412,
+	ERR_INPUTTOOLONG = 417,
+	// ERR_UNKNOWNCOMMAND = 421,
+	ERR_NONICKNAMEGIVEN = 431,
+	ERR_ERRONEUSNICKNAME = 432,
+	ERR_NICKNAMEINUSE = 433,
+	ERR_NOTONCHANNEL = 442,
+	ERR_USERONCHANNEL = 443,
+	ERR_NEEDMOREPARAMS = 461,
+	ERR_ALREADYREGISTERED = 462,
+	ERR_PASSWDMISMATCH = 464,
+	ERR_CHANNELISFULL = 471,
+	ERR_INVITEONLYCHAN = 473,
+	ERR_BADCHANNELKEY = 475,
+	ERR_BADCHANMASK = 476,
+	ERR_CHANOPRIVSNEEDED = 482,
+	ERR_UMODEUNKNOWNFLAG = 501,
+	ERR_USERSDONTMATCH = 502,
+	ERR_INVALIDKEY = 525,
+	ERR_INVALIDMODEPARAM = 696
 };
+
+namespace UserFlags {
+	enum Status {
+		UNVERIFY,
+		ACCEPT,
+		ONLINE,
+		OFFLINE
+	};
+
+	// When making changes, certify that they're reflected in isModeImplemented()
+	enum ModeLetter {
+		INVISIBLE = 'i',
+		OPERATOR = 'o'
+	};
+}
 
 class User
 {
 	private:
 		// string	_name;
-		string	_password;
-		string	_email;
-		string	_phone;
-		string	_address;
-		string	_city;
-		string	_postalCode;
-		string	_country;
-		string	_id;
+		std::string	_password;
+		std::string	_email;
+		std::string	_phone;
+		std::string	_address;
+		std::string	_city;
+		std::string	_postalCode;
+		std::string	_country;
+		std::string	_id;
 		// string	_role;
 		// string	_status;
-		string	_createdAt;
-		string	_updatedAt;
+		std::string	_createdAt;
+		std::string	_updatedAt;
 
-		int		_fd;
-		int		_status;
-		time_t	_previousPing;
-		string	_hostaddr;
-		string	_hostname;
-		string	_servername;
-		string	_nick;
-		string	_user;
-		string	_name;
-		string	_role;
-		string	_color;
-		string	_previousNick;
-		string	_atChannel;
-		Channel	*_channel;
-		Server	*_server;
+		const time_t	_joinTime;
 
-		uint16_t _hostport; // Not set
+		time_t		_idleSince;
 
-		bool _capable;
+		int			_fd;
+		int			_status;
+		time_t		_previousPing;
+		std::string	_hostaddr;
+		std::string	_hostname;
+		std::string	_servername;
+		std::string	_nick;
+		std::string	_user;
+		std::string	_name;
+		std::string	_role;
+		std::string	_color;
+		std::string	_previousNick;
+		std::string	_awayMsg;
+		std::string	_modes;
+		// string	_atChannel;
+		Channel		*_channel;
+		std::map<std::string, Channel *> _joinedChannels;
 
-		vector<string> _waitToSend;
+		uint16_t	_hostport; // Not set
+
+		bool		_capable;
+
+		std::vector<std::string> _waitToSend;
 
 	public:
-		User(const int fd, struct sockaddr_in addr, Server *server);
+		User(const int fd, struct sockaddr_in addr);
 		~User();
 
-		string buffer;
-		void sendPrivateMessage(User *To, const string Message);
-		void write(const string Message);
+		std::string buffer;
+		void sendPrivateMessage(User *To, const std::string &Message);
+		void write(const std::string Message);
 		void push();
 		bool isRegistered() const;
 		bool isOperator();
 
 		// Setters
-		void setPassword(const string passwd);
-		void setStatus(const int status);
+		void setPassword(const std::string &passwd);
+		void updateIdleTime();
+		void setStatus(UserFlags::Status status);
 		void setPreviousPing(const time_t ping);
-		void setHostaddr(const string hostaddr);
-		void setHostname(const string hostname);
-		void setServername(const string servername);
-		void setNick(const string nick);
-		void setUser(const string user);
-		void setName(const string name);
-		void setRole(const string role);
-		void setColor(const string color);
-		void setPreviousNick(const string previousNick);
-		void setAtChannel(const string atChannel);
-		void setChannel(Channel *);
+		void setHostaddr(const std::string &hostaddr);
+		void setHostname(const std::string &hostname);
+		void setServername(const std::string &servername);
+		void setNick(const std::string &nick);
+		void setUser(const std::string &user);
+		void setName(const std::string &name);
+		void setRole(const std::string &role);
+		void setColor(const std::string &color);
+		void setPreviousNick(const std::string &previousNick);
+		void setAway(const std::string &msg);
+		void setModes(const std::string &modes);
+		void setAtChannel(const std::string &atChannel);
+		// void setChannel(Channel *channel);
 		void setCapable(bool capable);
 
 		// Getters
-		int getFd() const;
-		int getStatus() const;
-		time_t getPreviousPing() const;
-		const string getHostaddr() const;
-		const string getHostname() const;
-		const string getServername() const;
-		const string getHost() const;
-		const string getNick() const;
-		const string getUser() const;
-		const string getName() const;
-		const string getRole() const;
-		const string getColor() const;
-		const string getPreviousNick() const;
-		const string getAtChannel() const;
-		Channel *getChannel() const;
-		uint16_t getPort() const;
-		bool getCapable() const;
+		time_t				getJoinTime() const;
+		time_t				getIdleSince() const;
+		int					getFd() const;
+		int					getStatus() const;
+		time_t				getPreviousPing() const;
+		const std::string	getHostaddr() const;
+		const std::string	getHostname() const;
+		const std::string	getServername() const;
+		const std::string	getHost() const;
+		const std::string	getNick() const;
+		const std::string	getUser() const;
+		const std::string	getName() const;
+		const std::string	getRole() const;
+		const std::string	getColor() const;
+		const std::string	getPreviousNick() const;
+		const std::string	getAwayMsg() const;
+		const std::string	getModes() const;
+		const std::string	getAtChannel() const;
+		Channel				*getChannel() const;
+		uint16_t			getPort() const;
+		bool				isCapable() const;
+
+		const std::vector<Channel *> getJoinedChannels() const;
+
+		bool			isChannelMember(const std::string &channelName) const;
+		void			joinChannel(const std::string &channelName, const std::string &key);
+		// void			leaveChannel(const std::string &channelName);
+		void			leaveChannel(Channel *channel);
+		void			leaveAllChannels();
+
+		bool			isModeImplemented(UserFlags::ModeLetter mode) const;
+		void			addMode(UserFlags::ModeLetter modeLetter);
+		void			removeMode(UserFlags::ModeLetter modeLetter);
+		bool			isInvisible() const;
+		bool			isAway() const;
+
+		void			sendReply(Replies type) const;
+		void			sendReply(Replies type, const std::string &param) const;
+		void			sendReply(Replies type, const std::vector<std::string> &params) const;
+		void			sendReply(Replies type, const std::string &param, const std::string &cmd) const;
+		void			sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd) const;
+		void			sendReply(Replies type, const std::string &param, const std::string &cmd, const std::string &tags, const std::string &src) const;
+		void			sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd, const std::string &tags, const std::string &src) const;
+
+		// void sendError(Errors type, const User *dest, const std::string &tags, const std::string &src, const std::string &cmd, const std::vector<std::string> &params);
+		void			sendError(Errors type) const;
+		void			sendError(Errors type, const std::string &param) const;
+		void			sendError(Errors type, const std::string &param, const std::string &cmd) const;
+		void			sendError(Errors type, const std::vector<std::string> &params) const;
+		void			sendError(Errors type, const std::vector<std::string> &params, const std::string &cmd) const;
 };
 
 #endif

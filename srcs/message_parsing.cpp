@@ -3,13 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/10/23 23:15:47 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/05 03:41:41 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../includes/commands.hpp"
 #include "../includes/main.hpp"
 
 struct s_msg
@@ -22,26 +23,32 @@ Server::parseMessage(User *user, const char * const buffer)
 
 	strncpy(msg.buffer, buffer, BUFFER + 1);
 
-	vector< vector<string> > lines = splitBuffer(buffer);
+	std::vector< std::vector<std::string> > lines = splitBuffer(buffer);
 
-	vector< vector<string> >::iterator line;
+	std::vector< std::vector<std::string> >::iterator line;
 	for (line = lines.begin(); line != lines.end(); line++)
-		lookForCmd(user, *line, msg);
+		lookForCmd(user, cmdToEnum((*line)[0]), *line, msg);
+		// lookForCmd(user, *line, msg);
 
 	return msg;
 }
 
-vector< vector<string> >
+std::vector< std::vector<std::string> >
 Server::splitBuffer(const char * const buffer)
 {
-	vector< vector<string> >	lines;
-	istringstream				lines_iss(buffer);
-	string						line;
+	std::vector< std::vector<std::string> >	lines;
+	std::istringstream						lines_iss(buffer);
+	std::string								line;
 
 	while (getline(lines_iss, line) && !line.empty()) {
-		vector<string>	words;
-		istringstream	words_iss(line);
-		string			word;
+		//? Maybe ignore empty lines but keep parsing
+		//? https://modern.ircdocs.horse/#compatibility-with-incorrect-software
+		// if (line.empty())
+		// 	continue;
+
+		std::vector<std::string>	words;
+		std::istringstream			words_iss(line);
+		std::string					word;
 
 		while (words_iss >> word)
 			words.push_back(word);
@@ -55,62 +62,71 @@ Server::splitBuffer(const char * const buffer)
 }
 
 static bool
-expectedArgs(const vector<string> &args, const size_t n)
+expectedArgs(const std::vector<std::string> &args, const size_t n)
 {
 	if (args.size() == n)
-		return(true);
+		return true;
 
 	error(args[0], CONTINUE);
 	if (args.size() > n)
 		error("too many arguments", CONTINUE);
 	else
 		error("not enough arguments", CONTINUE);
-	return(false);
-}
-
-bool
-Server::isCmd(const string &word)
-{
-	for (size_t i = 0; !Commands[i].empty(); ++i) {
-		if (word == Commands[i])
-			return true;
-	}
 	return false;
 }
 
+bool
+Server::isCmd(const std::string &param) const { return (cmdToEnum(param) != Commands::UNKNOWN); }
+bool
+Server::isChannel(const std::string &channel) const { return (_channels.find(channel) != _channels.end()); }
+bool
+Server::isOperator(const User *user) const { return (_operators.find(user->getFd()) != _operators.end()); }
+
 void
-Server::lookForCmd(User *user, vector<string> words, struct s_msg &msg)
+Server::lookForCmd(User *user, const int cmd, std::vector<std::string> params, struct s_msg &msg)
 {
-	if (words.empty() || !isCmd(words[0]))
+	if (params.empty())
 		return;
 
-	const string cmd = words[0];
+	params.erase(params.begin());
 	msg.command = true;
 
-	if (!cmd.compare("PASS")) {
-		passCmd(user, words);
-
-	} else if (!cmd.compare("NICK")) {
-		nickCmd(user, words);
-
-	} else if (!cmd.compare("USER")) {
-		userCmd(user, words);
-
-	} else if (!cmd.compare("COLOR")) {
-		colorCmd(user, words);
-
-	} else if (!cmd.compare("JOIN")) {
-		joinCmd(user, words);
-
-	} else if (!cmd.compare("QUIT")) {
-		quitCmd(user);
-
-	} else if (!cmd.compare("CAP")) {
-		capCmd(user, words);
-
-	} else if (!cmd.compare("TOPIC")) {
-		topicCmd(user, words);
-
+	switch (cmd)
+	{
+	case Commands::PASS:
+		return passCmd(user, params);
+	case Commands::NICK:
+		return nickCmd(user, params);
+	case Commands::USER:
+		return userCmd(user, params);
+	case Commands::COLOR:
+		return colorCmd(user, params);
+	case Commands::JOIN:
+		return joinCmd(user, params);
+	case Commands::QUIT:
+		return quitCmd(user, params[0]);
+	case Commands::CAP:
+		return capCmd(user, params);
+	case Commands::TOPIC:
+		return topicCmd(user, params);
+	case Commands::PRIVMSG:
+		return privmsgCmd(user, params);
+	case Commands::AWAY:
+		return awayCmd(user, params);
+	case Commands::PING:
+		return pingCmd(user, params);
+	case Commands::MODE:
+		return modeCmd(user, params);
+	case Commands::INVITE:
+		return inviteCmd(user, params);
+	case Commands::PART:
+		return partCmd(user, params);
+	case Commands::WHO:
+		return whoCmd(user, params);
+	case Commands::WHOIS:
+		return whoisCmd(user, params);
+	default:
+		return;
 	}
 
 }
@@ -125,21 +141,33 @@ Server::lookForCmd(User *user, vector<string> words, struct s_msg &msg)
 * Parameters: <password>
 */
 void
-Server::passCmd(User *user, const vector<string> words)
+Server::passCmd(User *user, const std::vector<std::string> &params)
 {
-	if (words.size() < 2) {
-		sendMsg(user->getFd(), ERR_NEEDMOREPARAMS);
-		return;
-	} else if (!expectedArgs(words, 2)) // There's a numeric reply for too little but not too many
-		return;
+	const std::string password = params[0];
 
-	if (words[1] != _password) {
-		sendMsg(user->getFd(), ERR_PASSWDMISMATCH);
+	if (_password.empty())
+	{
+		// user->setPassword(NULL);
+		user->setStatus(UserFlags::ACCEPT);
 		return;
 	}
 
-	user->setPassword(words[1]);
-	user->setStatus(ACCEPT);
+	if (params.size() < 1) {
+		return user->sendError(ERR_NEEDMOREPARAMS, "", "PASS");
+	} else if (!expectedArgs(params, 1)) // There's a numeric reply for too little but not too many
+		return;
+
+	if (password != _password)
+	{
+		user->sendError(ERR_PASSWDMISMATCH);
+		user->setStatus(UserFlags::OFFLINE);
+		return;
+	}
+
+	std::cout << "++++++++++++++++++++" << std::endl;
+	std::cout << GREEN << "Password given by " << user->getNick() << " was valid" << RESET << std::endl;
+	user->setPassword(password);
+	user->setStatus(UserFlags::ACCEPT);
 }
 
 /*
@@ -147,30 +175,30 @@ Server::passCmd(User *user, const vector<string> words)
 * Parameters: <nickname>
 */
 void
-Server::nickCmd(User *user, const vector<string> &words)
+Server::nickCmd(User *user, const std::vector<std::string> &params)
 {
-	if (words.size() != 2) {
-		sendMsg(user->getFd(), ERR_NONICKNAMEGIVEN);
-		return;
-	}
+	std::cout << "status: " << user->getStatus() << std::endl;
+	if (user->getStatus() == UserFlags::UNVERIFY)
+		return sendErrFatal(user, "NICK: No password given");
+
+	if (params.empty())
+		return user->sendError(ERR_NONICKNAMEGIVEN);
 
 	// Sanitize nickname
-	const string nickname = words[1];
-	if (nickname[0] == '#' \
-	|| nickname[0] == ':' \
-	|| hasSpace(nickname)) {
-		sendMsg(user->getFd(), ERR_ERRONEUSNICKNAME);
-		return;
-	}
+	const std::string nickName = params[0];
+	if (nickName[0] == '#' \
+		|| nickName[0] == ':' \
+		|| nickName.find(' ') != std::string::npos
+	)
+		return user->sendError(ERR_ERRONEUSNICKNAME, nickName);
 
 	// Find duplicate
-	for (map<int, User *>::const_iterator it = _users.begin(); it != _users.end(); ++it)
-		if (it->second->getNick() == nickname) {
-			sendMsg(user->getFd(), ERR_NICKNAMEINUSE);
-			return;
-		}
+	if (getUser(nickName) != NULL)
+		return user->sendError(ERR_NICKNAMEINUSE, nickName);
 
-	user->setNick(nickname);
+	const std::string oldNickName = user->getNick();
+	user->setNick(nickName);
+	broadcast(":" + oldNickName + " NICK " + nickName);
 }
 
 /*
@@ -178,30 +206,37 @@ Server::nickCmd(User *user, const vector<string> &words)
 * Parameters: <username> 0 * <realname>
 */
 void
-Server::userCmd(User *user, const vector<string> &words)
+Server::userCmd(User *user, const std::vector<std::string> &params)
 {
-	const size_t n_args = words.size();
+	if (user->getStatus() == UserFlags::UNVERIFY)
+		return sendErrFatal(user, "USER: No password given");
 
-	if (user->isRegistered()) {
-		sendMsg(user->getFd(), ERR_ALREADYREGISTERED);
-		return;
-	}
+	const size_t n_args = params.size();
 
-	if (n_args < 5) {
-		sendMsg(user->getFd(), ERR_NEEDMOREPARAMS);
-		return;
-	}
+	if (user->isRegistered())
+		return user->sendError(ERR_ALREADYREGISTERED);
 
-	user->setUser(words[1]);
-	user->setHostname(words[2]);
-	user->setServername(words[3]);
+	if (n_args < 4)
+		return user->sendError(ERR_NEEDMOREPARAMS, "", "USER");
 
-	string word = words[4];
-	for (size_t i = 5; i < n_args; ++i)
-		word += " " + words[i];
-	if (word[0] == ':')
-		word.erase(word.begin());
-	user->setName(word);
+	user->setUser(params[0]);
+	user->setHostname(params[1]);
+	user->setServername(params[2]);
+
+	std::string realName = params[3];
+	for (size_t i = 4; i < n_args; ++i)
+		realName += " " + params[i];
+	if (realName[0] == ':')
+		realName.erase(realName.begin());
+	user->setName(realName);
+
+	if (user->isRegistered())
+		log(MAGENTA + user->getNick() + BLUE + " (" \
+			+ MAGENTA + toString(user->getFd()) + BLUE + ") is " + GREEN + "registered");
+
+	user->setStatus(UserFlags::ONLINE);
+
+	user->sendReply(RPL_WELCOME);
 }
 
 /*
@@ -210,81 +245,42 @@ Server::userCmd(User *user, const vector<string> &words)
 * Alt Params: 0
 */
 void
-Server::joinCmd(User *user, vector<string> words)
+Server::joinCmd(User *user, const std::vector<std::string> &params)
 {
-	// cout << "User " << user->getNick() << " is going to join the channel" << endl << flush;
-	if (!expectedArgs(words, 2))
-		return ;
+	// This is equivalent to sending a PART command to each channel
+	if (params.size() == 1 && params[0] == "0")
+		user->leaveAllChannels();
 
-	// cout << "args are fine" << endl << flush;
-	if (user->getAtChannel() == words[1])
-		return ;
+	// Split vectors by , delimiter -> pair< vector<Channels> vector<Keys> >
+	const std::string channelNames = params[0];
+	const std::vector<std::string> names = splitString(channelNames, ",");
 
-	if (!isValidChannelName(words[1]))
-	{
-		sendColorMsg(user->getFd(), CH_NAMING_ERR, RED);
-		return ;
+	std::string channelKeys;
+	if (params.size() > 1)
+		channelKeys = params[1];
+	const std::vector<std::string> keys = splitString(channelKeys, ",");
+
+	std::vector<std::string>::const_iterator names_it = names.begin();
+	std::vector<std::string>::const_iterator key_it = keys.begin();
+	for (; names_it != names.end(); ++names_it) {
+		if (channelKeys.empty())
+			user->joinChannel(*names_it, "");
+		else
+		{
+			user->joinChannel(*names_it, *key_it);
+			++key_it;
+		}
 	}
 
-	// cout << "user wasn't already in channel" << endl << flush;
-	if (!isChannel(words[1]))
-		createChannel(words[1], user);
-
-	// cout << "back in the joinCmd" << endl << flush;
-	//leaving channel msg
-	Channel *prevChannel = getChannel(user->getAtChannel());
-	if (prevChannel)
-		prevChannel->setLog(user->getNick() + " left " + prevChannel->getName());
-
-	//joining channel msg
-	// cout << "user fd: " << user->getFd() << endl << flush;
-	sendClear(user->getFd());
-	user->setAtChannel(words[1]);
-	Channel *channel = getChannel(words[1]);
-	user->setChannel(channel);
-	channel->addUser(user);
-
-	// Send reply
-	string reply;
-	// JOIN ACK
-	reply = ":" + user->getNick() + " JOIN " + channel->getName();
-	sendMsg(user->getFd(), reply);
-	// Channel topic
-	if (!channel->getTopic().empty()) {
-		reply = user->getNick() + " " + channel->getName() + " :" + channel->getTopic();
-		sendMsg(user->getFd(), reply);
-	}
-	// List of users in the channel
-	reply = user->getNick() + " " + channel->getStatus() + " " + channel->getName() + " :";
-	const vector<User *> users = channel->getUsers();
-	for (vector<User *>::const_iterator i = users.begin(); i != users.end(); ++i) {
-		if (channel->getUserMode(*i) == "o")
-			reply += '@';
-		reply += (*i)->getNick();
-		if (i + 1 != users.end())
-			reply += ' ';
-		sendMsg(user->getFd(), reply);
-	}
-	reply = user->getNick() + " " + channel->getName() + " :End of /NAMES list";
-	sendMsg(user->getFd(), reply);
-
-	if (!user->getCapable())
-		channel->setLog(YELLOW + user->getNick() + " joined the channel" + RESET);
-	else
-		channel->setLog(user->getNick() + " joined the channel");
-
-	// removes the user from the previous channel list of users
-	if (prevChannel)
-		prevChannel->removeUser(user);
 }
 
 void
-Server::colorCmd(User *user, const vector<string> &words)
+Server::colorCmd(User *user, const std::vector<std::string> &words)
 {
 	if (!expectedArgs(words, 2))
 		return ;
 
-	map<string, string>colors;
+	std::map<std::string, std::string>colors;
 
 	colors["r"] = RED_BOLD;
 	colors["k"] = BLACK_BOLD;
@@ -326,53 +322,377 @@ Server::colorCmd(User *user, const vector<string> &words)
 * Parameters: [<reason>]
 */
 void
-Server::quitCmd(User *user)
+Server::quitCmd(User *user, const std::string &reason)
 {
-	cout << BLUE << "User " << user->getNick();
-	cout << RED << " disconnected" << RESET << endl;
-	delUser(user);
-}
+	// std::cout << BLUE << "User " << user->getNick() << RED << " disconnected" << RESET << std::endl;
+	const std::vector<Channel *> channels = user->getJoinedChannels();
+	for (std::vector<Channel *>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+		(*it)->broadcast(user->getNick() + ": Quit: " + reason);
 
-void
-Server::capCmd(User *user, vector<string> &words)
-{
-	if (!words[1].compare("LS")
-	&& !words[2].compare("302"))
-		user->setCapable(true);
+	sendErrFatal(user, reason);
 }
 
 // void
-// Server::kickCmd(User *user, vector<string> &words)
+// Server::capCmd(User *user, const std::vector<std::string> &words)
+// {
+// 	if (
+// 		!words[1].compare("LS")
+// 		&& !words[2].compare("302")
+// 	)
+// 		user->setCapable(true);
+// 	user->setCapable(false);
+// }
+
+/*
+* Command: CAP
+* Parameters: <subcommand> [:<capabilities>]
+*/
+void
+Server::capCmd(User *user, const std::vector<std::string> &params)
+{
+	if (params.size() >= 2) {
+		if (params[0] == "LS" \
+			&& params[1] == "302"
+		) {
+			user->setCapable(true);
+			sendMsg(user, "CAP * LS :");
+		}
+		else if (params[1] == "END") {
+			// user
+		}
+	}
+	// else
+	// 	user->setCapable(false);
+}
+
+/*
+* Command: TOPIC
+* Parameters: <channel> [<topic>]
+*/
+void
+Server::topicCmd(User *user, const std::vector<std::string> &params)
+{
+	if (params.size() == 0)
+		return user->sendError(ERR_NEEDMOREPARAMS, "", "TOPIC");
+
+	const std::string channelName = params[0];
+	Channel *channel = getChannel(channelName);
+	if (!channel)
+		return user->sendError(ERR_NOSUCHCHANNEL, channelName);
+
+	if (params.size() == 1) {
+		if (!channel->getTopic().empty()) {
+			user->sendReply(RPL_TOPIC, channelName);
+			user->sendReply(RPL_TOPICWHOTIME, channelName);
+		} else
+			user->sendReply(RPL_NOTOPIC, channelName);
+	}
+	else {
+		if (channel->isTopicProtected() && !channel->isOperator(user))
+			return user->sendError(ERR_CHANOPRIVSNEEDED, channelName);
+
+		const std::string topic = joinStringsButFirst(params);
+
+		channel->setTopic(topic, user);
+
+		std::string reply = "TOPIC " + channelName;
+		if (!topic.empty())
+			reply += " " + topic;
+
+		channel->broadcast(reply);
+	}
+}
+
+/*
+* Command: PRIVMSG
+* Parameters: <target>{,<target>} <text to be sent>
+*/
+void
+Server::privmsgCmd(User *user, const std::vector<std::string> &params)
+{
+	const std::vector<std::string> targets = splitString(params[0], ",");
+
+	const std::string msg = "PRIVMSG " + joinStrings(params);
+	std::cout << msg << std::endl;
+
+	std::vector<std::string>::const_iterator it;
+	for (it = targets.begin(); it != targets.end(); ++it) {
+		const std::string targetName = *it;
+
+		if (targetName[0] == '$') {
+			broadcast(msg);
+		}
+		else if (getChannel(targetName) != NULL) { // Target's a channel
+			Channel *channel = getChannel(targetName);
+
+			if (channel->isBanned(user))
+				return;
+			if (channel->noExternalMessages() && !channel->isMember(user))
+				return user->sendError(ERR_CANNOTSENDTOCHAN, targetName);
+
+			channel->broadcast(msg, user, user->getNick());
+		}
+		else if (getUser(targetName) != NULL) { // Target's a user
+			User *target = getUser(targetName);
+
+			if (target->isAway())
+				user->sendReply(RPL_AWAY, targetName);
+
+			sendMsg(target, msg, user->getNick());
+		}
+		else {
+			user->sendError(ERR_NOSUCHNICK, targetName);
+		}
+	}
+}
+
+/*
+* Command: AWAY
+* Parameters: [<text>]
+*/
+void
+Server::awayCmd(User *user, const std::vector<std::string> &params)
+{
+	(void)user;
+	(void)params;
+	//TODO implement
+}
+
+/*
+* Command: PING
+* Parameters: <token>
+*/
+void
+Server::pingCmd(User *user, const std::vector<std::string> &token)
+{
+	sendMsg(user, "PONG " + _serverName + " " + joinStrings(token));
+}
+
+/*
+* Command: MODE
+* Parameters: <target> [<modestring> [<mode arguments>...]]
+*/
+void
+Server::modeCmd(User *user, const std::vector<std::string> &params)
+{
+	const std::string targetName = params[0];
+	std::string modeString;
+	if (params.size() > 1) {
+		modeString = params[1];
+		// params.erase()
+	}
+	std::vector<std::string> modeArguments;
+	if (params.size() > 2)
+		modeArguments = std::vector<std::string>(params.begin() + 2, params.end());
+
+	//? how to differentiate between user and channel modes?
+	if (!(targetName[0] == ChannelFlags::REGULAR \
+		|| targetName[0] == ChannelFlags::LOCAL)
+	) {
+		// User modes
+		User *target = getUser(targetName);
+		if (!target)
+			return user->sendError(ERR_NOSUCHNICK, targetName);
+
+		if (target->getNick() != targetName)
+			return user->sendError(ERR_USERSDONTMATCH);
+		if (params.size() == 1)
+			return user->sendReply(RPL_UMODEIS, targetName);
+
+		char lastFlag = 0;
+		std::string::const_iterator it;
+		for (it = modeString.begin(); it != modeString.end(); ++it) {
+			if (*it == '+') {
+				lastFlag = '+';
+				continue;
+			} else if (*it == '-') {
+				lastFlag = '-';
+				continue;
+			}
+			if (lastFlag == '+')
+				target->addMode((UserFlags::ModeLetter)*it);
+			else if (lastFlag == '-')
+				target->removeMode((UserFlags::ModeLetter)*it);
+		}
+	} else {
+		// Channel mode
+		Channel *target = getChannel(targetName);
+		if (!target)
+			return user->sendError(ERR_NOSUCHCHANNEL, targetName);
+
+		if (params.size() == 1)
+			return user->sendReply(RPL_CHANNELMODEIS, params);
+		if (!target->isOperator(user))
+			return user->sendError(ERR_CHANOPRIVSNEEDED, targetName);
+
+		char lastFlag = 0;
+		std::string::const_iterator it;
+		for (it = modeString.begin(); it != modeString.end(); ++it) {
+			if (*it == '+') {
+				lastFlag = '+';
+				continue;
+			} else if (*it == '-') {
+				lastFlag = '-';
+				continue;
+			}
+			if (lastFlag == '+')
+				target->addMode((ChannelFlags::ModeLetter)*it, modeArguments, user);
+			else if (lastFlag == '-')
+				target->removeMode((ChannelFlags::ModeLetter)*it, modeArguments, user);
+		}
+		// if (modeString.size() == 1 && !target->isModeImplemented((ChannelFlags::ModeLetter)modeString[0])) // Maybe restrict broadcast when "MODE <channel> b" is received
+		// 	return;
+
+		target->broadcast("MODE " + joinStrings(params));
+	}
+}
+
+/*
+* Command: KICK
+* Parameters: [<channel>] <nicks> [<reason>]
+*/
+// void
+// Server::kickCmd(User *user, const std::vector<std::string> &params)
 // {
 
 // }
 
-// void
-// Server::inviteCmd(User *user, vector<string> &words)
-// {
-
-// }
-
+/*
+* Command: INVITE
+* Parameters: <nick> <channel>
+*/
 void
-Server::topicCmd(User *user, vector<string> &words)
+Server::inviteCmd(User *user, const std::vector<std::string> &params)
 {
-	// Checks there is text to set at the topic
-	if (words.empty()) {
-		sendMsg(user->getFd(), ERR_NEEDMOREPARAMS);
-		return;
+	// Parameters number check
+	if (params.size() < 2)
+		user->sendError(ERR_NEEDMOREPARAMS, "", "INVITE");
+	else if (params.size() > 2)
+		return sendMsg(user, "Too many arguments");
+
+	User *target = getUser(params[0]);
+	const std::string channelName = params[1];
+
+	// Getting the channel
+	Channel *invChannel = getChannel(channelName);
+	if (!invChannel)
+		return user->sendError(ERR_NOSUCHCHANNEL, channelName);
+
+	if (!invChannel->isMember(user))
+		return user->sendError(ERR_NOTONCHANNEL, channelName);
+	if (!invChannel->isOperator(user))
+		return user->sendError(ERR_CHANOPRIVSNEEDED, channelName);
+	if (invChannel->isMember(target))
+		return user->sendError(ERR_USERONCHANNEL, params);
+
+	invChannel->addInvitedUser(target);
+	user->sendReply(RPL_INVITING, params);
+}
+
+
+/*
+* Command: PART
+* Parameters: [<channels>] [<message>]
+*/
+void
+Server::partCmd(User *user, std::vector<std::string> params)
+{
+	std::vector<std::string> channelNames;
+	std::string message = "";
+
+	channelNames = splitString(params[0], ",");
+
+	if (params.size() > 1)
+	{
+		params.erase(params.begin());
+		message = joinStrings(params);
+
+		if (message[0] == ':')
+			message.erase(message.begin());
 	}
 
-	// if (!user->isOperator())
-	// 	return ;
+	for (std::vector<std::string>::const_iterator it = channelNames.begin(); it != channelNames.end(); ++it)
+	{
+		Channel *channel = getChannel(*it);
+		if (!channel) {
+			user->sendError(ERR_NOSUCHCHANNEL, *it);
+			continue;
+		}
+		sendMsg(user, message);
+		if (user->isChannelMember(channel->getName()))
+			user->leaveChannel(channel);
+	}
+}
 
-	Channel *channel = user->getChannel();
-	string topic;
+/*
+* Command: WHO
+* Parameters: <mask>
+*/
+void
+Server::whoCmd(const User *user, const std::vector<std::string> &params)
+{
+	if (params.empty())
+		return error("Empty params @whoCmd", CONTINUE);
 
-	for (vector<string>::const_iterator i = words.begin(); i != words.end(); ++i)
-		topic += *i;
-	
-	cout << topic << endl << flush;
-	channel->setTopic(topic);
+	const std::string mask = params[0];
+	Channel	*target_channel = getChannel(mask);
+	User	*target_user = getUser(mask);
+
+	if (target_channel) { // Mask is channel
+		const std::vector<User *> users = target_channel->getUsers();
+		for (std::vector<User *>::const_iterator it = users.begin(); it != users.end(); ++it) {
+			User *tmp_user = *it;
+
+			std::vector<std::string> tmp;
+			tmp.push_back(tmp_user->getNick());
+			tmp.push_back(mask);
+
+			user->sendReply(RPL_WHOREPLY, tmp);
+		}
+	} else if (target_user) { // Mask is user
+		user->sendReply(RPL_WHOREPLY, mask);
+	}
+	user->sendReply(RPL_ENDOFWHO, mask);
+}
+
+/*
+* Command: WHOIS
+* Parameters: [<target>] <nick>
+*/
+void
+Server::whoisCmd(const User *user, const std::vector<std::string> &params)
+{
+	std::string targetNick;
+
+	if (params.size() == 0)
+		return user->sendError(ERR_NONICKNAMEGIVEN);
+	else if (params.size() == 1)
+		targetNick = params[0];
+	else if (params.size() == 2)
+		targetNick = params[1];
+
+	// ERR_NOSUCHSERVER
+
+	User *target = getUser(targetNick);
+	if (!target)
+		return user->sendError(ERR_NOSUCHNICK, targetNick);
+
+	if (target->isInvisible() && !shareChannels(user, target))
+		return user->sendReply(RPL_ENDOFWHOIS, targetNick);
+
+	if (user->isAway())
+		user->sendReply(RPL_AWAY, targetNick);
+
+	if (isOperator(user)) {
+		user->sendReply(RPL_WHOISUSER, targetNick);
+		user->sendReply(RPL_WHOISIDLE, targetNick);
+		user->sendReply(RPL_WHOISCHANNELS, targetNick);
+		user->sendReply(RPL_WHOISMODES, targetNick);
+	}
+	if (isOperator(target)) {
+		user->sendReply(RPL_WHOISOPERATOR, targetNick);
+	}
+	user->sendReply(RPL_ENDOFWHOIS, targetNick);
 }
 
 // void

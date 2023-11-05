@@ -7,8 +7,34 @@ https://netcat.sourceforge.net/
 
 Roadmap and recommended order:
 --------------------------------------------------------------------------------
-1- Establish a working client/server socket connection, 
-2- Add the signals handling (CTRL+C, CTRL+D, CTRL+Z); 
-3- Client registration system (NICK, USER, PASS), 
-4- Server commands (PING, OPER, KILL...) and 
+1- Establish a working client/server socket connection,
+2- Add the signals handling (CTRL+C, CTRL+D, CTRL+Z);
+3- Client registration system (NICK, USER, PASS),
+4- Server commands (PING, OPER, KILL...) and
 5- Channel operations commands (JOIN, PART, INVITE, KICK, PRIVMSG, NOTICE...).
+
+Use insert in maps
+Fix user.getChannel (i.e.: in rpl_list())
+Make sure all rpl_ and err_ functions are mapped to the switch statements
+
+Test commands:
+	PASS
+	NICK works
+	USER
+	COLOR
+	JOIN works
+	QUIT works
+	CAP
+	TOPIC
+	PRIVMSG
+	AWAY
+	PING
+	MODE
+
+Problem with Annon- (test without configured nick)
+Deprecate user->getChannel()
+Change sendReply args order to slim down on cmds being passed around for nothing
+Check if msg.command is needed
+Remove unneeded this-> ?
+updateIdleTime() when user sends commands
+Change buffer size to 512 (split messages if they're too long i.e.: RPL_WHOISCHANNELS)
