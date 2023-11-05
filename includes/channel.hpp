@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
-/*   Updated: 2023/10/30 22:07:43 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 02:25:17 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,38 +22,34 @@ class User;
 
 // Maybe later change enums to arrays for pattern matching
 namespace ChannelFlags {
+	enum Type {
+		REGULAR = '#',
+		LOCAL = '&'
+	};
 
-enum Type {
-	REGULAR = '#',
-	LOCAL = '&'
-};
+	enum Status {
+		PUBLIC = '=',
+		SECRET = '@', // Channel mode +s
+		PRIVATE = '*' // Channel mode +p (deprecated)
+	};
 
-enum Status {
-	PUBLIC = '=',
-	SECRET = '@', // Channel mode +s
-	PRIVATE = '*' // Channel mode +p (deprecated)
-};
-
-// When making changes, certify that they're reflected in isModeImplemented()
-enum Mode {
-	INVITE_ONLY = 'i',
-	PROTECTED_TOPIC = 't',
-	KEY_CHANNEL = 'k',
-	OPERATOR = 'o',
-	CLIENT_LIMIT = 'l'
-};
-
+	// When making changes, certify that they're reflected in isModeImplemented()
+	enum ModeLetter {
+		INVITE_ONLY = 'i',
+		PROTECTED_TOPIC = 't',
+		KEY_CHANNEL = 'k',
+		OPERATOR = 'o',
+		CLIENT_LIMIT = 'l'
+	};
 }
 
 namespace Operator {
-
-enum Command {
-	KICK,
-	INVITE,
-	TOPIC,
-	MODE
-};
-
+	enum Command {
+		KICK,
+		INVITE,
+		TOPIC,
+		MODE
+	};
 }
 
 class Channel
@@ -113,11 +109,11 @@ class Channel
 		// const std::string	getUserModes(const User *user) const;
 		std::vector<User *>	getUsers() const;
 
-		bool isModeImplemented(ChannelFlags::Mode mode) const;
-		void addMode(ChannelFlags::Mode letter, std::vector<std::string> arguments, const User *caller);
-		// void addMode(ChannelFlags::Mode letter);
-		void removeMode(ChannelFlags::Mode letter, std::vector<std::string> &arguments, User *caller);
-		// void removeMode(ChannelFlags::Mode letter);
+		bool isModeImplemented(ChannelFlags::ModeLetter mode) const;
+		void addMode(ChannelFlags::ModeLetter letter, std::vector<std::string> arguments, const User *caller);
+		// void addMode(ChannelFlags::ModeLetter letter);
+		void removeMode(ChannelFlags::ModeLetter letter, std::vector<std::string> &arguments, User *caller);
+		// void removeMode(ChannelFlags::ModeLetter letter);
 
 		void addUser(User *user);
 		void removeUser(User *user);

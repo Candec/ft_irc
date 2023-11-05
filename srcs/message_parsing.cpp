@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/02 15:43:15 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/05 02:21:24 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -509,9 +509,9 @@ Server::modeCmd(User *user, const std::vector<std::string> &params)
 				continue;
 			}
 			if (lastFlag == '+')
-				target->addMode((UserFlags::Mode)*it);
+				target->addMode((UserFlags::ModeLetter)*it);
 			else if (lastFlag == '-')
-				target->removeMode((UserFlags::Mode)*it);
+				target->removeMode((UserFlags::ModeLetter)*it);
 		}
 	} else {
 		// Channel mode
@@ -535,9 +535,9 @@ Server::modeCmd(User *user, const std::vector<std::string> &params)
 				continue;
 			}
 			if (lastFlag == '+')
-				target->addMode((ChannelFlags::Mode)*it, modeArguments, user);
+				target->addMode((ChannelFlags::ModeLetter)*it, modeArguments, user);
 			else if (lastFlag == '-')
-				target->removeMode((ChannelFlags::Mode)*it, modeArguments, user);
+				target->removeMode((ChannelFlags::ModeLetter)*it, modeArguments, user);
 		}
 		target->broadcast("MODE " + joinStrings(params));
 	}

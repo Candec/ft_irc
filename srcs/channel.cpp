@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/11/01 19:14:27 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/05 02:17:41 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ std::vector<User *>	Channel::getUsers() const
 	return users;
 }
 
-bool Channel::isModeImplemented(ChannelFlags::Mode modeLetter) const
+bool Channel::isModeImplemented(ChannelFlags::ModeLetter modeLetter) const
 {
 	switch (modeLetter)
 	{
@@ -81,7 +81,7 @@ bool Channel::isModeImplemented(ChannelFlags::Mode modeLetter) const
 		return false;
 	}
 }
-void Channel::addMode(ChannelFlags::Mode letter, std::vector<std::string> arguments, const User *caller)
+void Channel::addMode(ChannelFlags::ModeLetter letter, std::vector<std::string> arguments, const User *caller)
 {
 	User *user;
 
@@ -119,7 +119,7 @@ void Channel::addMode(ChannelFlags::Mode letter, std::vector<std::string> argume
 	else
 		log("Channel already had that mode");
 }
-void Channel::removeMode(ChannelFlags::Mode letter, std::vector<std::string> &arguments, User *caller)
+void Channel::removeMode(ChannelFlags::ModeLetter letter, std::vector<std::string> &arguments, User *caller)
 {
 	User *user;
 	switch (letter)

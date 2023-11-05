@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/10/30 16:35:40 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/05 02:23:12 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,20 +73,18 @@ enum Errors {
 };
 
 namespace UserFlags {
+	enum Status {
+		UNVERIFY,
+		ACCEPT,
+		ONLINE,
+		OFFLINE
+	};
 
-enum Status {
-	UNVERIFY,
-	ACCEPT,
-	ONLINE,
-	OFFLINE
-};
-
-// When making changes, certify that they're reflected in isModeImplemented()
-enum Mode {
-	INVISIBLE = 'i',
-	OPERATOR = 'o'
-};
-
+	// When making changes, certify that they're reflected in isModeImplemented()
+	enum ModeLetter {
+		INVISIBLE = 'i',
+		OPERATOR = 'o'
+	};
 }
 
 class User
@@ -196,9 +194,9 @@ class User
 		void			leaveChannel(Channel *channel);
 		void			leaveAllChannels();
 
-		bool			isModeImplemented(UserFlags::Mode mode) const;
-		void			addMode(UserFlags::Mode modeLetter);
-		void			removeMode(UserFlags::Mode modeLetter);
+		bool			isModeImplemented(UserFlags::ModeLetter mode) const;
+		void			addMode(UserFlags::ModeLetter modeLetter);
+		void			removeMode(UserFlags::ModeLetter modeLetter);
 		bool			isInvisible() const;
 		bool			isAway() const;
 

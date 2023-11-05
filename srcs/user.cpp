@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/02 15:00:40 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/05 02:21:12 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,7 +219,7 @@ void User::leaveAllChannels()
 
 
 
-bool User::isModeImplemented(UserFlags::Mode modeLetter) const
+bool User::isModeImplemented(UserFlags::ModeLetter modeLetter) const
 {
 	switch (modeLetter)
 	{
@@ -230,7 +230,7 @@ bool User::isModeImplemented(UserFlags::Mode modeLetter) const
 		return false;
 	}
 }
-void User::addMode(UserFlags::Mode modeLetter)
+void User::addMode(UserFlags::ModeLetter modeLetter)
 {
 	if (!isModeImplemented(modeLetter))
 		return sendError(ERR_UMODEUNKNOWNFLAG);
@@ -242,7 +242,7 @@ void User::addMode(UserFlags::Mode modeLetter)
 	if (_modes.find(mode) == std::string::npos)
 		_modes += mode;
 }
-void User::removeMode(UserFlags::Mode modeLetter)
+void User::removeMode(UserFlags::ModeLetter modeLetter)
 {
 	if (!isModeImplemented(modeLetter))
 		return sendError(ERR_UMODEUNKNOWNFLAG);
