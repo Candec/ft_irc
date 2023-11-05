@@ -51,7 +51,7 @@ Your executable will be run as follows:
       - If \<topic> is an empty string, the \<channel>'s topic is cleared
       - ~~If caller isn't on \<channel>, server MAY reject with *ERR_NOTONCHANNEL*~~
       - If *RPL_TOPIC* is returned to caller, *RPL_TOPICWHOTIME* SHOULD also be sent to that client
-      - If **protected topic** mode is set on \<channel> and caller isn't operator, reject with *ERR_CHANOPRIVSNEEDED*
+      - If **protected topic** mode is set on \<channel> and caller isn't operator, reject with *ERR_CHANOPRIVSNEEDED* ✔️
       - If topic is set or cleared, every client in \<channel> will receive a TOPIC command with the new topic or an empty string as argument, depending on if the topic was set or cleared
     - MODE `Parameters: <target> [<modestring> [<mode arguments>...]]`
       - i: Set/remove Invite-only channel -- Invitations are not being properly registered
@@ -60,10 +60,13 @@ Your executable will be run as follows:
         - If mode is set on channel, TOPIC caller isn't operator and is trying to set the topic, reject with *ERR_CHANOPRIVSNEEDED*
       - k: Set/remove the channel key (password)
         - If, when setting the key, it's invalid, reject with *ERR_INVALIDMODEPARAM*
-        - If this mode is set and a client doesn't supply the correct key, reject JOIN with *ERR_BADCHANNELKEY*
-      - o: Give/take channel operator privilege ❌ -- Giving, Removing and then removing op privilage causes "alloc-dealloc-mismatch"
-        - Users with this mode may kick users, apply channel modes, and set other users to operator (or lower) status.
-      - l: Set/remove the user limit to channel
+        - If this mode is set and a client doesn't supply the correct key, reject JOIN with *ERR_BADCHANNELKEY* ✔️
+      - o: Give/take channel operator privilege ✔️
+        - Users with this mode may:
+          - Kick users
+          - Apply channel modes ✔️
+          - Set other users to operator (or lower) status ✔️
+      - l: Set/remove the user limit to channel ✔️
     - NAME
       - When a user creates a channel, the message points there are 2 normal users and no operator (the creator of the channel should be op by default and there should be no normal users instead of 2)
       - When a second user joins, the second user sees all the people in the channel, but previous users do not see the new members added to the list
