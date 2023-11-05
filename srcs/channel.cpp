@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/11/05 02:17:41 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 02:30:26 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,8 @@ void Channel::addUser(User *user)
 		return;
 
 	log(YELLOW + _name + BLUE + ": " + GREEN + "Adding" + BLUE + " user " \
-		+ MAGENTA + toString(user->getFd()));
+		+ MAGENTA + user->getNick() \
+		+ RESET + " (" + MAGENTA + toString(user->getFd()) + RESET + ")");
 
 	_users[user->getFd()] = user;
 
@@ -178,7 +179,7 @@ void Channel::removeUser(User *user)
 	if (!user)
 		return;
 
-	log(std::string("    ") + YELLOW + _name + RESET + ": " \
+	log(YELLOW + _name + RESET + ": " \
 		+ RED + "Removing " \
 		+ MAGENTA + user->getNick() + RESET + " (" \
 		+ MAGENTA + toString(user->getFd()) + RESET + ")");

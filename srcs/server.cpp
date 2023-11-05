@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tpereira <tpereira@42Lisboa.com>           +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/04 08:50:57 by tpereira         ###   ########.fr       */
+/*   Updated: 2023/11/05 02:28:11 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -342,7 +342,7 @@ void Server::delUser(User *user)
 	if (!user)
 		return;
 
-	std::cout << BLUE << "User " << MAGENTA << user->getNick();
+	std::cout << MAGENTA << user->getNick();
 	std::cout << RED << " disconnected" << WHITE << std::endl;
 	log(std::string("Server: ") + RED + "Removing " + MAGENTA + user->getNick() + RESET + " (" \
 		+ MAGENTA + toString(user->getFd()) + RESET + ")");

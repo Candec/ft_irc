@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 02:21:12 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/05 02:29:14 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,7 +237,7 @@ void User::addMode(UserFlags::ModeLetter modeLetter)
 
 	const char mode = modeLetter;
 
-	log(MAGENTA + _name + BLUE + ": " + GREEN + "Adding" + BLUE + " mode " + mode);
+	log(MAGENTA + _nick + BLUE + ": " + GREEN + "Adding" + BLUE + " mode " + mode);
 
 	if (_modes.find(mode) == std::string::npos)
 		_modes += mode;
@@ -249,7 +249,7 @@ void User::removeMode(UserFlags::ModeLetter modeLetter)
 
 	const char mode = modeLetter;
 
-	log(MAGENTA + _name + BLUE + ": " + RED + "Removing" + BLUE + " mode " + mode);
+	log(MAGENTA + _nick + BLUE + ": " + RED + "Removing" + BLUE + " mode " + mode);
 
 	size_t pos = _modes.find(mode);
 	if (pos != std::string::npos)
