@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 19:13:30 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/06 01:03:38 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -559,52 +559,78 @@ Server::modeCmd(User *user, const std::vector<std::string> &params)
 
 /*
 * Command: KICK
-* Parameters: [<channel>] <nicks> [<reason>]
+* Parameters: <channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]
 */
 void
 Server::kickCmd(User *user, std::vector<std::string> &params)
 {
-	Channel *channel;
+	std::vector<std::string> firstSplit;
+	std::vector<Channel *> channels;
 	std::vector<std::string> nicks;
-	int nicksIndex = 0;
 	vector<std::string> reasonParams;
 	std::string reason;
 
-	channel = user->getChannel();
+	if (params.size() < 1)
+		return user->sendError(ERR_NEEDMOREPARAMS, "");
 
-	if (isChannel(params[0]))
+	firstSplit = splitString(params[0], ",");
+
+	if (isChannel(firstSplit[0]))
 	{
-		channel = getChannel(params[0]);
-		nicksIndex = 1;
+		for (std::vector<std::string>::iterator it = firstSplit.begin(); it != firstSplit.end(); ++it)
+		{
+			if (!getChannel(*it))
+				return user->sendError(ERR_NOSUCHCHANNEL, *it);
+
+			channels.push_back(getChannel(*it));
+		}
+		nicks = splitString(params[1], ",");
+	}
+	else
+	{
+		nicks = firstSplit;
+		channels.push_back(user->getChannel());
 	}
 
-	nicks = splitString(params[nicksIndex], ",");
+	if (channels.size() > nicks.size())
+		return user->sendError(ERR_NEEDMOREPARAMS, "Required as many channel parameters as there are user parameters");
 
 	if (params.size() > 3)
 	{
-		for (std::vector<std::string>::iterator it = params.begin() + nicksIndex + 1; it != params.end(); ++it)
+		for (std::vector<std::string>::iterator it = params.begin() + 2; it != params.end(); ++it)
 			reasonParams.push_back(*it);
 		reason = joinStrings(reasonParams);
 	}
+	else
+		reason = "You have been kicked by: " + user->getNick();
 
-	for (std::vector<std::string>::iterator it = nicks.begin(); it != nicks.end(); ++it)
-	{
-		if (!channel) {
-			user->sendError(ERR_NOSUCHCHANNEL, *it);
-			continue;
-		}
-
-		if (!channel->isMember(getUser(*it))) {
-			user->sendError(ERR_NOTONCHANNEL, *it);
-			continue;
-		}
-
-		if (getUser(*it)->isChannelMember(channel->getName()))
-			getUser(*it)->leaveChannel(channel);
-		sendMsg(getUser(*it), reason);
+	for (std::vector<Channel *>::iterator i = channels.begin(); i != channels.end(); ++i) {
+		Channel *target = *i;
+		if (!target->isOperator(user))
+			return user->sendError(ERR_CHANOPRIVSNEEDED, target->getName());
 	}
 
+	for (std::vector<Channel *>::iterator i = channels.begin(); i != channels.end(); ++i) {
+		Channel *channel = *i;
+		for (std::vector<std::string>::iterator it = nicks.begin(); it != nicks.end(); ++it)
+		{
+			if (!channel) {
+				user->sendError(ERR_NOSUCHCHANNEL, *it);
+				continue;
+			}
 
+			if (!channel->isMember(getUser(*it))) {
+				user->sendError(ERR_NOTONCHANNEL, *it);
+				continue;
+			}
+
+			channel->broadcast(std::string(user->getNick() + "was kicked by " + user->getName()));
+			sendMsg(user, "You have kicked " + *it);
+			sendMsg(getUser(*it), reason);
+			if (getUser(*it)->isChannelMember(channel->getName()) && nicks.find(*it)) //falta encontrar el nick
+				getUser(*it)->leaveChannel(channel);
+		}
+	}
 }
 
 /*
