@@ -34,8 +34,8 @@ Your executable will be run as follows:
   - Messages to channel must be sent to every other channel member ✔️
   - Operators and regular users ✔️
   - Channel Operators commands:
-    - KICK `Parameters: <channel> <user> *( "," <user> ) [<comment>]` ❌
-      - If no comment is given, the server SHOULD use a default message instead
+    - KICK `Parameters: <channel> <user> *( "," <user> ) [<comment>]` ✔️
+      - If no comment is given, the server SHOULD use a default message instead ✔️
       - The server MUST NOT send KICK messages with multiple users to clients.
     - INVITE `Parameters: <nickname> <channel>` ❌ -- Invitations are not being properly registered
       - If \<channel> doesn't exist, reject with *ERR_NOSUCHCHANNEL*
@@ -69,8 +69,8 @@ Your executable will be run as follows:
           - Set other users to operator (or lower) status ✔️
       - l: Set/remove the user limit to channel ✔️
     - NAME
-      - When a user creates a channel, the message points there are 2 normal users and no operator (the creator of the channel should be op by default and there should be no normal users instead of 2)
-      - When a second user joins, the second user sees all the people in the channel, but previous users do not see the new members added to the list
+      - When a user creates a channel, the message points there are 2 normal users and no operator (the creator of the channel should be op by default and there should be no normal users instead of 2) ✔️
+      - When a second user joins, the second user sees all the people in the channel, but previous users do not see the new members added to the list ✔️
 
 ### For MacOS only
 
