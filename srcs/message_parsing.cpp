@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/06 01:04:18 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/06 12:38:05 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -602,7 +602,7 @@ Server::kickCmd(User *user, std::vector<std::string> &params)
 		reason = joinStrings(reasonParams);
 	}
 	else
-		reason = "You have been kicked by: " + user->getNick();
+		reason = "you have been kicked by " + user->getNick();
 
 	for (std::vector<Channel *>::iterator i = channels.begin(); i != channels.end(); ++i) {
 		Channel *target = *i;
@@ -624,11 +624,9 @@ Server::kickCmd(User *user, std::vector<std::string> &params)
 				continue;
 			}
 
-			channel->broadcast(std::string(user->getNick() + "was kicked by " + user->getName()));
-			sendMsg(user, "You have kicked " + *it);
 			sendMsg(getUser(*it), reason);
-			// if (getUser(*it)->isChannelMember(channel->getName()) && nicks.find(*it)) //falta encontrar el nick
-			// 	getUser(*it)->leaveChannel(channel);
+			if (getUser(*it)->isChannelMember(channel->getName()))
+				getUser(*it)->leaveChannel(channel);
 		}
 	}
 }
