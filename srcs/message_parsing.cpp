@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/06 01:03:38 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/06 01:04:18 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -627,8 +627,8 @@ Server::kickCmd(User *user, std::vector<std::string> &params)
 			channel->broadcast(std::string(user->getNick() + "was kicked by " + user->getName()));
 			sendMsg(user, "You have kicked " + *it);
 			sendMsg(getUser(*it), reason);
-			if (getUser(*it)->isChannelMember(channel->getName()) && nicks.find(*it)) //falta encontrar el nick
-				getUser(*it)->leaveChannel(channel);
+			// if (getUser(*it)->isChannelMember(channel->getName()) && nicks.find(*it)) //falta encontrar el nick
+			// 	getUser(*it)->leaveChannel(channel);
 		}
 	}
 }
