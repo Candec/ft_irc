@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/11/05 08:10:46 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/07 01:50:34 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/main.hpp"
 
-Channel::Channel() : _modes("n") {}
-Channel::Channel(const std::string &name) : _name(name), _modes("n"), _type(name[0])
+Channel::Channel() {}
+Channel::Channel(const std::string &name) : _name(name), _type(name[0])
 {
 	// const std::string str = WLC_CH_MSG + name + RESET;
 

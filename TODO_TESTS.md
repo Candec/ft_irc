@@ -37,15 +37,16 @@ Your executable will be run as follows:
     - KICK `Parameters: <channel> <user> *( "," <user> ) [<comment>]` ✔️
       - If no comment is given, the server SHOULD use a default message instead ✔️
       - The server MUST NOT send KICK messages with multiple users to clients.
+      - The only the last word of the reason is being sent to the kick user.
     - INVITE `Parameters: <nickname> <channel>` ❌ -- Invitations are not being properly registered
-      - If \<channel> doesn't exist, reject with *ERR_NOSUCHCHANNEL*
-      - If caller isn't \<channel> member, reject with *ERR_NOTONCHANNEL*
-      - If caller isn't \<channel> operator, reject with *ERR_CHANOPRIVSNEEDED*
-      - If \<user>'s already on \<channel>, reject with *ERR_USERONCHANNEL*
+      - If \<channel> doesn't exist, reject with *ERR_NOSUCHCHANNEL* ✔️
+      - If caller isn't \<channel> member, reject with *ERR_NOTONCHANNEL* ✔️
+      - If caller isn't \<channel> operator, reject with *ERR_CHANOPRIVSNEEDED* ✔️
+      - If \<user>'s already on \<channel>, reject with *ERR_USERONCHANNEL* ✔️
       - If INVITE is successful, send:
-        - *RPL_INVITING* to caller
-        - INVITE message (with caller as \<source>) to \<user>
-        - Other \<channel> members SHOULD NOT be notified.
+        - *RPL_INVITING* to caller ✔️
+        - INVITE message (with caller as \<source>) to \<user> ✔️
+        - Other \<channel> members SHOULD NOT be notified. ✔️
     - TOPIC `Parameters: <channel> [<topic>]` ❌
       - Only the first word is being set as topic, even when the whole sentence is between quotes ("") ✔️
       - If no \<topic> is given, reply with *RPL_TOPIC* or *RPL_NOTOPIC*
@@ -71,6 +72,9 @@ Your executable will be run as follows:
     - NAME
       - When a user creates a channel, the message points there are 2 normal users and no operator (the creator of the channel should be op by default and there should be no normal users instead of 2) ✔️
       - When a second user joins, the second user sees all the people in the channel, but previous users do not see the new members added to the list ✔️
+    - PART
+      - The leaving message is being sent to the user leaving the channel instead of broadcasting it to the rest of users in the channel
+
 
 ### For MacOS only
 

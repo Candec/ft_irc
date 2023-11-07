@@ -6,7 +6,7 @@
 /*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/06 12:38:05 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/07 00:51:01 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -614,6 +614,8 @@ Server::kickCmd(User *user, std::vector<std::string> &params)
 		Channel *channel = *i;
 		for (std::vector<std::string>::iterator it = nicks.begin(); it != nicks.end(); ++it)
 		{
+			User *target = getUser(*it);
+
 			if (!channel) {
 				user->sendError(ERR_NOSUCHCHANNEL, *it);
 				continue;
@@ -624,9 +626,11 @@ Server::kickCmd(User *user, std::vector<std::string> &params)
 				continue;
 			}
 
-			sendMsg(getUser(*it), reason);
-			if (getUser(*it)->isChannelMember(channel->getName()))
-				getUser(*it)->leaveChannel(channel);
+			if (target->isChannelMember(channel->getName()))
+				target->leaveChannel(channel);
+			sendMsg(target, reason);
+			const std::string cast(target->getNick() + " was kicked from " + channel->getName());
+			channel->broadcast(cast);
 		}
 	}
 }
@@ -677,13 +681,7 @@ Server::partCmd(User *user, std::vector<std::string> params)
 	channelNames = splitString(params[0], ",");
 
 	if (params.size() > 1)
-	{
-		params.erase(params.begin());
 		message = joinStrings(params);
-
-		if (message[0] == ':')
-			message.erase(message.begin());
-	}
 
 	for (std::vector<std::string>::const_iterator it = channelNames.begin(); it != channelNames.end(); ++it)
 	{
@@ -692,9 +690,9 @@ Server::partCmd(User *user, std::vector<std::string> params)
 			user->sendError(ERR_NOSUCHCHANNEL, *it);
 			continue;
 		}
-		sendMsg(user, message);
+
 		if (user->isChannelMember(channel->getName()))
-			user->leaveChannel(channel);
+			user->leaveChannel(channel, message);
 	}
 }
 

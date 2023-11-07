@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/11/05 03:39:59 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/07 00:46:25 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,6 +195,7 @@ class User
 		void			joinChannel(const std::string &channelName, const std::string &key);
 		// void			leaveChannel(const std::string &channelName);
 		void			leaveChannel(Channel *channel);
+		void			leaveChannel(Channel *channel, const std::string reason);
 		void			leaveAllChannels();
 
 		bool			isModeImplemented(UserFlags::ModeLetter mode) const;

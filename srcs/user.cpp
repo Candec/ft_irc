@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 08:08:20 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/07 01:34:10 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,27 @@ void User::leaveChannel(Channel *channel)
 	if (!channel->isMember(this))
 		return log("User was not member of " + channel->getName());
 
-	channel->broadcast(std::string("PART " + channel->getName()), NULL, _nick);
+	channel->broadcast(std::string("PART " + channel->getName()), this, _nick);
+	server->sendMsg(this, ":" + getNick() + " PART " + channel->getName());
+
+
+	channel->removeUser(this);
+	_joinedChannels.erase(channel->getName());
+
+	log(MAGENTA + _nick + RED + " left " + YELLOW + channel->getName() + WHITE);
+
+	if (channel->getUsers().size() == 0)
+		server->delChannel(channel);
+}
+void User::leaveChannel(Channel *channel, const std::string reason)
+{
+	if (!channel)
+		return;
+	if (!channel->isMember(this))
+		return log("User was not member of " + channel->getName());
+
+	channel->broadcast("PART " + reason, this, _nick);
+	server->sendMsg(this, ":" + getNick() + " PART " + channel->getName());
 
 	channel->removeUser(this);
 	_joinedChannels.erase(channel->getName());
