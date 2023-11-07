@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/07 11:17:32 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/07 11:22:00 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -670,18 +670,19 @@ Server::inviteCmd(User *user, const std::vector<std::string> &params)
 
 /*
 * Command: PART
-* Parameters: [<channels>] [<message>]
+* Parameters: <channel>{,<channel>} [<reason>]
 */
 void
-Server::partCmd(User *user, std::vector<std::string> params)
+Server::partCmd(User *user, const std::vector<std::string> &params)
 {
-	std::vector<std::string> channelNames;
-	std::string message = "";
+	if (!params.size())
+		user->sendError(ERR_NEEDMOREPARAMS, "", "PART");
 
-	channelNames = splitString(params[0], ",");
+	std::vector<std::string> channelNames = splitString(params[0], ",");
+	std::string reason = "";
 
 	if (params.size() > 1)
-		message = joinStrings(params);
+		reason = joinStringsButFirst(params);
 
 	for (std::vector<std::string>::const_iterator it = channelNames.begin(); it != channelNames.end(); ++it)
 	{
@@ -691,8 +692,12 @@ Server::partCmd(User *user, std::vector<std::string> params)
 			continue;
 		}
 
-		if (user->isChannelMember(channel->getName()))
-			user->leaveChannel(channel, message);
+		if (!user->isChannelMember(channel->getName())) {
+			user->sendError(ERR_NOTONCHANNEL, *it);
+			continue;
+		}
+
+		user->leaveChannel(channel, reason);
 	}
 }
 
