@@ -12,7 +12,7 @@ Your executable will be run as follows:
 
 - No forking ✔️
 - Only 1 poll() ✔️
-- irssi must be able to connect to your server without encountering any error.
+- irssi must be able to connect to your server without encountering any error. ✔️
   - test also with netcat ✔️
   - Server might accept client without a proper password if it send many connection requests ✔️
   - Server migh not accept client, even when all the information is correct. The welcome message is even sent, but after, the user is not able to interact with the server. The fd is created, and irssi even tries to reconnect, as it has the "reconnect after timeout" setting active by default ✔️
@@ -69,13 +69,12 @@ Your executable will be run as follows:
           - Apply channel modes ✔️
           - Set other users to operator (or lower) status ✔️
       - l: Set/remove the user limit to channel ✔️
-    - NAME
+    - NAME ✔️
       - When a user creates a channel, the message points there are 2 normal users and no operator (the creator of the channel should be op by default and there should be no normal users instead of 2) ✔️
       - When a second user joins, the second user sees all the people in the channel, but previous users do not see the new members added to the list ✔️
-    - PART
+    - PART ✔️
       - The leaving message is being sent to the user leaving the channel instead of broadcasting it to the rest of users in the channel ✔️
-      - When the owner leave the channel after a user has been in the channel (even when the second user had already leave the channel), errors are generated
-
+      - When the owner leave the channel after a user has been in the channel (even when the second user had already leave the channel), errors are generated ✔️
 
 ### For MacOS only
 
