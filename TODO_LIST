@@ -32,7 +32,6 @@ Test commands:
 	MODE
 
 Problem with Annon- (test without configured nick)
-Deprecate user->getChannel()
 Check if msg.command is needed
 Remove unneeded this-> ?
 Change buffer size to 512 (split messages if they're too long i.e.: RPL_WHOISCHANNELS)

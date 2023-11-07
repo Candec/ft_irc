@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/07 11:22:00 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/07 11:49:31 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -589,7 +589,7 @@ Server::kickCmd(User *user, std::vector<std::string> &params)
 	else
 	{
 		nicks = firstSplit;
-		channels.push_back(user->getChannel());
+		// channels.push_back(user->getChannel());
 	}
 
 	if (channels.size() > nicks.size())

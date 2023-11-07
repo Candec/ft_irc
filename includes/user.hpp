@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/11/07 00:46:25 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/07 11:44:28 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ class User
 		const std::string	getAwayMsg() const;
 		const std::string	getModes() const;
 		const std::string	getAtChannel() const;
-		Channel				*getChannel() const;
+		// Channel				*getChannel() const;
 		uint16_t			getPort() const;
 		bool				isCapable() const;
 

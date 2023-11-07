@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 15:56:34 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 08:17:14 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/07 11:45:48 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,12 @@ const std::string rpl_whoischannels(const User *dest, const std::string &targetN
 	}
 	return ret;
 }
-const std::string rpl_list(const User *dest) {
-	const Channel *channel = dest->getChannel();
+const std::string rpl_list(const User *dest, const std::string &channelName) {
+	const Channel *channel = server->getChannel(channelName);
 	if (!channel)
 		error("No channel found @rpl_list", EXIT);
 
-	return dest->getNick() + " " + channel->getName() + " " + toString(channel->getUsers().size()) + " :" + channel->getTopic();
+	return dest->getNick() + " " + channelName + " " + toString(channel->getUsers().size()) + " :" + channel->getTopic();
 }
 // const std::string rpl_channelmodeis(const User *dest, const std::vector<std::string> &params) {
 const std::string rpl_channelmodeis(const User *dest, const std::string &channelName) {

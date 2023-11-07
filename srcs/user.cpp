@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/07 11:37:28 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/07 11:46:02 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ const std::string	User::getPreviousNick() const { return (_previousNick); }
 const std::string	User::getAwayMsg() const { return (_awayMsg); }
 const std::string	User::getModes() const { return (_modes); }
 // const std::string	User::getAtChannel() const { return (_atChannel); }
-Channel *			User::getChannel() const { return (_channel); }
+// Channel *			User::getChannel() const { return (_channel); }
 uint16_t			User::getPort() const { return ntohs(_hostport); }
 bool				User::isCapable() const { return (_capable); }
 
@@ -306,7 +306,7 @@ void User::sendReply(Replies type, const std::vector<std::string> &params, const
 		reply += rpl_whoischannels(this, params[0]);
 		break;
 	case RPL_LIST:
-		reply += rpl_list(this);
+		reply += rpl_list(this, params[0]);
 		break;
 	case RPL_CHANNELMODEIS:
 		reply += rpl_channelmodeis(this, params[0]);

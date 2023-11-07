@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:20:00 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/05 08:07:56 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/07 11:45:52 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ const std::string rpl_endofwho(const User *dest, const std::string &mask);
 const std::string rpl_whoisidle(const User *dest, const std::string &targetNick);
 const std::string rpl_endofwhois(const User *dest, const std::string &targetNick);
 const std::string rpl_whoischannels(const User *dest, const std::string &targetNick);
-const std::string rpl_list(const User *dest);
+const std::string rpl_list(const User *dest, const std::string &channelName);
 // const std::string rpl_channelmodeis(const User *dest, const std::vector<std::string> &params);
 const std::string rpl_channelmodeis(const User *dest, const std::string &channelName);
 const std::string rpl_notopic(const User *dest, const std::string &channelName);
