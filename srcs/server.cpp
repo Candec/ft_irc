@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/07 11:17:03 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/07 11:40:45 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,10 @@ Server::~Server()
 	log(std::string(RED) + "Shutting down server", false);
 	std::cout << std::endl << RED << "Shutting down server" << WHITE << std::endl << std::flush;
 
-	for (std::map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
+	for (std::map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i) {
+		sendErrFatal(i->second, "Server shutdown");
 		delUser(i->second);
+	}
 
 	close(_listen_fd);
 
