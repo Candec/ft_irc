@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/07 08:25:28 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/07 11:17:03 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ Server::Server() : _upTime(time(0))
 			_password = line.substr(1, line.find(":"));
 
 		if (line.substr(0, line.find(":")) == "server_name")
-			_serverName = atoi(line.substr(1, line.find(":")).c_str());
+			_name = atoi(line.substr(1, line.find(":")).c_str());
 
 		if (line.substr(0, line.find(":")) == "max_users")
 			_maxUsers = atoi(line.substr(1, line.find(":")).c_str());
@@ -109,7 +109,7 @@ void Server::parseConfig()
 	{
 		// cout << "line: " << line << std::endl << std::flush;
 		if (line.substr(0, line.find(":")) == "server_name")
-			_serverName = line.erase(0, line.find(":") + 1);
+			_name = line.erase(0, line.find(":") + 1);
 
 		if (line.substr(0, line.find(":")) == "max_users")
 			_maxUsers = atoi(line.erase(0, line.find(":") + 1).c_str());
@@ -413,7 +413,7 @@ void Server::sendMsg(const User *user, const int n) const
 }
 void Server::sendMsg(const User *user, const std::string &msg, const std::string &src) const
 {
-	sendMsg(user, ":" + src + " " + msg);
+	sendMsg(user, ":" + src + "@" + server->getName() + " " + msg);
 }
 void Server::sendMsg(const int user_fd, const int n) const
 {
@@ -588,6 +588,7 @@ User * Server::getUser(const std::string &nick) const
 	return NULL;
 }
 
+const std::string Server::getName() const { return _name; }
 std::string Server::getPassword() { return(_password); }
 
 bool Server::shareChannels(const User *user1, const User *user2) const

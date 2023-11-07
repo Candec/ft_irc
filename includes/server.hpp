@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/05 19:06:22 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/07 11:16:51 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ class Server
 
 
 		// # Configs
-		std::string	_serverName;
+		std::string	_name;
 		std::string	_password;
 		uint16_t	_port;
 
@@ -145,6 +145,7 @@ class Server
 
 		User *getUser(const std::string &nick) const;
 
+		const std::string getName() const;
 		std::string getPassword();
 
 		void delChannel(const Channel *channel);

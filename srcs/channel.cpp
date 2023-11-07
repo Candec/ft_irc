@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/11/07 01:50:34 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/07 11:15:57 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,7 +255,7 @@ void Channel::broadcast(const std::string &msg) const
 }
 void Channel::broadcast(const std::string &msg, const User *exclude, const std::string &src) const
 {
-	broadcast(":" + src + " " + msg, exclude);
+	broadcast(":" + src + "@" + server->getName() + " " + msg, exclude);
 }
 void Channel::broadcast(const std::string &msg, const User *exclude) const
 {

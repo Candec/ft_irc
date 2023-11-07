@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/07 01:34:10 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/07 11:31:52 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,10 +173,8 @@ void User::joinChannel(const std::string &channelName, const std::string &key)
 
 	// std::cout << GREEN << " OK" << WHITE << std::endl << std::flush;
 
-	std::string reply;
 	// Send JOIN ACK
-	reply = ":" + _nick + " JOIN " + channelName;
-	server->sendMsg(this, reply);
+	server->sendMsg(this, "JOIN " + channelName, _nick);
 	// Channel topic
 	if (!channel->getTopic().empty())
 		this->sendReply(RPL_TOPIC, channelName);
@@ -284,7 +282,7 @@ void User::sendReply(Replies type, const std::vector<std::string> &params, const
 		reply += "@" + tags + " ";
 
 	if (!src.empty())
-		reply += ":" + src + " ";
+		reply += ":" + src + "@" + server->getName() + " ";
 
 	reply += codeToString(type) + " ";
 	switch (type)

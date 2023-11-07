@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/07 00:51:01 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/07 11:17:32 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -475,7 +475,7 @@ Server::awayCmd(User *user, const std::vector<std::string> &params)
 void
 Server::pingCmd(User *user, const std::vector<std::string> &token)
 {
-	sendMsg(user, "PONG " + _serverName + " " + joinStrings(token));
+	sendMsg(user, "PONG " + _name + " " + joinStrings(token));
 }
 
 /*
