@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/07 08:25:13 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/07 08:25:28 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -536,9 +536,9 @@ void Server::receiveMsg(std::vector<pollfd>::const_iterator it)
 	// messages_operations();
 
 	// printMsg(it);
-	Channel *channel = user->getChannel();
-	if (channel && !msg.command)
-		channel->setMsg(buf, user->getNick());
+	// Channel *channel = user->getChannel();
+	// if (channel && !msg.command)
+	// 	channel->setMsg(buf, user->getNick());
 }
 
 
