@@ -73,7 +73,8 @@ Your executable will be run as follows:
       - When a user creates a channel, the message points there are 2 normal users and no operator (the creator of the channel should be op by default and there should be no normal users instead of 2) ✔️
       - When a second user joins, the second user sees all the people in the channel, but previous users do not see the new members added to the list ✔️
     - PART
-      - The leaving message is being sent to the user leaving the channel instead of broadcasting it to the rest of users in the channel
+      - The leaving message is being sent to the user leaving the channel instead of broadcasting it to the rest of users in the channel ✔️
+      - When the owner leave the channel after a user has been in the channel (even when the second user had already leave the channel), errors are generated
 
 
 ### For MacOS only
