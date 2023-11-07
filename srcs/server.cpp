@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/05 18:06:45 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/07 08:25:13 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -425,16 +425,16 @@ void Server::sendMsg(const int user_fd, const std::string &msg) const
 }
 void Server::sendMsg(const User *user, const std::string &msg) const
 {
+	const std::string tmp = msg + " " + MESSAGE_END;
+	if (send(user->getFd(), tmp.c_str(), tmp.size(), 0) == SENDING_ERROR)
+		error("Error sending message", CONTINUE);
+
 	std::ostringstream oss;
 	oss << "SEND " << RESET << timestamp() << BLUE << "Server: Sending to " \
 		<< MAGENTA << user->getNick() << RESET << " (" \
 		<< MAGENTA << user->getFd() << RESET << "):" << std::endl \
 		<< msg << std::endl << std::flush;
 	log(oss.str());
-
-	const std::string tmp = msg + " " + MESSAGE_END;
-	if (send(user->getFd(), tmp.c_str(), tmp.size(), 0) == SENDING_ERROR)
-		error("Error sending message", CONTINUE);
 }
 
 void Server::broadcast(const std::string &message) const
@@ -514,8 +514,11 @@ void Server::receiveMsg(std::vector<pollfd>::const_iterator it)
 		return ;
 	}
 
+	user->setPreviousPing(time(NULL));
+
 	printMsg2(user, buf);
 	struct s_msg msg = parseMessage(user, buf);
+	(void)msg;
 	// cout << "in pckg: " << buf << std::endl << std::flush;
 
 	user->buffer += buf;
