@@ -94,7 +94,7 @@ Any other flag is forbidden.
 ### Test example
 
 Verify absolutely every possible error and issue (receiving partial data, low bandwidth, and so forth).
-To ensure that your server correctly processes everything that you send to it, the following simple test using nc can be done:
+To ensure that your server correctly processes everything that you send to it, the following simple test using nc can be done: ✔️
 
 \$> nc 127.0.0.1 6667
 com^Dman^Dd

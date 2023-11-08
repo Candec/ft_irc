@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/11/08 03:21:00 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/08 07:36:49 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,8 @@ namespace UserFlags {
 		UNVERIFY,
 		ACCEPT,
 		ONLINE,
-		OFFLINE
+		OFFLINE,
+		WAITING // Received incomplete message
 	};
 
 	// When making changes, certify that they're reflected in isModeImplemented()

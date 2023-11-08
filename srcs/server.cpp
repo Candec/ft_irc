@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/08 05:39:45 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/08 07:37:24 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -491,11 +491,6 @@ void Server::sendErrFatal(User *user, const std::string &reason)
 	user->setStatus(UserFlags::OFFLINE);
 }
 
-
-
-// Since application is single threaded, is a msg buffer for each client needed?
-// Can't we just process each fd and std::flush the parsed content one by one?
-
 void Server::receiveMsg(std::vector<pollfd>::const_iterator it)
 {
 	if (_users.find(it->fd) == _users.end())
@@ -518,22 +513,29 @@ void Server::receiveMsg(std::vector<pollfd>::const_iterator it)
 
 	user->setPreviousPing(time(NULL));
 
-	printMsg2(user, buf);
-	parseMessage(user, buf);
-	// cout << "in pckg: " << buf << std::endl << std::flush;
-
 	user->buffer += buf;
 
-	const std::string	delimiter(MESSAGE_END);
-	size_t				position;
-	while ((position = user->buffer.find(delimiter)) != std::string::npos)
-	{
-		std::string message = user->buffer.substr(0, position);
-		user->buffer.erase(0, position + delimiter.length());
-		if (!message.length())
-			continue;
-		user->push();
+	if (user->buffer.find('\n') == std::string::npos) {
+		user->setStatus(UserFlags::WAITING);
+		return;
 	}
+
+	printMsg2(user, user->buffer.c_str());
+	parseMessage(user, user->buffer.c_str());
+	user->buffer.clear();
+
+	// cout << "in pckg: " << buf << std::endl << std::flush;
+
+	// const std::string	delimiter(MESSAGE_END);
+	// size_t				position;
+	// while ((position = user->buffer.find(delimiter)) != std::string::npos)
+	// {
+	// 	std::string message = user->buffer.substr(0, position);
+	// 	user->buffer.erase(0, position + delimiter.length());
+	// 	if (!message.length())
+	// 		continue;
+	// 	user->push();
+	// }
 }
 
 
