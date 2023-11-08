@@ -52,14 +52,15 @@ Your executable will be run as follows:
         - *RPL_INVITING* to caller ✔️
         - INVITE message (with caller as \<source>) to \<user> ✔️
         - Other \<channel> members SHOULD NOT be notified. ✔️
-    - TOPIC `Parameters: <channel> [<topic>]` ❌
+    - TOPIC `Parameters: <channel> [<topic>]` ✔️
       - Only the first word is being set as topic, even when the whole sentence is between quotes ("") ✔️
-      - If no \<topic> is given, reply with *RPL_TOPIC* or *RPL_NOTOPIC*
-      - If \<topic> is an empty string, the \<channel>'s topic is cleared
+      - If no \<topic> is given, reply with *RPL_TOPIC* or *RPL_NOTOPIC* ✔️
+      - If \<topic> is an empty string, the \<channel>'s topic is cleared ✔️
+        - In irssi: TOPIC -delete \<channel>
       - ~~If caller isn't on \<channel>, server MAY reject with *ERR_NOTONCHANNEL*~~
-      - If *RPL_TOPIC* is returned to caller, *RPL_TOPICWHOTIME* SHOULD also be sent to that client
+      - If *RPL_TOPIC* is returned to caller, *RPL_TOPICWHOTIME* SHOULD also be sent to that client ✔️
       - If **protected topic** mode is set on \<channel> and caller isn't operator, reject with *ERR_CHANOPRIVSNEEDED* ✔️
-      - If topic is set or cleared, every client in \<channel> will receive a TOPIC command with the new topic or an empty string as argument, depending on if the topic was set or cleared
+      - If topic is set or cleared, every client in \<channel> will receive a TOPIC command with the new topic or an empty string as argument, depending on if the topic was set or cleared ✔️
     - MODE `Parameters: <target> [<modestring> [<mode arguments>...]]`
       - i: Set/remove Invite-only channel -- Invitations are not being properly registered ✔️
         - If this mode is set, users must have received an INVITE to be able to join. If they try joining without it, reject JOIN with *ERR_INVITEONLYCHAN* ✔️

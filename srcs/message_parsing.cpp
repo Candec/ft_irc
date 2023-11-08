@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/08 03:14:35 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/08 05:08:31 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -401,7 +401,9 @@ Server::topicCmd(User *user, const std::vector<std::string> &params)
 		if (channel->isTopicProtected() && !channel->isOperator(user))
 			return user->sendError(ERR_CHANOPRIVSNEEDED, channelName);
 
-		const std::string topic = joinStringsButFirst(params);
+		std::string topic = joinStringsButFirst(params);
+		if (topic[0] == ':')
+			topic.erase(topic.begin());
 
 		channel->setTopic(topic, user);
 
@@ -409,7 +411,7 @@ Server::topicCmd(User *user, const std::vector<std::string> &params)
 		if (!topic.empty())
 			reply += " " + topic;
 
-		channel->broadcast(reply);
+		channel->broadcast(reply, NULL, user->getNick());
 	}
 }
 
