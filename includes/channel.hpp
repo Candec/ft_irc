@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/08 03:18:18 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/08 03:21:48 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ class Channel
 
 		void setClientLimit(const size_t limit);
 		// void setUserModes(const User *user, const std::string mode);
-		void setHistory(const std::string &line);
+		// void setHistory(const std::string &line);
 
 		// Getters
 		const std::string	getName() const;

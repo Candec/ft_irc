@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/11/07 11:44:28 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/08 03:21:00 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,6 @@ class User
 		void setPreviousNick(const std::string &previousNick);
 		void setAway(const std::string &msg);
 		void setModes(const std::string &modes);
-		void setAtChannel(const std::string &atChannel);
 		// void setChannel(Channel *channel);
 		void setCapable(bool capable);
 
@@ -184,8 +183,6 @@ class User
 		const std::string	getPreviousNick() const;
 		const std::string	getAwayMsg() const;
 		const std::string	getModes() const;
-		const std::string	getAtChannel() const;
-		// Channel				*getChannel() const;
 		uint16_t			getPort() const;
 		bool				isCapable() const;
 

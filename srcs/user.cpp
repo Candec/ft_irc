@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/07 11:46:02 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/08 03:20:48 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,14 +59,6 @@ void User::setColor(const std::string &color) { _color = color; }
 void User::setPreviousNick(const std::string &previousNick) { _previousNick = previousNick; }
 void User::setAway(const std::string &msg) { _awayMsg = msg; }
 void User::setModes(const std::string &modes) { _modes = modes; }
-// void User::setAtChannel(const std::string &atChannel)
-// {
-// 	if (atChannel == _atChannel)
-// 		return ;
-
-// 	_atChannel = atChannel;
-// }
-// void User::setChannel(Channel *channel) { _channel = channel; }
 void User::setCapable(bool capable) { _capable = capable; }
 
 // Getters
