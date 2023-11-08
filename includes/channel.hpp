@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/06 23:14:28 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/08 03:18:18 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,13 +71,13 @@ class Channel
 		char		_status;
 
 		size_t		_client_limit;
-		std::map<int, User *>	_users;
+		std::map<const uint, User *>	_users;
 		// std::map<User *, bool>	_operators;
-		std::map<int, User *>	_operators;
+		std::map<const uint, const User *>	_operators;
 		// std::map<int, std::string>	_user_modes;
 
-		std::vector<User *>		_invitations;
-		std::map<int, User *>	_banned;
+		std::vector<const User *>	_invitations;
+		std::map<const uint, const User *>	_banned;
 
 		std::map<int, std::string>	_history;
 
@@ -110,9 +110,9 @@ class Channel
 
 		size_t				getClientLimit() const;
 		// const std::string	getUserModes(const User *user) const;
-		std::vector<User *>	getUsers() const;
-		std::vector<User *>	getOperators() const;
-		std::vector<User *>	getInvitations() const;
+		const std::vector<const User *>	getUsers() const;
+		const std::vector<const User *>	getOperators() const;
+		const std::vector<const User *>	getInvitations() const;
 
 		bool isModeImplemented(ChannelFlags::ModeLetter mode) const;
 		void addMode(ChannelFlags::ModeLetter letter, std::vector<std::string> arguments, const User *caller);
@@ -121,7 +121,7 @@ class Channel
 		// void removeMode(ChannelFlags::ModeLetter letter);
 
 		void addUser(User *user);
-		void removeUser(User *user);
+		void removeUser(const User *user);
 		void removeUser(const std::string &nick);
 
 		void ban(User *user);
@@ -135,7 +135,7 @@ class Channel
 		bool noExternalMessages() const;
 		bool isTopicProtected() const;
 
-		void addInvitedUser(User *user);
+		void addInvitedUser(const User *user);
 		bool isInvitedUser(const User *user) const;
 		void revokeInvitation(const User *user);
 

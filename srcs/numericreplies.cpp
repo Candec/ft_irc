@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 15:56:34 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/07 11:45:48 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/08 03:17:51 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ const std::string rpl_channelmodeis(const User *dest, const std::string &channel
 	// 	match getter func
 	// 		add to vector
 
-	Channel *channel = server->getChannel(channelName);
+	const Channel *channel = server->getChannel(channelName);
 	if (!channel)
 		error("No channel found @rpl_channelmodeis", EXIT);
 
@@ -99,14 +99,15 @@ const std::string rpl_channelmodeis(const User *dest, const std::string &channel
 	std::string::const_iterator it;
 	for (it = modeString.begin(); it != modeString.end(); ++it) {
 		const ChannelFlags::ModeLetter modeLetter = (ChannelFlags::ModeLetter)*it;
+
 		switch (modeLetter)
 		{
 		case ChannelFlags::INVITE_ONLY:
-		if (channel->isOperator(dest))
-			break;
 		{
-			std::vector<User *> invited = channel->getInvitations();
-			std::vector<User *>::const_iterator it2;
+			if (channel->isOperator(dest))
+				break;
+			const std::vector<const User *> invited = channel->getInvitations();
+			std::vector<const User *>::const_iterator it2;
 			for (it2 = invited.begin(); it2 != invited.end(); ++it2) {
 				tmp.push_back((*it2)->getNick());
 			}
@@ -120,8 +121,8 @@ const std::string rpl_channelmodeis(const User *dest, const std::string &channel
 			break;
 		case ChannelFlags::OPERATOR:
 		{
-			std::vector<User *> operators = channel->getOperators();
-			std::vector<User *>::const_iterator it2;
+			const std::vector<const User *> operators = channel->getOperators();
+			std::vector<const User *>::const_iterator it2;
 			for (it2 = operators.begin(); it2 != operators.end(); ++it2) {
 				tmp.push_back((*it2)->getNick());
 			}
@@ -171,11 +172,11 @@ const std::string rpl_namreply(const User *dest, const std::string &channelName)
 	if (!channel)
 		error("No channel found @rpl_namreply", EXIT);
 
-	const std::vector<User *> users = channel->getUsers();
+	const std::vector<const User *> users = channel->getUsers();
 
 	std::string reply = dest->getNick() + " " + channel->getStatus() + " " + channelName + " :";
 
-	for (std::vector<User *>::const_iterator it = users.begin(); it != users.end(); ++it) {
+	for (std::vector<const User *>::const_iterator it = users.begin(); it != users.end(); ++it) {
 		const User *user = *it;
 		if (user->isInvisible() && !server->shareChannels(dest, user))
 			continue;

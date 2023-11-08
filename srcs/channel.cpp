@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/11/07 11:15:57 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/08 03:18:22 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,23 +58,23 @@ char				Channel::getStatus() const { return _status; }
 
 size_t				Channel::getClientLimit() const { return _client_limit; }
 // const std::string	Channel::getUserModes(const User *user) const { return _user_modes.at(user->getFd()); }
-std::vector<User *>	Channel::getUsers() const
+const std::vector<const User *>	Channel::getUsers() const
 {
-	std::vector<User *> users;
+	std::vector<const User *> users;
 
-	for (std::map<int, User *>::const_iterator i = _users.begin(); i != _users.end(); ++i)
+	for (std::map<const uint, User *>::const_iterator i = _users.begin(); i != _users.end(); ++i)
 		users.push_back(i->second);
 	return users;
 }
-std::vector<User *>	Channel::getOperators() const
+const std::vector<const User *>	Channel::getOperators() const
 {
-	std::vector<User *> operators;
+	std::vector<const User *> operators;
 
-	for (std::map<int, User *>::const_iterator i = _operators.begin(); i != _operators.end(); ++i)
+	for (std::map<const uint, const User *>::const_iterator i = _operators.begin(); i != _operators.end(); ++i)
 		operators.push_back(i->second);
 	return operators;
 }
-std::vector<User *>	Channel::getInvitations() const { return _invitations; }
+const std::vector<const User *>	Channel::getInvitations() const { return _invitations; }
 
 bool Channel::isModeImplemented(ChannelFlags::ModeLetter modeLetter) const
 {
@@ -95,26 +95,36 @@ void Channel::addMode(ChannelFlags::ModeLetter letter, std::vector<std::string> 
 	if (!isModeImplemented(letter))
 		return;
 
-	User *user;
-
 	switch (letter)
 	{
 	case ChannelFlags::OPERATOR:
+	{
 		if (!arguments.size())
 			return;
 
-		user = server->getUser(arguments[0]);
+		const User *user = server->getUser(arguments[0]);
 		if (!user)
 			return;
 
-		_operators.insert(std::pair<int, User *>(user->getFd(), user));
-
+		_operators.insert(std::pair<int, const User *>(user->getFd(), user));
 		arguments.erase(arguments.begin());
+
+		log(MAGENTA + arguments[0] + RESET + " is now a channel operator of " + YELLOW + _name);
 		break;
+	}
 	case ChannelFlags::CLIENT_LIMIT:
 		if (!arguments.size())
 			return;
+
 		_client_limit = atoi(arguments[0].c_str());
+
+		log(YELLOW + _name + RESET + " now has a client limit of " + YELLOW + toString(_client_limit));
+		break;
+	case ChannelFlags::INVITE_ONLY:
+		log(YELLOW + _name + RESET + " is now an invite-only channel");
+		break;
+	case ChannelFlags::PROTECTED_TOPIC:
+		log(YELLOW + _name + RESET + "'s topic is now protected");
 		break;
 	case ChannelFlags::KEY_CHANNEL:
 		if (!arguments.size())
@@ -122,14 +132,15 @@ void Channel::addMode(ChannelFlags::ModeLetter letter, std::vector<std::string> 
 
 		setKey(arguments[0], caller);
 		arguments.erase(arguments.begin());
+
+		log(YELLOW + _name + RESET + " is now protected by key " + YELLOW + _key);
 		break;
 	default:
 		break;
 	}
 	const char mode = letter;
 
-	log(YELLOW + _name + BLUE + ": " \
-		+ GREEN + "Adding" + BLUE + " mode " + mode);
+	log(YELLOW + _name + BLUE + ": " + GREEN + "Adding" + BLUE + " mode " + mode);
 
 	if (_modes.find(mode) == std::string::npos)
 		_modes += mode;
@@ -141,12 +152,11 @@ void Channel::removeMode(ChannelFlags::ModeLetter letter, std::vector<std::strin
 	if (!isModeImplemented(letter))
 		return;
 
-	User *user;
-
 	switch (letter)
 	{
 	case ChannelFlags::OPERATOR:
-		user = server->getUser(arguments[0]);
+	{
+		const User *user = server->getUser(arguments[0]);
 		if (!user)
 			return;
 
@@ -154,16 +164,27 @@ void Channel::removeMode(ChannelFlags::ModeLetter letter, std::vector<std::strin
 			arguments.erase(arguments.begin());
 
 		_operators.erase(_operators.find(user->getFd()));
+		if (_operators.size())
+			return;
+
+		log(MAGENTA + arguments[0] + RESET + " is no longer a channel operator of " + YELLOW + _name);
 		break;
+	}
 	case ChannelFlags::CLIENT_LIMIT:
 		_client_limit = 0;
+
+		log(YELLOW + _name + RESET + " no longer has a client limit");
 		break;
 	case ChannelFlags::INVITE_ONLY:
+		log(YELLOW + _name + RESET + " is no longer an invite-only channel");
 		break;
 	case ChannelFlags::PROTECTED_TOPIC:
+		log(YELLOW + _name + RESET + "'s topic is no longer protected");
 		break;
 	case ChannelFlags::KEY_CHANNEL:
 		setKey("", caller);
+
+		log(YELLOW + _name + RESET + " is no longer protected by key");
 	default:
 		break;
 	}
@@ -195,7 +216,7 @@ void Channel::addUser(User *user)
 	else
 		user->sendReply(RPL_NOTOPIC, _name);
 }
-void Channel::removeUser(User *user)
+void Channel::removeUser(const User *user)
 {
 	if (!user)
 		return;
@@ -211,7 +232,7 @@ void Channel::removeUser(User *user)
 }
 void Channel::removeUser(const std::string &nick)
 {
-	for (std::map<int, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
+	for (std::map<const uint, User *>::iterator i = _users.begin(); i != _users.end(); ++i)
 		if (i->second->getNick() == nick)
 			return removeUser(i->second);
 }
@@ -236,7 +257,7 @@ bool Channel::noExternalMessages() const { return (_modes.find('n') != std::stri
 bool Channel::isTopicProtected() const { return (_modes.find('t') != std::string::npos); }
 
 
-void Channel::addInvitedUser(User *user)
+void Channel::addInvitedUser(const User *user)
 {
 	if (!isInvitedUser(user))
 		_invitations.push_back(user);
@@ -244,7 +265,7 @@ void Channel::addInvitedUser(User *user)
 bool Channel::isInvitedUser(const User *user) const { return (find(_invitations.begin(), _invitations.end(), user) != _invitations.end()); }
 void Channel::revokeInvitation(const User *user)
 {
-	std::vector<User *>::iterator i = find(_invitations.begin(), _invitations.end(), user);
+	std::vector<const User *>::iterator i = find(_invitations.begin(), _invitations.end(), user);
 	if (i != _invitations.end())
 		_invitations.erase(i);
 }
@@ -259,14 +280,14 @@ void Channel::broadcast(const std::string &msg, const User *exclude, const std::
 }
 void Channel::broadcast(const std::string &msg, const User *exclude) const
 {
-	for (std::map<int, User *>::const_iterator it = _users.begin(); it != _users.end(); ++it)
+	for (std::map<const uint, User *>::const_iterator it = _users.begin(); it != _users.end(); ++it)
 		if (it->second != exclude)
 			server->sendMsg(it->second, msg);
 }
 
 void Channel::update()
 {
-	for (std::map<int, User *>::const_iterator it = _users.begin(); it != _users.end(); it++)
+	for (std::map<const uint, User *>::const_iterator it = _users.begin(); it != _users.end(); it++)
 	{
 		User *user = it->second;
 		if (isMember(user))

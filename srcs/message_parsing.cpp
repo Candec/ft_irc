@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/08 01:55:32 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/08 03:14:35 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -648,7 +648,10 @@ Server::inviteCmd(User *user, const std::vector<std::string> &params)
 	else if (params.size() > 2)
 		return sendMsg(user, "Too many arguments");
 
-	User *target = getUser(params[0]);
+	const User *target = getUser(params[0]);
+	if (!target)
+		return user->sendError(ERR_NOSUCHNICK, params[0]);
+
 	const std::string channelName = params[1];
 
 	// Getting the channel
@@ -665,6 +668,7 @@ Server::inviteCmd(User *user, const std::vector<std::string> &params)
 
 	invChannel->addInvitedUser(target);
 	user->sendReply(RPL_INVITING, params);
+	server->sendMsg(target, "INVITE " + target->getNick() + " " + channelName, user->getNick());
 }
 
 
@@ -712,13 +716,13 @@ Server::whoCmd(const User *user, const std::vector<std::string> &params)
 		return error("Empty params @whoCmd", CONTINUE);
 
 	const std::string mask = params[0];
-	Channel	*target_channel = getChannel(mask);
-	User	*target_user = getUser(mask);
+	const Channel	*target_channel = getChannel(mask);
+	const User		*target_user = getUser(mask);
 
 	if (target_channel) { // Mask is channel
-		const std::vector<User *> users = target_channel->getUsers();
-		for (std::vector<User *>::const_iterator it = users.begin(); it != users.end(); ++it) {
-			User *tmp_user = *it;
+		const std::vector<const User *> users = target_channel->getUsers();
+		for (std::vector<const User *>::const_iterator it = users.begin(); it != users.end(); ++it) {
+			const User *tmp_user = *it;
 
 			std::vector<std::string> tmp;
 			tmp.push_back(tmp_user->getNick());
