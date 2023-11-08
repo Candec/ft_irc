@@ -38,6 +38,8 @@ Your executable will be run as follows:
       - If no comment is given, the server SHOULD use a default message instead ✔️
       - The server MUST NOT send KICK messages with multiple users to clients.
       - The only the last word of the reason is being sent to the kick user.
+      - cmd [/kick maria Maria, que te vayas]
+        -error: reason sent is que te vayas, omiting Maria,
     - INVITE `Parameters: <nickname> <channel>` ❌ -- Invitations are not being properly registered
       - If \<channel> doesn't exist, reject with *ERR_NOSUCHCHANNEL* ✔️
       - If caller isn't \<channel> member, reject with *ERR_NOTONCHANNEL* ✔️
