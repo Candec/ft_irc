@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/07 11:40:45 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/08 05:39:45 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -519,8 +519,7 @@ void Server::receiveMsg(std::vector<pollfd>::const_iterator it)
 	user->setPreviousPing(time(NULL));
 
 	printMsg2(user, buf);
-	struct s_msg msg = parseMessage(user, buf);
-	(void)msg;
+	parseMessage(user, buf);
 	// cout << "in pckg: " << buf << std::endl << std::flush;
 
 	user->buffer += buf;
@@ -535,12 +534,6 @@ void Server::receiveMsg(std::vector<pollfd>::const_iterator it)
 			continue;
 		user->push();
 	}
-	// messages_operations();
-
-	// printMsg(it);
-	// Channel *channel = user->getChannel();
-	// if (channel && !msg.command)
-	// 	channel->setMsg(buf, user->getNick());
 }
 
 

@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/07 11:22:12 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/08 05:39:07 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,11 @@ class Server
 		std::vector<User *> getUsers() const;
 		void delUser(User *user);
 
-		struct s_msg parseMessage(User *user, const char * const buffer);
+		void parseMessage(User *user, const char * const buffer);
 		std::vector< std::vector<std::string> >splitBuffer(const char * const buffer);
 		bool isCmd(const std::string &param) const;
 		bool isChannel(const std::string &channel) const;
-		// void lookForCmd(User *user, vector<std::string> words, struct s_msg &msg);
-		void lookForCmd(User *user, const int cmd, std::vector<std::string> params, struct s_msg &msg);
+		void lookForCmd(User *user, const int cmd, std::vector<std::string> params);
 
 		void receiveMsg(std::vector<pollfd>::const_iterator it);
 		// void printMsg(vector<pollfd>::const_iterator it);

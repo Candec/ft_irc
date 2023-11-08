@@ -6,31 +6,21 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/08 05:08:31 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/08 05:39:27 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/commands.hpp"
 #include "../includes/main.hpp"
 
-struct s_msg
+void
 Server::parseMessage(User *user, const char * const buffer)
 {
-	struct s_msg msg;
-	msg.src = user;
-	msg.timestamp = time(NULL);
-	msg.command = false;
-
-	strncpy(msg.buffer, buffer, BUFFER + 1);
-
 	std::vector< std::vector<std::string> > lines = splitBuffer(buffer);
 
 	std::vector< std::vector<std::string> >::iterator line;
 	for (line = lines.begin(); line != lines.end(); line++)
-		lookForCmd(user, cmdToEnum((*line)[0]), *line, msg);
-		// lookForCmd(user, *line, msg);
-
-	return msg;
+		lookForCmd(user, cmdToEnum((*line)[0]), *line);
 }
 
 std::vector< std::vector<std::string> >
@@ -83,13 +73,12 @@ bool
 Server::isOperator(const User *user) const { return (_operators.find(user->getFd()) != _operators.end()); }
 
 void
-Server::lookForCmd(User *user, const int cmd, std::vector<std::string> params, struct s_msg &msg)
+Server::lookForCmd(User *user, const int cmd, std::vector<std::string> params)
 {
 	if (params.empty() || user->getStatus() == UserFlags::OFFLINE)
 		return;
 
 	params.erase(params.begin());
-	msg.command = true;
 
 	switch (cmd)
 	{
