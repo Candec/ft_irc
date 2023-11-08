@@ -36,4 +36,4 @@ Remove unneeded this-> ?
 Change buffer size to 512 (split messages if they're too long i.e.: RPL_WHOISCHANNELS)
 Need to chack if rpl_channelmodeis is complete
 
-Test example not handled yet, fragmented packets need to be stitched together, then processed
+Try to disable irssi ban list recurrent query
