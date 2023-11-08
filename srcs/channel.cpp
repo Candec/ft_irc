@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/11/08 03:18:22 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/08 06:03:27 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ void Channel::setKey(const std::string &key, const User *src)
 {
 	if (key.find(' ') != std::string::npos)
 		return src->sendError(ERR_INVALIDKEY, _name);
+		// return src->sendError(ERR_INVALIDKEY, _name);
 	_key = key;
 }
 void Channel::setType(ChannelFlags::Type type) { _type = (char)type; }
@@ -107,9 +108,10 @@ void Channel::addMode(ChannelFlags::ModeLetter letter, std::vector<std::string> 
 			return;
 
 		_operators.insert(std::pair<int, const User *>(user->getFd(), user));
-		arguments.erase(arguments.begin());
 
 		log(MAGENTA + arguments[0] + RESET + " is now a channel operator of " + YELLOW + _name);
+
+		arguments.erase(arguments.begin());
 		break;
 	}
 	case ChannelFlags::CLIENT_LIMIT:
@@ -119,6 +121,8 @@ void Channel::addMode(ChannelFlags::ModeLetter letter, std::vector<std::string> 
 		_client_limit = atoi(arguments[0].c_str());
 
 		log(YELLOW + _name + RESET + " now has a client limit of " + YELLOW + toString(_client_limit));
+
+		arguments.erase(arguments.begin());
 		break;
 	case ChannelFlags::INVITE_ONLY:
 		log(YELLOW + _name + RESET + " is now an invite-only channel");
@@ -131,9 +135,10 @@ void Channel::addMode(ChannelFlags::ModeLetter letter, std::vector<std::string> 
 			return;
 
 		setKey(arguments[0], caller);
-		arguments.erase(arguments.begin());
 
 		log(YELLOW + _name + RESET + " is now protected by key " + YELLOW + _key);
+
+		arguments.erase(arguments.begin());
 		break;
 	default:
 		break;

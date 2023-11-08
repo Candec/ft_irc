@@ -61,13 +61,13 @@ Your executable will be run as follows:
       - If *RPL_TOPIC* is returned to caller, *RPL_TOPICWHOTIME* SHOULD also be sent to that client ✔️
       - If **protected topic** mode is set on \<channel> and caller isn't operator, reject with *ERR_CHANOPRIVSNEEDED* ✔️
       - If topic is set or cleared, every client in \<channel> will receive a TOPIC command with the new topic or an empty string as argument, depending on if the topic was set or cleared ✔️
-    - MODE `Parameters: <target> [<modestring> [<mode arguments>...]]`
+    - MODE `Parameters: <target> [<modestring> [<mode arguments>...]]` ✔️
       - i: Set/remove Invite-only channel -- Invitations are not being properly registered ✔️
         - If this mode is set, users must have received an INVITE to be able to join. If they try joining without it, reject JOIN with *ERR_INVITEONLYCHAN* ✔️
       - t: Set/remove the restrictions of the TOPIC command to channel operators ✔️
-        - If mode is set on channel, TOPIC caller isn't operator and is trying to set the topic, reject with *ERR_CHANOPRIVSNEEDED*
-      - k: Set/remove the channel key (password)
-        - If, when setting the key, it's invalid, reject with *ERR_INVALIDMODEPARAM*
+        - If mode is set on channel, TOPIC caller isn't operator and is trying to set the topic, reject with *ERR_CHANOPRIVSNEEDED* ✔️
+      - k: Set/remove the channel key (password) ✔️
+        - If, when setting the key, it's invalid, reject with *ERR_INVALIDMODEPARAM*/*ERR_INVALIDKEY*
         - If this mode is set and a client doesn't supply the correct key, reject JOIN with *ERR_BADCHANNELKEY* ✔️
       - o: Give/take channel operator privilege ✔️
         - Users with this mode may:
