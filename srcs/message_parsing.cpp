@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/07 11:49:31 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/08 01:55:32 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -559,7 +559,7 @@ Server::modeCmd(User *user, const std::vector<std::string> &params)
 
 /*
 * Command: KICK
-* Parameters: <channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]
+* Parameters: [<channel>] <user> *( "," <user> ) [<comment>]
 */
 void
 Server::kickCmd(User *user, std::vector<std::string> &params)

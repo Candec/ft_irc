@@ -34,12 +34,15 @@ Your executable will be run as follows:
   - Messages to channel must be sent to every other channel member ✔️
   - Operators and regular users ✔️
   - Channel Operators commands:
-    - KICK `Parameters: <channel> <user> *( "," <user> ) [<comment>]` ✔️
+    - KICK `Parameters: [<channel>] <user> *( "," <user> ) [<comment>]` ✔️
       - If no comment is given, the server SHOULD use a default message instead ✔️
       - The server MUST NOT send KICK messages with multiple users to clients.
       - The only the last word of the reason is being sent to the kick user.
       - cmd [/kick maria Maria, que te vayas]
-        -error: reason sent is que te vayas, omiting Maria,
+        -error: first word is not being added to the reason to kick
+      - if the target user is not on the client the message is not properly handle, printed on console only, but not sent to the user sending the cmd
+      - kicking a target while the user is at another channel throws a SEGV. Both clients are members of the channel the target is being kicked
+      - kicking multiple users, all members of the same channel results in SEGV --> cmd [/kick fire candec,candec_]
     - INVITE `Parameters: <nickname> <channel>` ❌ -- Invitations are not being properly registered
       - If \<channel> doesn't exist, reject with *ERR_NOSUCHCHANNEL* ✔️
       - If caller isn't \<channel> member, reject with *ERR_NOTONCHANNEL* ✔️
