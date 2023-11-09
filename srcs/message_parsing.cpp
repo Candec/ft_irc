@@ -560,39 +560,23 @@ Server::kickCmd(User *user, const std::vector<std::string> &params)
 		return user->sendError(ERR_NEEDMOREPARAMS, "");
 
 	//Get and check the channel of the command
-	long unsigned int channelParam;
 	Channel *channel;
-	if (isValidChannelName(params[1], false))
-	{
-		if (params.size() == 2)
-			return user->sendError(ERR_NEEDMOREPARAMS, "Missing target user");
-		
-		if (!isChannel(params[1]))
-			return user->sendError(ERR_NOSUCHCHANNEL, params[1]);
-
-		channelParam = 1;
-	} 
+ 
 	// If no channel was given, then take the active one, served by IRSSI
-	else if (isValidChannelName(params[0], false))
-	{
-		// It is never going to be used
-		if (params.size() == 1)
-			return user->sendError(ERR_NEEDMOREPARAMS, "Missing target user");
-	
-		if (!isChannel(params[0]))
-			return user->sendError(ERR_NOSUCHCHANNEL, params[0]);
-			
-		channelParam = 0;
-	}
+	if (params.size() == 1)
+		return user->sendError(ERR_NEEDMOREPARAMS, "Missing target user");
 
-	channel = getChannel(params[channelParam]);
-	if (!channel)
+	if (!isChannel(params[0]))
 		return user->sendError(ERR_NOSUCHCHANNEL, params[0]);
 
-	long unsigned int targetParam = channelParam + 1;
+	channel = getChannel(params[0]);
+
+	if (!channel)
+		return user->sendError(ERR_NOSUCHCHANNEL, params[0]);
+	
 	// Get and check the targets of the command
 	std::vector<User *>targets;
-	std::vector<std::string> nicks = splitString(params[targetParam], ",");
+	std::vector<std::string> nicks = splitString(params[1], ",");
 	for	(std::vector<string>::const_iterator it = nicks.begin(); it != nicks.end(); ++it)
 	{
 		User *target = getUser(*it);
@@ -620,16 +604,12 @@ Server::kickCmd(User *user, const std::vector<std::string> &params)
 
 
 	// Create the reason string or set the default
-	long unsigned int reasonParam = targetParam + 1;
-	std::string reason = "you have been kicked by " + user->getNick();
-	if (params.size() > reasonParam)
+	std::string reason = " :you have been kicked by " + user->getNick();
+	if (params.size() > 2)
 	{
 		vector<std::string> reasonStr;
-		for (std::vector<std::string>::const_iterator it = params.begin() + reasonParam; it != params.end(); ++it)
-		{
-			std::cout << "Param: " << *it << std::endl << std::flush;
+		for (std::vector<std::string>::const_iterator it = params.begin() + 2; it != params.end(); ++it)
 			reasonStr.push_back(*it);
-		}
 		reason = joinStrings(reasonStr);
 		reason.erase(0, 1);
 	}
