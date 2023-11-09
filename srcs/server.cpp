@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/08 07:37:24 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/09 00:44:40 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -428,7 +428,7 @@ void Server::sendMsg(const int user_fd, const std::string &msg) const
 void Server::sendMsg(const User *user, const std::string &msg) const
 {
 	const std::string tmp = msg + " " + MESSAGE_END;
-	if (send(user->getFd(), tmp.c_str(), tmp.size(), 0) == SENDING_ERROR)
+	if (send(user->getFd(), tmp.c_str(), tmp.size(), MSG_NOSIGNAL) == SENDING_ERROR)
 		error("Error sending message", CONTINUE);
 
 	std::ostringstream oss;
@@ -513,6 +513,8 @@ void Server::receiveMsg(std::vector<pollfd>::const_iterator it)
 
 	user->setPreviousPing(time(NULL));
 
+	// std::cout << "in pckg: " << buf << std::endl << std::flush;
+
 	user->buffer += buf;
 
 	if (user->buffer.find('\n') == std::string::npos) {
@@ -524,7 +526,6 @@ void Server::receiveMsg(std::vector<pollfd>::const_iterator it)
 	parseMessage(user, user->buffer.c_str());
 	user->buffer.clear();
 
-	// cout << "in pckg: " << buf << std::endl << std::flush;
 
 	// const std::string	delimiter(MESSAGE_END);
 	// size_t				position;

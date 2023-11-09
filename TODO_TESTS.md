@@ -89,12 +89,12 @@ You must use file descriptors in non-blocking mode in order to get a behavior si
 
 However, you are allowed to use fcntl() only as follows:
 fcntl(fd, F_SETFL, O_NONBLOCK);
-Any other flag is forbidden.
+Any other flag is forbidden. ✔️
 
-### Test example
+### Test example ✔️
 
 Verify absolutely every possible error and issue (receiving partial data, low bandwidth, and so forth).
-To ensure that your server correctly processes everything that you send to it, the following simple test using nc can be done: ✔️
+To ensure that your server correctly processes everything that you send to it, the following simple test using nc can be done:
 
 \$> nc 127.0.0.1 6667
 com^Dman^Dd
@@ -103,10 +103,10 @@ com^Dman^Dd
 Use ctrl+D to send the command in several parts: ’com’, then ’man’, then ’d\n’.
 In order to process a command, you have to first aggregate the received packets in order to rebuild it.
 
-## Bonus part
+## Bonus part ❌
 
-- Handle file transfer.
-- A bot.
+- Handle file transfer. ❌
+- A bot. ❌
 
 ## Correction
 
@@ -114,13 +114,13 @@ In order to process a command, you have to first aggregate the received packets 
 
 #### Basic checks
 
-- There is a Makefile, the project compiles correctly with the required options, is written in C++, and the executable is called as expected.
+- There is a Makefile, the project compiles correctly with the required options, is written in C++, and the executable is called as expected. ✔️
 - Ask and check how many poll() (or equivalent) are present in the code. There must be only one. ✔️
 - Verify that the poll() (or equivalent) is called every time before each accept, read/recv, write/send. After these calls, errno should not be used to trigger specific action (e.g. like reading again after errno == EAGAIN).
 - Verify that each call to fcntl() is done as follows: fcntl(fd, F_SETFL, O_NONBLOCK); Any other use of fcntl() is forbidden. ✔️
 - If any of these points is wrong, the evaluation ends now and the final mark is 0.
 
-#### Networking
+#### Networking ✔️
 
 Check the following requirements:
 
@@ -138,7 +138,8 @@ Network communications can be disturbed by many strange situations.
 - Just like in the subject, using nc, try to send partial commands. Check that the server answers correctly. With a partial command sent, ensure that other connections still run fine. ✔️
 - Unexpectedly kill a client. Then check that the server is still operational for the other connections and for any new incoming client. 🟡
   - It crashes the server (sometimes), I think it would be best to check user status before each send. Ctrl-C'd netcat and one of the times it closed without error message when trying to send PART command to netcat's user but the other time it worked.
-- Unexpectedly kill a nc with just half of a command sent. Check again that the server is not in an odd state or blocked.
+  - Now added MSG_NOSIGNAL flag to send() so it doesn't generate a SIGPIPE signal if the peer on a stream-oriented socket has closed the connection. Requires further testing
+- Unexpectedly kill a nc with just half of a command sent. Check again that the server is not in an odd state or blocked. ✔️
 - Stop a client (^-Z) connected on a channel. Then flood the channel using another client. The server should not hang. When the client is live again, all stored commands should be processed normally. Also, check for memory leaks during this operation.
 
 #### Client Commands basic
@@ -146,11 +147,11 @@ Network communications can be disturbed by many strange situations.
 - With both nc and the reference IRC client, check that you can authenticate, set a nickname, a username, join a channel. This should be fine (you should have already done this previously). ✔️
 - Verify that private messages (PRIVMSG) are fully functional with different parameters.
 
-#### Client Commands channel operator
+#### Client Commands channel operator ✔️
 
-- With both nc and the reference IRC client, check that a regular user does not have privileges to do channel operator actions. Then test with an operator. All the channel operation commands should be tested (remove one point for each feature that is not working).
+- With both nc and the reference IRC client, check that a regular user does not have privileges to do channel operator actions. Then test with an operator. All the channel operation commands should be tested (remove one point for each feature that is not working). ✔️
 
-### Bonus part
+### Bonus part ❌
 
 Evaluate the bonus part if, and only if, the mandatory part has been entirely and perfectly done, and the error management handles unexpected or bad usage. In case all the mandatory points were not passed during the defense, bonus points must be totally ignored.
 
