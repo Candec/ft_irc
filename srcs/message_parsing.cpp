@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/08 05:39:27 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/09 00:20:37 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -553,76 +553,79 @@ Server::modeCmd(User *user, const std::vector<std::string> &params)
 * Parameters: [<channel>] <user> *( "," <user> ) [<comment>]
 */
 void
-Server::kickCmd(User *user, std::vector<std::string> &params)
+Server::kickCmd(User *user, const std::vector<std::string> &params)
 {
 	std::vector<std::string> firstSplit;
-	std::vector<Channel *> channels;
-	std::vector<std::string> nicks;
 	vector<std::string> reasonParams;
 	std::string reason;
 
-	if (params.size() < 1)
+	// The command needs at least a single param
+	if (params.size() <= 1)
 		return user->sendError(ERR_NEEDMOREPARAMS, "");
 
-	firstSplit = splitString(params[0], ",");
-
-	if (isChannel(firstSplit[0]))
+	// Get and check the channel of the command
+	Channel * channel;
+	if (isValidChannelName(params[0]))
 	{
-		for (std::vector<std::string>::iterator it = firstSplit.begin(); it != firstSplit.end(); ++it)
+		channel = getChannel(params[0]);
+		if (!channel)
+			return user->sendError(ERR_NOSUCHCHANNEL, params[0]);
+
+		// It is never going to be used
+		if (params.size() == 1)
+			return user->sendError(ERR_NEEDMOREPARAMS, "Missing target user");
+	}
+
+	// OP priviledges of the channel required
+	if (!channel->isOperator(user))
+		return user->sendError(ERR_CHANOPRIVSNEEDED, "");
+
+	// Get and check the targets of the command
+	std::vector<User *>targets;
+	std::vector<std::string> nicks = splitString(params[1], ",");
+	for	(std::vector<string>::const_iterator it = nicks.begin(); it != nicks.end(); ++it)
+	{
+		User *target = getUser(*it);
+		if (!target)
 		{
-			if (!getChannel(*it))
-				return user->sendError(ERR_NOSUCHCHANNEL, *it);
-
-			channels.push_back(getChannel(*it));
+			user->sendError(ERR_NOSUCHNICK, *it);
+			continue;
 		}
-		nicks = splitString(params[1], ",");
-	}
-	else
-	{
-		nicks = firstSplit;
-		// channels.push_back(user->getChannel());
+
+		if (!channel->isMember(target))
+		{
+			user->sendError(ERR_NOTONCHANNEL, *it);
+			continue;
+		}
+
+		targets.push_back(target);
 	}
 
-	if (channels.size() > nicks.size())
-		return user->sendError(ERR_NEEDMOREPARAMS, "Required as many channel parameters as there are user parameters");
+	if (targets.empty())
+		return; // Should be sent an error here? There is none for when all the parameters are invalid
 
-	if (params.size() > 3)
+	// Create the reason string or set the default
+	if (params.size() >= 3)
 	{
-		for (std::vector<std::string>::iterator it = params.begin() + 2; it != params.end(); ++it)
+		for (std::vector<std::string>::const_iterator it = params.begin() + 2; it != params.end(); ++it)
 			reasonParams.push_back(*it);
 		reason = joinStrings(reasonParams);
 	}
 	else
 		reason = "you have been kicked by " + user->getNick();
 
-	for (std::vector<Channel *>::iterator i = channels.begin(); i != channels.end(); ++i) {
-		Channel *target = *i;
-		if (!target->isOperator(user))
-			return user->sendError(ERR_CHANOPRIVSNEEDED, target->getName());
-	}
+	for (std::vector<User *>::iterator it = targets.begin(); it != targets.end(); ++it)
+	{
+		User *target = *it;
 
-	for (std::vector<Channel *>::iterator i = channels.begin(); i != channels.end(); ++i) {
-		Channel *channel = *i;
-		for (std::vector<std::string>::iterator it = nicks.begin(); it != nicks.end(); ++it)
-		{
-			User *target = getUser(*it);
-
-			if (!channel) {
-				user->sendError(ERR_NOSUCHCHANNEL, *it);
-				continue;
-			}
-
-			if (!channel->isMember(getUser(*it))) {
-				user->sendError(ERR_NOTONCHANNEL, *it);
-				continue;
-			}
-
-			if (target->isChannelMember(channel->getName()))
-				target->leaveChannel(channel);
-			sendMsg(target, reason);
-			const std::string cast(target->getNick() + " was kicked from " + channel->getName());
-			channel->broadcast(cast);
+		if (!channel->isMember(target)) {
+			user->sendError(ERR_NOTONCHANNEL, target->getNick());
+			continue;
 		}
+
+		target->leaveChannel(channel, target->getNick() + " was kicked from " + channel->getName());
+		sendMsg(target, reason);
+		// channel->broadcast(target->getNick() + " was kicked from " + channel->getName(), NULL, user->getNick());
 	}
 }
 
@@ -665,7 +668,7 @@ Server::inviteCmd(User *user, const std::vector<std::string> &params)
 
 /*
 * Command: PART
-* Parameters: <channel>{,<channel>} [<reason>]
+* Parameters: [<channel>{,<channel>}] [<reason>]
 */
 void
 Server::partCmd(User *user, const std::vector<std::string> &params)

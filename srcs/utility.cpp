@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utility.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:06 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/08 05:28:56 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/08 21:50:19 by jibanez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,4 +179,9 @@ const std::string removeColor(std::string str)
 			str.erase(pos, lastPos - pos + 1);
 	}
 	return str;
+}
+
+bool identifiedAsChannel(std::string param)
+{
+	return (param[0] == ChannelFlags::REGULAR || param[0] == ChannelFlags::LOCAL);
 }
