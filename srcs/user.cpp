@@ -6,13 +6,17 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 19:40:37 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/08 23:16:07 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/09 08:09:22 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/user.hpp"
 
-User::User(const int fd, struct sockaddr_in addr) : _joinTime(time(NULL)), _fd(fd), _previousPing(time(0)), _role("user")
+User::User(const int fd, struct sockaddr_in addr)
+	:	_joinTime(time(NULL)),
+		_fd(fd),
+		_previousPing(time(0)),
+		_capable(false)
 {
 	//Shouldn't be required in linux. It is to block simultanious accesses to the fd
 	fcntl(fd, F_SETFL, O_NONBLOCK);
@@ -36,7 +40,7 @@ User::User(const int fd, struct sockaddr_in addr) : _joinTime(time(NULL)), _fd(f
 	}
 
 	setNick("Annon-" + toString(fd));
-	setCapable(false);
+	// setCapable(false);
 }
 
 User::~User() { close(_fd); }
@@ -247,13 +251,13 @@ void User::removeMode(UserFlags::ModeLetter modeLetter)
 bool User::isInvisible() const { return (_modes.find('i') != std::string::npos); }
 bool User::isAway() const { return !_awayMsg.empty(); }
 
-void User::sendReply(Replies type) const { sendReply(type, "", ""); }
-void User::sendReply(Replies type, const std::string &param) const { sendReply(type, param, ""); }
-void User::sendReply(Replies type, const std::vector<std::string> &params) const { sendReply(type, params, ""); }
-void User::sendReply(Replies type, const std::string &param, const std::string &cmd) const { sendReply(type, std::vector<std::string>(1, param), cmd); }
-void User::sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd) const { sendReply(type, params, cmd, "", ""); }
-void User::sendReply(Replies type, const std::string &param, const std::string &cmd, const std::string &tags, const std::string &src) const { sendReply(type, std::vector<std::string>(1, param), cmd, tags, src); }
-void User::sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd, const std::string &tags, const std::string &src) const
+void User::sendReply(Replies type) { sendReply(type, "", ""); }
+void User::sendReply(Replies type, const std::string &param) { sendReply(type, param, ""); }
+void User::sendReply(Replies type, const std::vector<std::string> &params) { sendReply(type, params, ""); }
+void User::sendReply(Replies type, const std::string &param, const std::string &cmd) { sendReply(type, std::vector<std::string>(1, param), cmd); }
+void User::sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd) { sendReply(type, params, cmd, "", ""); }
+void User::sendReply(Replies type, const std::string &param, const std::string &cmd, const std::string &tags, const std::string &src) { sendReply(type, std::vector<std::string>(1, param), cmd, tags, src); }
+void User::sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd, const std::string &tags, const std::string &src)
 {
 	std::string reply;
 
@@ -334,11 +338,11 @@ void User::sendReply(Replies type, const std::vector<std::string> &params, const
 }
 
 
-void User::sendError(Errors type) const { sendError(type, "", ""); }
-void User::sendError(Errors type, const std::string &param) const { sendError(type, param, ""); }
-void User::sendError(Errors type, const std::string &param, const std::string &cmd) const { sendError(type, std::vector<std::string>(1, param), cmd); }
-void User::sendError(Errors type, const std::vector<std::string> &params) const { sendError(type, params, ""); }
-void User::sendError(Errors type, const std::vector<std::string> &params, const std::string &cmd) const
+void User::sendError(Errors type) { sendError(type, "", ""); }
+void User::sendError(Errors type, const std::string &param) { sendError(type, param, ""); }
+void User::sendError(Errors type, const std::string &param, const std::string &cmd) { sendError(type, std::vector<std::string>(1, param), cmd); }
+void User::sendError(Errors type, const std::vector<std::string> &params) { sendError(type, params, ""); }
+void User::sendError(Errors type, const std::vector<std::string> &params, const std::string &cmd)
 {
 	std::string reply;
 

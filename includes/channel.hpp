@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:30 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/08 03:21:48 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/09 07:34:23 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ class Channel
 		void setName(const std::string &name);
 		void setMode(const std::string &mode);
 		void setTopic(const std::string &topic, const User *setBy);
-		void setKey(const std::string &key, const User *src);
+		void setKey(const std::string &key, User *src);
 		void setType(ChannelFlags::Type type);
 		void setStatus(ChannelFlags::Status status);
 
@@ -115,7 +115,7 @@ class Channel
 		const std::vector<const User *>	getInvitations() const;
 
 		bool isModeImplemented(ChannelFlags::ModeLetter mode) const;
-		void addMode(ChannelFlags::ModeLetter letter, std::vector<std::string> arguments, const User *caller);
+		void addMode(ChannelFlags::ModeLetter letter, std::vector<std::string> arguments, User *caller);
 		// void addMode(ChannelFlags::ModeLetter letter);
 		void removeMode(ChannelFlags::ModeLetter letter, std::vector<std::string> &arguments, User *caller);
 		// void removeMode(ChannelFlags::ModeLetter letter);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message_parsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 21:15:51 by fporto            #+#    #+#             */
-/*   Updated: 2023/11/09 00:20:37 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/09 08:09:48 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -642,7 +642,7 @@ Server::inviteCmd(User *user, const std::vector<std::string> &params)
 	else if (params.size() > 2)
 		return sendMsg(user, "Too many arguments");
 
-	const User *target = getUser(params[0]);
+	User *target = getUser(params[0]);
 	if (!target)
 		return user->sendError(ERR_NOSUCHNICK, params[0]);
 
@@ -704,7 +704,7 @@ Server::partCmd(User *user, const std::vector<std::string> &params)
 * Parameters: <mask>
 */
 void
-Server::whoCmd(const User *user, const std::vector<std::string> &params)
+Server::whoCmd(User *user, const std::vector<std::string> &params)
 {
 	if (params.empty())
 		return error("Empty params @whoCmd", CONTINUE);
@@ -735,7 +735,7 @@ Server::whoCmd(const User *user, const std::vector<std::string> &params)
 * Parameters: [<target>] <nick>
 */
 void
-Server::whoisCmd(const User *user, const std::vector<std::string> &params)
+Server::whoisCmd(User *user, const std::vector<std::string> &params)
 {
 	std::string targetNick;
 

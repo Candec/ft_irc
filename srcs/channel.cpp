@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:16:55 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/11/08 06:03:27 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/09 07:34:11 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void Channel::setTopic(const std::string &topic, const User *setBy)
 	_topic.setBy = setBy;
 	_topic.setAt = time(NULL);
 }
-void Channel::setKey(const std::string &key, const User *src)
+void Channel::setKey(const std::string &key, User *src)
 {
 	if (key.find(' ') != std::string::npos)
 		return src->sendError(ERR_INVALIDKEY, _name);
@@ -91,7 +91,7 @@ bool Channel::isModeImplemented(ChannelFlags::ModeLetter modeLetter) const
 		return false;
 	}
 }
-void Channel::addMode(ChannelFlags::ModeLetter letter, std::vector<std::string> arguments, const User *caller)
+void Channel::addMode(ChannelFlags::ModeLetter letter, std::vector<std::string> arguments, User *caller)
 {
 	if (!isModeImplemented(letter))
 		return;

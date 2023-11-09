@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:24 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/08 21:12:28 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/09 08:17:47 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ class Server
 		std::map<std::string, Channel *> _channels;
 		std::map<int, User *>	_operators;
 		std::map<int, User *>	_users;
-		std::vector<pollfd>		_pollfds;
+		std::vector<pollfd>		_pollfds_in;
+		std::vector<pollfd>		_pollfds_out;
 
 		const time_t _upTime;
 		time_t _previousPing;
@@ -103,8 +104,8 @@ class Server
 		void kickCmd(User *user, const std::vector<std::string> &params);
 		void inviteCmd(User *user, const std::vector<std::string> &params);
 		void partCmd(User *user, const std::vector<std::string> &params);
-		void whoCmd(const User *user, const std::vector<std::string> &params);
-		void whoisCmd(const User *user, const std::vector<std::string> &params);
+		void whoCmd(User *user, const std::vector<std::string> &params);
+		void whoisCmd(User *user, const std::vector<std::string> &params);
 
 
 
@@ -121,24 +122,26 @@ class Server
 		void setPort(const char * const arg);
 		void setPassword(const std::string &password);
 
-		void sendMsg(const User *user, const int n) const;
-		void sendMsg(const User *user, const std::string &msg, const std::string &src) const;
+		void sendMsg(User *user, const int n) const;
+		void sendMsg(User *user, const std::string &msg, const std::string &src) const;
 		void sendMsg(const int user_fd, const std::string &msg) const;
 		void sendMsg(const int user_fd, const int n) const;
-		void sendMsg(const User *user, const std::string &msg) const;
+		void sendMsg(User *user, const std::string &msg) const;
+
+		void sendBuffer(const int user_fd) const;
 
 		void broadcast(const std::string &message) const;
 
-		void sendClear(const User *user) const;
+		void sendClear(User *user) const;
 		void sendClear(const int user_fd) const;
 
 		void sendColorMsg(const int user_fd, const std::string &msg, const std::string &color) const;
-		void sendColorMsg(const User *user, const std::string &msg, const std::string &color) const;
+		void sendColorMsg(User *user, const std::string &msg, const std::string &color) const;
 
 		void sendErrFatal(User *user, const std::string &reason);
 
 		Channel *createChannel(const std::string &channelName);
-		Channel *createChannel(const std::string &channelName, const User *creator);
+		Channel *createChannel(const std::string &channelName, User *creator);
 		Channel *getChannel(const std::string &channelName) const;
 		std::vector<Channel *> getChannels() const;
 

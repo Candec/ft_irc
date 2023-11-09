@@ -38,3 +38,15 @@ Need to chack if rpl_channelmodeis is complete
 
 Try to disable irssi ban list recurrent query
 /MODE <channel> lists operators separated by space. Should it be by comma?
+Check for memory leaks with valgrind
+
+New branch:
+	Each user has a pointer to their pollfd
+	Check if poll() == POLLOUT before send()
+	Test with HexChat
+
+irssi:
+	AppImage
+	Flatpak
+	Snap
+	Docker container
