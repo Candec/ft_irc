@@ -37,3 +37,4 @@ Change buffer size to 512 (split messages if they're too long i.e.: RPL_WHOISCHA
 Need to chack if rpl_channelmodeis is complete
 
 Try to disable irssi ban list recurrent query
+/MODE <channel> lists operators separated by space. Should it be by comma?
