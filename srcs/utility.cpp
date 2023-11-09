@@ -77,7 +77,7 @@ const std::string timestamp()
 	return (str.str());
 }
 
-bool isValidChannelName(const std::string& name)
+bool isValidChannelName(const std::string& name, bool warnings)
 {
 	/*
 	** Name max length is 200 chars
@@ -87,18 +87,21 @@ bool isValidChannelName(const std::string& name)
 	** Can't contain ' ', ascii 7 or ','
 	*/
 	if (name.size() > CHANNEL_NAME_MAX_LEN) {
-		error("Channel name too long", CONTINUE);
+		if (warnings)
+			error("Channel name too long", CONTINUE);
 		return false;
 	}
 	if (name[0] != '&' && name[0] != '#') {
-		error("Missing \"" + name + "\"'s &/# channel identifier", CONTINUE);
+		if (warnings)
+			error("Missing \"" + name + "\"'s &/# channel identifier", CONTINUE);
 		return false;
 	}
 	if (name.find(' ') != std::string::npos \
 		|| name.find(7) != std::string::npos \
 		|| name.find(',') != std::string::npos
 	) {
-		error("Invalid character in name", CONTINUE);
+		if (warnings)
+			error("Invalid character in name", CONTINUE);
 		return false;
 	}
 	return true;

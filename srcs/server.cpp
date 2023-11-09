@@ -306,7 +306,7 @@ void Server::createUser()
 
 Channel *Server::createChannel(const std::string &channelName)
 {
-	if (!isValidChannelName(channelName))
+	if (!isValidChannelName(channelName, true))
 		return NULL;
 
 	// cout << GREEN << "Creating channel " << YELLOW << channelName << RESET << std::flush;
@@ -329,7 +329,7 @@ Channel *Server::createChannel(const std::string &channelName)
 }
 Channel *Server::createChannel(const std::string &channelName, const User *creator)
 {
-	if (isValidChannelName(channelName))
+	if (isValidChannelName(channelName, true))
 		return createChannel(channelName);
 	creator->sendError(ERR_BADCHANMASK, channelName);
 	return NULL;

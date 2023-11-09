@@ -38,7 +38,7 @@ const std::string	toString(const size_t n);
 const std::string	codeToString(const int code);
 
 const std::string	timestamp();
-bool				isValidChannelName(const std::string& name);
+bool				isValidChannelName(const std::string& name, bool warnings);
 
 const std::vector<std::string>	splitString(std::string str, const std::string &delimiter);
 const std::string				joinStrings(const std::vector<std::string> &strings);

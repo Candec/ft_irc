@@ -555,34 +555,38 @@ Server::modeCmd(User *user, const std::vector<std::string> &params)
 void
 Server::kickCmd(User *user, const std::vector<std::string> &params)
 {
-	std::vector<std::string> firstSplit;
-	vector<std::string> reasonParams;
-	std::string reason;
-
 	// The command needs at least a single param
 	if (params.size() <= 1)
 		return user->sendError(ERR_NEEDMOREPARAMS, "");
 
-	// Get and check the channel of the command
-	Channel * channel;
-	if (isValidChannelName(params[0]))
+	//Get and check the channel of the command
+	long unsigned int channelParam;
+	Channel *channel;
+	if (isValidChannelName(params[1], false))
 	{
-		channel = getChannel(params[0]);
-		if (!channel)
-			return user->sendError(ERR_NOSUCHCHANNEL, params[0]);
-
+		if (params.size() == 2)
+			return user->sendError(ERR_NEEDMOREPARAMS, "Missing target user");
+		
+		channelParam = 1;
+	} 
+	// If no channel was given, then take the active one, served by IRSSI
+	else if (isValidChannelName(params[0], false))
+	{
 		// It is never going to be used
 		if (params.size() == 1)
 			return user->sendError(ERR_NEEDMOREPARAMS, "Missing target user");
+	
+		channelParam = 0;
 	}
 
-	// OP priviledges of the channel required
-	if (!channel->isOperator(user))
-		return user->sendError(ERR_CHANOPRIVSNEEDED, "");
+	channel = getChannel(params[channelParam]);
+	if (!channel)
+		return user->sendError(ERR_NOSUCHCHANNEL, params[0]);
 
+	long unsigned int targetParam = channelParam + 1;
 	// Get and check the targets of the command
 	std::vector<User *>targets;
-	std::vector<std::string> nicks = splitString(params[1], ",");
+	std::vector<std::string> nicks = splitString(params[targetParam], ",");
 	for	(std::vector<string>::const_iterator it = nicks.begin(); it != nicks.end(); ++it)
 	{
 		User *target = getUser(*it);
@@ -603,16 +607,26 @@ Server::kickCmd(User *user, const std::vector<std::string> &params)
 
 	if (targets.empty())
 		return; // Should be sent an error here? There is none for when all the parameters are invalid
+	
+	// OP priviledges of the channel required
+	if (!channel->isOperator(user))
+		return user->sendError(ERR_CHANOPRIVSNEEDED, "");
+
 
 	// Create the reason string or set the default
-	if (params.size() >= 3)
+	long unsigned int reasonParam = targetParam + 1;
+	std::string reason = "you have been kicked by " + user->getNick();
+	if (params.size() > reasonParam)
 	{
-		for (std::vector<std::string>::const_iterator it = params.begin() + 2; it != params.end(); ++it)
-			reasonParams.push_back(*it);
-		reason = joinStrings(reasonParams);
+		vector<std::string> reasonStr;
+		for (std::vector<std::string>::const_iterator it = params.begin() + reasonParam; it != params.end(); ++it)
+		{
+			std::cout << "Param: " << *it << std::endl << std::flush;
+			reasonStr.push_back(*it);
+		}
+		reason = joinStrings(reasonStr);
+		reason.erase(0, 1);
 	}
-	else
-		reason = "you have been kicked by " + user->getNick();
 
 	for (std::vector<User *>::iterator it = targets.begin(); it != targets.end(); ++it)
 	{
