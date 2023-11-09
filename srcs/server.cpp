@@ -250,9 +250,9 @@ std::vector<User *> Server::getUsers() const
 
 Channel *Server::getChannel(const std::string &channelName) const
 {
-	if (_channels.find(channelName) == _channels.end())
-		return NULL;
-	return _channels.at(channelName);
+	if (_channels.find(channelName) != _channels.end())
+		return _channels.at(channelName);
+	return NULL;
 }
 
 std::vector<Channel *> Server::getChannels() const

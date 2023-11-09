@@ -567,6 +567,9 @@ Server::kickCmd(User *user, const std::vector<std::string> &params)
 		if (params.size() == 2)
 			return user->sendError(ERR_NEEDMOREPARAMS, "Missing target user");
 		
+		if (!isChannel(params[1]))
+			return user->sendError(ERR_NOSUCHCHANNEL, params[1]);
+
 		channelParam = 1;
 	} 
 	// If no channel was given, then take the active one, served by IRSSI
@@ -576,6 +579,9 @@ Server::kickCmd(User *user, const std::vector<std::string> &params)
 		if (params.size() == 1)
 			return user->sendError(ERR_NEEDMOREPARAMS, "Missing target user");
 	
+		if (!isChannel(params[0]))
+			return user->sendError(ERR_NOSUCHCHANNEL, params[0]);
+			
 		channelParam = 0;
 	}
 
