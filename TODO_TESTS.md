@@ -140,12 +140,12 @@ Network communications can be disturbed by many strange situations.
   - It crashes the server (sometimes), I think it would be best to check user status before each send. Ctrl-C'd netcat and one of the times it closed without error message when trying to send PART command to netcat's user but the other time it worked.
   - Now added MSG_NOSIGNAL flag to send() so it doesn't generate a SIGPIPE signal if the peer on a stream-oriented socket has closed the connection. Requires further testing
 - Unexpectedly kill a nc with just half of a command sent. Check again that the server is not in an odd state or blocked. ✔️
-- Stop a client (^-Z) connected on a channel. Then flood the channel using another client. The server should not hang. When the client is live again, all stored commands should be processed normally. Also, check for memory leaks during this operation.
+- Stop a client (^-Z) connected on a channel. Then flood the channel using another client. The server should not hang. When the client is live again, all stored commands should be processed normally. Also, check for memory leaks during this operation. ✔️
 
 #### Client Commands basic
 
 - With both nc and the reference IRC client, check that you can authenticate, set a nickname, a username, join a channel. This should be fine (you should have already done this previously). ✔️
-- Verify that private messages (PRIVMSG) are fully functional with different parameters.
+- Verify that private messages (PRIVMSG) are fully functional with different parameters. ✔️
 
 #### Client Commands channel operator ✔️
 
