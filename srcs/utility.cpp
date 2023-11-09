@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utility.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jibanez- <jibanez-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:06 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/08 21:50:19 by jibanez-         ###   ########.fr       */
+/*   Updated: 2023/11/09 00:35:40 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void error(const std::string &str, const bool quit)
 {
 	log("Error: " + str, false);
-	std::cout << RED_BG << "Error: " << RESET << RED << str << RESET << std::endl << std::flush;
+	std::cout << RED_BG << "Error: " << str << RESET << std::endl << std::flush;
 	if (quit)
 		exit(EXIT_FAILURE);
 }
