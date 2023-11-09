@@ -120,6 +120,8 @@ const std::vector<std::string> splitString(std::string str, const std::string &d
 			ret.push_back(str.substr(0, pos));
 			str.erase(0, pos + delimiter.length());
 		}
+		if (!str.empty())
+			ret.push_back(str);
 		if (ret.empty())
 			ret = std::vector<std::string>(1, str);
 	}
