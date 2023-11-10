@@ -603,8 +603,8 @@ Server::kickCmd(User *user, const std::vector<std::string> &params)
 
 		User *target = getUser(targetNick);
 
-		channel->broadcast("KICK " + channelName + " " + targetNick, NULL, user->getNick());
-		target->leaveChannel(channel, target->getNick() + " was kicked");
+		channel->broadcast("KICK " + channelName + " " + targetNick + " :" + reason, NULL, user->getNick());
+		target->leaveChannel(channel, target->getNick() + " was kicked. Reason: " + reason);
 	}
 }
 
