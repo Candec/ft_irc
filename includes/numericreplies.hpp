@@ -52,6 +52,7 @@ const std::string err_toomanychannels(const User *dest, const std::string &attem
 const std::string err_nonicknamegiven(const User *dest);
 const std::string err_erroneusnickname(const User *dest, const std::string &nick);
 const std::string err_nicknameinuser(const User *dest, const std::string &nick);
+const std::string err_usernotinchannel(const User *dest, const std::vector<std::string> &params);
 const std::string err_notonchannel(const User *dest, const std::string &channelName);
 const std::string err_useronchannel(const User *dest, const std::string &targetNick, const std::string &channelName);
 const std::string err_needmoreparams(const User *dest, const std::string &command);

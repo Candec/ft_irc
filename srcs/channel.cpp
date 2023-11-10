@@ -254,6 +254,14 @@ void Channel::unban(const User *user)
 }
 
 bool Channel::isMember(const User *user) const { return (_users.find(user->getFd()) != _users.end()); }
+bool Channel::isMember(const std::string &nick) const
+{
+	std::map<const uint, User *>::const_iterator it;
+	for (it = _users.begin(); it != _users.end(); ++it)
+		if (it->second->getNick() == nick)
+			return true;
+	return false;
+}
 bool Channel::isOperator(const User *user) const { return (_operators.find(user->getFd()) != _operators.end()); }
 bool Channel::isFull() const { return (_users.size() == _client_limit); }
 bool Channel::isBanned(const User *user) const { return (_banned.find(user->getFd()) != _banned.end()); }

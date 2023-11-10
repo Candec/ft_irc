@@ -550,58 +550,28 @@ Server::modeCmd(User *user, const std::vector<std::string> &params)
 
 /*
 * Command: KICK
-* Parameters: [<channel>] <user> *( "," <user> ) [<comment>]
+* Parameters: <channel> <user> *( "," <user> ) [<comment>]
 */
 void
 Server::kickCmd(User *user, const std::vector<std::string> &params)
 {
 	// The command needs at least a single param
 	if (params.size() <= 1)
-		return user->sendError(ERR_NEEDMOREPARAMS, "");
+		return user->sendError(ERR_NEEDMOREPARAMS, "", "KICK");
+
+	const std::string channelName = params[0];
 
 	//Get and check the channel of the command
-	Channel *channel;
- 
-	// If no channel was given, then take the active one, served by IRSSI
-	if (params.size() == 1)
-		return user->sendError(ERR_NEEDMOREPARAMS, "Missing target user");
-
-	if (!isChannel(params[0]))
-		return user->sendError(ERR_NOSUCHCHANNEL, params[0]);
-
-	channel = getChannel(params[0]);
-
+	Channel *channel = getChannel(channelName);
 	if (!channel)
-		return user->sendError(ERR_NOSUCHCHANNEL, params[0]);
-	
-	// Get and check the targets of the command
-	std::vector<User *>targets;
-	std::vector<std::string> nicks = splitString(params[1], ",");
-	for	(std::vector<string>::const_iterator it = nicks.begin(); it != nicks.end(); ++it)
-	{
-		User *target = getUser(*it);
-		if (!target)
-		{
-			user->sendError(ERR_NOSUCHNICK, *it);
-			continue;
-		}
+		return user->sendError(ERR_NOSUCHCHANNEL, channelName);
 
-		if (!channel->isMember(target))
-		{
-			user->sendError(ERR_NOTONCHANNEL, *it);
-			continue;
-		}
+	if (!channel->isMember(user))
+		return user->sendError(ERR_NOTONCHANNEL, channelName);
 
-		targets.push_back(target);
-	}
-
-	if (targets.empty())
-		return; // Should be sent an error here? There is none for when all the parameters are invalid
-	
 	// OP priviledges of the channel required
 	if (!channel->isOperator(user))
-		return user->sendError(ERR_CHANOPRIVSNEEDED, "");
-
+		return user->sendError(ERR_CHANOPRIVSNEEDED, channelName);
 
 	// Create the reason string or set the default
 	std::string reason = " :you have been kicked by " + user->getNick();
@@ -611,21 +581,30 @@ Server::kickCmd(User *user, const std::vector<std::string> &params)
 		for (std::vector<std::string>::const_iterator it = params.begin() + 2; it != params.end(); ++it)
 			reasonStr.push_back(*it);
 		reason = joinStrings(reasonStr);
-		reason.erase(0, 1);
+		if (reason[0] == ':')
+			reason.erase(0, 1);
 	}
-
-	for (std::vector<User *>::iterator it = targets.begin(); it != targets.end(); ++it)
+	
+	// Get and check the targets of the command
+	std::vector<User *> targets;
+	std::vector<std::string> nicks = splitString(params[1], ",");
+	for	(std::vector<string>::const_iterator it = nicks.begin(); it != nicks.end(); ++it)
 	{
-		User *target = *it;
+		const std::string targetNick = *it;
 
-		if (!channel->isMember(target)) {
-			user->sendError(ERR_NOTONCHANNEL, target->getNick());
+		std::vector<std::string> err;
+		err.push_back(targetNick);
+		err.push_back(channelName);
+
+		if (!channel->isMember(targetNick)) {
+			user->sendError(ERR_USERNOTINCHANNEL, err);
 			continue;
 		}
 
-		target->leaveChannel(channel, target->getNick() + " was kicked from " + channel->getName());
-		sendMsg(target, reason);
-		// channel->broadcast(target->getNick() + " was kicked from " + channel->getName(), NULL, user->getNick());
+		User *target = getUser(targetNick);
+
+		channel->broadcast("KICK " + channelName + " " + targetNick, NULL, user->getNick());
+		target->leaveChannel(channel, target->getNick() + " was kicked");
 	}
 }
 

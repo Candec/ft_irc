@@ -236,6 +236,9 @@ const std::string err_erroneusnickname(const User *dest, const std::string &nick
 const std::string err_nicknameinuser(const User *dest, const std::string &nick) {
 	return dest->getNick() + " " + nick + " :Nickname is already in use";
 }
+const std::string err_usernotinchannel(const User *dest, const std::vector<std::string> &params) {
+	return dest->getNick() + " " + params[0] + " " + params[1] + " :They aren't on that channel";
+}
 const std::string err_notonchannel(const User *dest, const std::string &channelName) {
 	return dest->getNick() + " " + channelName + " :You're not on that channel";
 }

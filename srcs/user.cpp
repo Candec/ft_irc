@@ -372,6 +372,9 @@ void User::sendError(Errors type, const std::vector<std::string> &params, const 
 	case ERR_NICKNAMEINUSE:
 		reply += err_nicknameinuser(this, params[0]);
 		break;
+	case ERR_USERNOTINCHANNEL:
+		reply += err_usernotinchannel(this, params);
+		break;
 	case ERR_NOTONCHANNEL:
 		reply += err_notonchannel(this, params[0]);
 		break;

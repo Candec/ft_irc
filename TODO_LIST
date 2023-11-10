@@ -22,14 +22,26 @@ Test commands:
 	NICK works
 	USER
 	COLOR
-	JOIN works
+	JOIN
+		1 channel 1 key
+		1 channel 2 keys
+		2 channels 1 key
+		2 channel 2 key
 	QUIT works
 	CAP
 	TOPIC
 	PRIVMSG
+		user
+		channel
+		user,user,user
+		user,channel,user
+		channel,channel,channel
+		channel,user
 	AWAY
 	PING
 	MODE
+	KICK
+		
 
 Problem with Annon- (test without configured nick)
 Remove unneeded this-> ?

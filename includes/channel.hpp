@@ -128,6 +128,7 @@ class Channel
 		void unban(const User *user);
 
 		bool isMember(const User *user) const;
+		bool isMember(const std::string &nick) const;
 		bool isOperator(const User *user) const;
 		bool isFull() const;
 		bool isBanned(const User *user) const;
