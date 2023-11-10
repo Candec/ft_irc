@@ -38,3 +38,4 @@
 ircserv
 .vscode/
 *.txt
+.nfs*

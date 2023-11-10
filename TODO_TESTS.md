@@ -17,7 +17,7 @@ Your executable will be run as follows:
   - Server might accept client without a proper password if it send many connection requests ✔️
   - Server migh not accept client, even when all the information is correct. The welcome message is even sent, but after, the user is not able to interact with the server. The fd is created, and irssi even tries to reconnect, as it has the "reconnect after timeout" setting active by default ✔️
 - Communication has to be done via TCP ✔️
-- Compare with official IRC servers ❌
+- Compare with official IRC servers ✔️
   - Authenticate ✔️
     - When creating a server without password, /NICK and /NAME complain the user has not provided a password ✔️
   - Set Nickname (NICK command )✔️
@@ -136,7 +136,7 @@ Check the following requirements:
 Network communications can be disturbed by many strange situations.
 
 - Just like in the subject, using nc, try to send partial commands. Check that the server answers correctly. With a partial command sent, ensure that other connections still run fine. ✔️
-- Unexpectedly kill a client. Then check that the server is still operational for the other connections and for any new incoming client. 🟡
+- Unexpectedly kill a client. Then check that the server is still operational for the other connections and for any new incoming client. ✔️
   - It crashes the server (sometimes), I think it would be best to check user status before each send. Ctrl-C'd netcat and one of the times it closed without error message when trying to send PART command to netcat's user but the other time it worked.
   - Now added MSG_NOSIGNAL flag to send() so it doesn't generate a SIGPIPE signal if the peer on a stream-oriented socket has closed the connection. Requires further testing
 - Unexpectedly kill a nc with just half of a command sent. Check again that the server is not in an odd state or blocked. ✔️
