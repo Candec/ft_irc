@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:01 by tpereira          #+#    #+#             */
-/*   Updated: 2023/11/09 00:44:40 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/09 08:45:54 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,9 +173,9 @@ void Server::setup()
 	// char str[INET_ADDRSTRLEN];
 	// cout << "IP: " << inet_ntop( AF_INET, &ipAddr, str, INET_ADDRSTRLEN)  << std::flush;
 
-	_pollfds.push_back(pollfd());
-	_pollfds.back().fd = _listen_fd;
-	_pollfds.back().events = POLLIN;
+	_pollfds_in.push_back(pollfd());
+	_pollfds_in.back().fd = _listen_fd;
+	_pollfds_in.back().events = POLLIN;
 }
 
 void Server::run()
@@ -184,12 +184,12 @@ void Server::run()
 	std::cout << BLUE << "Listening on port " << YELLOW << this->_port << WHITE << std::endl << std::flush;
 
 	while (true) {
-		if (poll(&_pollfds[0], _pollfds.size(), -1) == SENDING_ERROR)
-			error("Failed poll", EXIT);
+		if (poll(&_pollfds_in[0], _pollfds_in.size(), -1) == SENDING_ERROR)
+			error("Failed poll _pollfds_in", EXIT);
 
 		if (time(0) - _previousPing >= _ping)
 			updatePing();
-		else if (_pollfds[0].revents == POLLIN)
+		else if (_pollfds_in[0].revents == POLLIN)
 			createUser();
 		else
 			updatePoll();
@@ -296,9 +296,13 @@ void Server::createUser()
 	std::cout << BLUE << "User " << GREEN << "connected" << BLUE << " from ";
 	std::cout << user->getHostaddr() << ":" << user->getPort() << WHITE << std::endl << std::flush;
 
-	_pollfds.push_back(pollfd());
-	_pollfds.back().fd = user_fd;
-	_pollfds.back().events = POLLIN;
+	_pollfds_in.push_back(pollfd());
+	_pollfds_in.back().fd = user_fd;
+	_pollfds_in.back().events = POLLIN;
+
+	_pollfds_out.push_back(pollfd());
+	_pollfds_out.back().fd = user_fd;
+	_pollfds_out.back().events = POLLOUT;
 
 	if (_users.size() == _maxUsers && (shutdown(_listen_fd, SHUT_RD) == SENDING_ERROR))
 		error("Failed shutdown of receptions on listening socket", CONTINUE);
@@ -327,7 +331,7 @@ Channel *Server::createChannel(const std::string &channelName)
 	// cout << "channel [ mem: " << _channels[channelName] << " | << name: " << _channels[channelName]->getName() << " ] created" << std::endl << std::flush;
 	return channel;
 }
-Channel *Server::createChannel(const std::string &channelName, const User *creator)
+Channel *Server::createChannel(const std::string &channelName, User *creator)
 {
 	if (isValidChannelName(channelName, true))
 		return createChannel(channelName);
@@ -345,6 +349,12 @@ void Server::delUser(User *user)
 	if (!user)
 		return;
 
+	if (poll(&_pollfds_out[0], _pollfds_out.size(), -1) == SENDING_ERROR)
+		error("Failed poll _pollfds_out", EXIT);
+	for (std::vector<pollfd>::iterator i = _pollfds_out.begin(); i != _pollfds_out.end(); ++i)
+		if (i->fd == user->getFd() && i->revents == POLLOUT)
+			sendBuffer(i->fd);
+
 	std::cout << MAGENTA << user->getNick();
 	std::cout << RED << " disconnected" << WHITE << std::endl << std::flush;
 	log(std::string("Server: ") + RED + "Removing " + MAGENTA + user->getNick() + RESET + " (" \
@@ -352,14 +362,19 @@ void Server::delUser(User *user)
 
 	user->leaveAllChannels();
 
-	for (std::vector<pollfd>::iterator l = _pollfds.begin(); l != _pollfds.end(); ++l)
-	{
-		if (l->fd == user->getFd())
-		{
-			_pollfds.erase(l);
+	for (std::vector<pollfd>::iterator l = _pollfds_in.begin(); l != _pollfds_in.end(); ++l) {
+		if (l->fd == user->getFd()) {
+			_pollfds_in.erase(l);
 			break;
 		}
 	}
+	for (std::vector<pollfd>::iterator l = _pollfds_out.begin(); l != _pollfds_out.end(); ++l) {
+		if (l->fd == user->getFd()) {
+			_pollfds_out.erase(l);
+			break;
+		}
+	}
+
 	_users.erase(user->getFd());
 
 	delete user;
@@ -394,11 +409,17 @@ void Server::updatePing()
 
 void Server::updatePoll()
 {
-	for (std::vector<pollfd>::iterator i = _pollfds.begin(); i != _pollfds.end(); ++i)
+	for (std::vector<pollfd>::iterator i = _pollfds_in.begin(); i != _pollfds_in.end(); ++i)
 	{
 		if (i->revents & POLLIN && _users.find(i->fd) != _users.end())
 			receiveMsg(i);
 	}
+
+	if (poll(&_pollfds_out[0], _pollfds_out.size(), -1) == SENDING_ERROR)
+		error("Failed poll _pollfds_out", EXIT);
+	for (std::vector<pollfd>::iterator i = _pollfds_out.begin(); i != _pollfds_out.end(); ++i)
+		if (i->revents == POLLOUT)
+			sendBuffer(i->fd);
 
 	for (std::map<int, User *>::iterator it = _users.begin(); it != _users.end(); ++it)
 	{
@@ -409,11 +430,11 @@ void Server::updatePoll()
 }
 
 
-void Server::sendMsg(const User *user, const int n) const
+void Server::sendMsg(User *user, const int n) const
 {
 	sendMsg(user, toString(n));
 }
-void Server::sendMsg(const User *user, const std::string &msg, const std::string &src) const
+void Server::sendMsg(User *user, const std::string &msg, const std::string &src) const
 {
 	sendMsg(user, ":" + src + "@" + server->getName() + " " + msg);
 }
@@ -425,18 +446,29 @@ void Server::sendMsg(const int user_fd, const std::string &msg) const
 {
 	sendMsg(_users.at(user_fd), msg);
 }
-void Server::sendMsg(const User *user, const std::string &msg) const
+void Server::sendMsg(User *user, const std::string &msg) const
 {
-	const std::string tmp = msg + " " + MESSAGE_END;
-	if (send(user->getFd(), tmp.c_str(), tmp.size(), MSG_NOSIGNAL) == SENDING_ERROR)
-		error("Error sending message", CONTINUE);
+	user->send_buffer += msg + ' ' + MESSAGE_END;
+}
+
+void Server::sendBuffer(const int user_fd) const
+{
+	User *const user = _users.at(user_fd);
+
+	if (user->send_buffer.empty())
+		return;
 
 	std::ostringstream oss;
 	oss << "SEND " << RESET << timestamp() << BLUE << "Server: Sending to " \
 		<< MAGENTA << user->getNick() << RESET << " (" \
 		<< MAGENTA << user->getFd() << RESET << "):" << std::endl \
-		<< msg << std::endl << std::flush;
+		<< user->send_buffer << std::flush;
 	log(oss.str());
+
+	if (send(user->getFd(), user->send_buffer.c_str(), user->send_buffer.size(), 0) == SENDING_ERROR)
+		return error("Error sending message", CONTINUE);
+
+	user->send_buffer.clear();
 }
 
 void Server::broadcast(const std::string &message) const
@@ -453,14 +485,14 @@ void Server::sendColorMsg(const int user_fd, const std::string &msg, const std::
 	User *user = _users.at(user_fd);
 	sendColorMsg(user, msg, color);
 }
-void Server::sendColorMsg(const User *user, const std::string &msg, const std::string &color) const
+void Server::sendColorMsg(User *user, const std::string &msg, const std::string &color) const
 {
 	if (!user->isCapable())
 		return sendMsg(user, msg);
 	sendMsg(user, color + msg + RESET);
 }
 
-void Server::sendClear(const User *user) const
+void Server::sendClear(User *user) const
 {
 	if (user->isCapable())
 		return;
@@ -515,16 +547,16 @@ void Server::receiveMsg(std::vector<pollfd>::const_iterator it)
 
 	std::cout << "in pckg: " << buf << std::endl << std::flush;
 
-	user->buffer += buf;
+	user->recv_buffer += buf;
 
-	if (user->buffer.find('\n') == std::string::npos) {
+	if (user->recv_buffer.find('\n') == std::string::npos) {
 		user->setStatus(UserFlags::WAITING);
 		return;
 	}
 
-	printMsg2(user, user->buffer.c_str());
-	parseMessage(user, user->buffer.c_str());
-	user->buffer.clear();
+	printMsg2(user, user->recv_buffer.c_str());
+	parseMessage(user, user->recv_buffer.c_str());
+	user->recv_buffer.clear();
 
 
 	// const std::string	delimiter(MESSAGE_END);

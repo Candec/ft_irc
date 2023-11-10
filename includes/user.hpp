@@ -6,7 +6,7 @@
 /*   By: fporto <fporto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 13:17:22 by jibanez-          #+#    #+#             */
-/*   Updated: 2023/11/08 07:36:49 by fporto           ###   ########.fr       */
+/*   Updated: 2023/11/09 08:09:08 by fporto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ class User
 
 		time_t		_idleSince;
 
-		int			_fd;
+		const int	_fd;
 		int			_status;
 		time_t		_previousPing;
 		std::string	_hostaddr;
@@ -141,7 +141,8 @@ class User
 		User(const int fd, struct sockaddr_in addr);
 		~User();
 
-		std::string buffer;
+		std::string recv_buffer;
+		std::string send_buffer;
 		void sendPrivateMessage(User *To, const std::string &Message);
 		void write(const std::string Message);
 		void push();
@@ -203,20 +204,20 @@ class User
 		bool			isInvisible() const;
 		bool			isAway() const;
 
-		void			sendReply(Replies type) const;
-		void			sendReply(Replies type, const std::string &param) const;
-		void			sendReply(Replies type, const std::vector<std::string> &params) const;
-		void			sendReply(Replies type, const std::string &param, const std::string &cmd) const;
-		void			sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd) const;
-		void			sendReply(Replies type, const std::string &param, const std::string &cmd, const std::string &tags, const std::string &src) const;
-		void			sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd, const std::string &tags, const std::string &src) const;
+		void			sendReply(Replies type);
+		void			sendReply(Replies type, const std::string &param);
+		void			sendReply(Replies type, const std::vector<std::string> &params);
+		void			sendReply(Replies type, const std::string &param, const std::string &cmd);
+		void			sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd);
+		void			sendReply(Replies type, const std::string &param, const std::string &cmd, const std::string &tags, const std::string &src);
+		void			sendReply(Replies type, const std::vector<std::string> &params, const std::string &cmd, const std::string &tags, const std::string &src);
 
 		// void sendError(Errors type, const User *dest, const std::string &tags, const std::string &src, const std::string &cmd, const std::vector<std::string> &params);
-		void			sendError(Errors type) const;
-		void			sendError(Errors type, const std::string &param) const;
-		void			sendError(Errors type, const std::string &param, const std::string &cmd) const;
-		void			sendError(Errors type, const std::vector<std::string> &params) const;
-		void			sendError(Errors type, const std::vector<std::string> &params, const std::string &cmd) const;
+		void			sendError(Errors type);
+		void			sendError(Errors type, const std::string &param);
+		void			sendError(Errors type, const std::string &param, const std::string &cmd);
+		void			sendError(Errors type, const std::vector<std::string> &params);
+		void			sendError(Errors type, const std::vector<std::string> &params, const std::string &cmd);
 };
 
 #endif
